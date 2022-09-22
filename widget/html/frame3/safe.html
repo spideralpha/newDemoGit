@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui_font.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/news.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/frame3.css" />
+    <style>
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <section class="m-frame">
+            <ul class="item">
+                <li class="item_li" @click="_url({url:'frame4/confirm_phone', title:'账号校验', phone: ffInfo.phone})">
+                    <div class="lt">手机号码</div>
+                    <div class="rt">
+                        <span class="f-size12 phone">{{ffInfo.phone}}(仅自己可见)</span>
+                        <span class="aui-iconfont aui-icon-right"></span>
+                    </div>
+                </li>
+                <!-- <li class="item_li" onclick="_url({url:'user/pwd', title:'修改密码'})">
+                    <span class="lt" v-if="ffInfo">修改登录密码</span>
+                    <span class="aui-iconfont aui-icon-right"></span>
+                </li> -->
+                <!-- <li v-if="!ios" class="item_li" onclick="openPayPwd()">
+                    <span class="lt" v-if="!parseInt(ffInfo.paypwd)">设置支付密码</span>
+                    <span class="lt" v-else>修改支付密码</span>
+                    <span class="aui-iconfont aui-icon-right"></span>
+                </li> -->
+                <li v-if="!ios" class="item_li" onclick="_url({ url: 'frame4/set_paya', title:escape_a})">
+                    <span class="lt" v-if="!ffInfo.zhifucount">设置{{escape_a}}</span>
+                    <span class="lt" v-else>修改{{escape_a}}</span>
+                    <span class="aui-iconfont aui-icon-right"></span>
+                </li>
+                <!-- <li v-if="!ios" class="item_li" onclick="_url({ type: 1, slidBackEnabled: 0, animationType: 'fade' }, 'frame4/pwd')">
+                    <div class="lt">手势密码</div>
+                    <div class="rt">
+                        <span class="aui-iconfont aui-icon-right"></span>
+                    </div>
+                </li>
+                <li class="item_li" onclick="clear_huncun()">
+                    <div class="lt">清除缓存</div>
+                    <div class="rt">
+                        <span class="f-size12 clearCache"></span>
+                        <span class="aui-iconfont aui-icon-right"></span>
+                    </div>
+                </li> -->
+                <li class="item_li" v-if="!ios" onclick="_url({url: 'shop/area', title: '地址管理', moreTitle: '添加地址'})">
+                    <div class="lt">我的地址</div>
+                    <div class="rt">
+                        <span class="f-size12 "></span>
+                        <span class="aui-iconfont aui-icon-right"></span>
+                    </div>
+                </li>
+                <!-- <li class="item_li" onclick="zhuxiao()">
+                    <div class="lt">注销账号</div>
+                    <div class="rt">
+                        <span class="f-size12"></span>
+                        <span class="aui-iconfont aui-icon-right"></span>
+                    </div>
+                </li> -->
+            </ul>
+        </section>
+    </div>
+    <script type="text/javascript" src="../../script/api.js"></script>
+    <script type="text/javascript" src="../../script/jquery.js"></script>
+    <script type="text/javascript" src="../../script/ffkj.js"></script>
+    <script type="text/javascript" src="../../script/vue.js"></script>
+    <script type="text/javascript" src="../../script/update.js"></script>
+    <script type="text/javascript">
+        var view = new Vue({
+            el: '#view',
+            data: {
+                ffInfo: {},
+                ios: 1, // 1上架 0非上架
+                escape_a: escape_a
+            },
+            methods: {
+                _url(param, url) {
+                    _url(param, url);
+                },
+                // 返回图片路径
+                returnImg(url) {
+                    return returnImg(url);
+                },
+            }
+        })
+        apiready = function() {
+            view.ios = $api.getStorage('shang');
+            //获取缓存大小
+            api.getCacheSize(function(ret) {
+                var clearCache = ret.size / 1024 / 1024;
+                $api.html($api.dom('.clearCache'), clearCache.toFixed(2) + "MB")
+            });
+            _getUser(function(ret) {
+                view.ffInfo = ret.result;
+            })
+
+        }
+        // 支付密码
+        function openPayPwd() {
+            _getUser(function(ret) {
+                view.ffInfo = ret.result;
+                if (!parseInt(view.ffInfo.paypwd)) {
+                    showDetail('frame4/paypwd');
+                } else {
+                    if (!view.ffInfo.phone) {
+                        _url({
+                            url: 'frame4/bang_ding_shou_ji_frm',
+                            title: '绑定手机'
+                        })
+                    } else {
+                        _url({
+                            url: 'user/change_paypwd',
+                            title: '修改支付密码',
+                            phone: view.ffInfo.phone
+                        })
+                    }
+                }
+            })
+        }
+
+
+        //清除缓存
+        function clear_huncun() {
+            api.clearCache(function() {
+                _msg('清除完成');
+                //获取缓存大小
+                api.getCacheSize(function(ret) {
+                    var clearCache = ret.size / 1024 / 1024;
+                    $api.html($api.dom('.clearCache'), clearCache.toFixed(2) + "MB")
+                });
+            });
+        }
+        // 注销账号
+        function zhuxiao() {
+            var obj = {
+                msg: '注销账号会清空您的所有的账信息，是否要继续注销？'
+            }
+            _confirm(obj, function(bIndex) {
+                if (bIndex == 1) {
+                    if (!view.ffInfo.phone) {
+                        _url({
+                            url: 'frame4/bang_ding_shou_ji_frm',
+                            title: '绑定手机'
+                        })
+                    } else {
+                        _url({
+                            url: 'user/delete',
+                            title: '注销账号',
+                            phone: view.ffInfo.phone
+                        })
+                    }
+                }
+            })
+
+        }
+    </script>
+</body>
+
+</html>

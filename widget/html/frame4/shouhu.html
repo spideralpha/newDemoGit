@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>小火苗</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/shouhu.css">
+    <style>
+        html,
+        body {
+            background: #f3f3f3;
+        }
+
+        .tisheng {
+            background: linear-gradient(-14deg, #F97FF8, #FAB0CA);
+            border-radius: 37px;
+            color: #FFFFFF;
+            padding: 5px 14px;
+            font-size: 12px;
+        }
+
+        .time span {
+            border: 2px solid;
+            color: #F97FF8 !important;
+            border-radius: 35px;
+            font-size: 12px !important;
+            padding: 2px 12px;
+        }
+
+        .tx,
+        .tx img {
+            width: 60px !important;
+            height: 60px !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <ul class="sh-ul">
+            <li class="list flex-bt" v-for="(m, index) in ffList">
+                <div class="user flex-c">
+                    <div class="tx" @click="go_userInfo(m.userid)">
+                        <img :src="returnImg(m.head_100)" onerror="this.src='../../image/touxiang.png'" alt="">
+                    </div>
+                    <div class="detail">
+                        <p class="name" style="margin-bottom:7px;">{{m.name}}</p>
+                        <div class="time">
+                            <span>亲密度{{m.intimate}}°C</span>
+                            <!-- <span v-if="m.days">已守护：{{m.days}}天</span> -->
+                        </div>
+                    </div>
+                </div>
+                <!-- <i class="angel-icon" v-if="index==0 && m.angel ==1"></i>
+                <i class="angel-icon angel-orange-icon" v-if="index==0 && m.angel ==0"></i> -->
+                <div class="tisheng" @click="_url({ touserid: m.userid, title: '与' + m.name + '的聊天', moreType: 1 }, 'frame0/liaotian_win')">提升亲密度</div>
+            </li>
+        </ul>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+        },
+        methods: {
+            // 查看用户资料
+            go_userInfo(id, name, sex) {
+                go_userInfo(id, name, sex)
+            },
+            // 跳转
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+        }
+    })
+    apiready = function () {
+        var types = api.pageParam['types'];
+        var user_id = $api.getStorage('userid');
+        if (api.pageParam['uid']) {
+            user_id = api.pageParam['uid'];
+        }
+        var param = {
+            user_id: user_id,
+            types: types
+        }
+        _shangla(function () {
+            _lists('api/User/defend', 1, 1, param);
+        })
+
+        _scrollToBottom(function () {
+            if (heigutgao == 1) {
+                page++;
+                _lists('api/User/defend', page, '', param);
+            }
+        })
+    }
+
+    // 守护规则
+    function _more() {
+        showDetail('frame4/shouhu_rule');
+    }
+</script>
+
+</html>

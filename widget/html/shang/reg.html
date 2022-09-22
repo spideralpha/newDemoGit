@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/login.css">
+    <style>
+        .login-bg {
+            padding: 10px 0;
+            width: 100vw;
+        }
+
+        .check-box {
+            border: 1px solid #ddd;
+            width: 20px;
+            height: 20px;
+            margin-right: 5px;
+        }
+
+        .check-box.active {
+            background-image: url('../../image/select2.png');
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+
+        }
+
+        .xieyi p {
+            color: #fff;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-bg" id="view" v-cloak>
+        <div class="wrap">
+            <ul class="input-wrap w-bg">
+                <li class="li phone">
+                    <span class="name">+86</span>
+                    <input type="text" placeholder="请输入手机号">
+                </li>
+                <li class="li code">
+                    <span class="name">验证码</span>
+                    <input style="width: 150px;" type="text" placeholder="请输入收到的验证码">
+                    <span class="get-code new-theme-color forget" data-status=0 onclick="getCode(1)">发送验证码</span>
+                </li>
+                <li class="li pwd">
+                    <span class="name">设置密码</span>
+                    <input type="password" placeholder="请设置登录密码">
+                </li>
+            </ul>
+            <button class="new-btn" tapmode onclick="submit()">确定</button>
+            <div class="xieyi flex-c">
+                <p>
+                    <div @click.stop @click="xieyi= xieyi==1?0:1" class="check-box" :class="{'active':xieyi==1}"></div>
+                    点击进入表示你已阅读并同意<a href="javascript:;" onclick="openPage(2)">《用户协议》</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/login.js"></script>
+<script src="../../script/code.js"></script>
+<script src="../../script/keyboard.js"></script>
+<script src="../../script/vue.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            ios: 1, // 1上架 0非上架
+            xieyi: 0,
+        }
+    })
+    apiready = function() {
+        view.ios = $api.getStorage('shang');
+    }
+    // 下一步
+    function submit() {
+        if (view.xieyi == 0) {
+            _msg('请先查看协议并勾选协议');
+            return;
+        }
+        var phone = $.trim($('.phone input').val());
+        var pwd = $.trim($('.pwd input').val());
+        var code = $.trim($('.code input').val());
+        if (!checkMobile(phone)) {
+            _msg('请输入正确的手机号');
+            return;
+        }
+        if (!(pwd && pwd.length >= 6)) {
+            _msg('密码不能为空并且不少于6位')
+            return;
+        }
+        if (!phone) {
+            _msg('手机号未填写');
+            return;
+        }
+        var obj = {
+            phone: phone,
+            password: pwd,
+            name: returnName(phone),
+            sex: '男',
+            code: code,
+        }
+        _loading();
+        _ajax('api/reg/index', function(ret, err) {
+            _loadingClose();
+            if (ret.code == '200') {
+                $api.rmStorage('wechat');
+                $api.rmStorage('qq_openID');
+                _msg('提交成功')
+                $api.setStorage('userid', ret.id);
+                loginToUpdate(ret.id)
+                _home()
+            } else {
+                _msg(ret.msg);
+            }
+        }, obj)
+    }
+</script>
+
+</html>

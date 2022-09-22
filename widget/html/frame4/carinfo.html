@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/aui_font.css">
+    <title>Document</title>
+    <style>
+        html,
+        body {
+            margin: 0;
+            background-color: rgb(61, 185, 243);
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            padding: 0 14px;
+            line-height: 50px;
+            z-index: 1;
+            color: #fff;
+            font-size: 14px;
+            background-color: #fff;
+        }
+
+        header .aui-icon-left {
+            margin-right: 6px;
+            font-size: 14px;
+        }
+
+        header .right {
+            font-size: 12px;
+        }
+
+        .listbox {
+            margin: 20px 14px;
+            position: relative;
+            background-color: #fff;
+            border-radius: 6px;
+        }
+
+        .list {
+            /* margin-bottom: 20px; */
+            position: relative;
+            /* height: 47vw;
+            overflow: hidden; */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: auto;
+        }
+
+        .bg {
+            width: 96%;
+            margin-top: -100px;
+        }
+
+        .bg.hh {
+            margin-top: -150px;
+        }
+
+        .carname {
+            text-align: center;
+            padding: 10px 0 0 0;
+            font-size: 14px;
+        }
+
+        .item {
+            width: 100vw;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .item img {
+            height: 250px;
+            width: 250px;
+            object-fit: contain;
+            z-index: 1;
+        }
+
+        .info {
+            padding: 20px 10px;
+        }
+
+        .tab {
+            text-align: center;
+            position: relative;
+            font-size: 14px;
+            padding: 20px 0;
+            width: 60px;
+            color: slateblue;
+            margin-left: calc(50% - 30px);
+        }
+
+        .tab::before {
+            content: '';
+            width: 60px;
+            height: 2px;
+            background: linear-gradient(to left, slateblue, rgba(105, 90, 205, 0.178));
+            position: absolute;
+            top: calc(50% - 1px);
+            left: -70px;
+        }
+
+        .tab::after {
+            content: '';
+            width: 60px;
+            right: -70px;
+            height: 2px;
+            background: linear-gradient(to right, slateblue, rgba(105, 90, 205, 0.178));
+            position: absolute;
+            top: calc(50% - 1px);
+        }
+
+        .content {
+            font-size: 12px;
+            line-height: 1.8;
+        }
+
+        .guige {
+            padding: 20px 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .guige .gitem {
+            width: 31%;
+            border: 1px solid #eee;
+            padding: 10px 0;
+            text-align: center;
+            font-size: 14px;
+            border-radius: 6px;
+        }
+
+        .guige .gitem span {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .guige .gitem .price {
+            margin-top: 6px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view">
+        <header>
+            <div class="hleft">
+                <span class="aui-iconfont aui-icon-left" onClick="_closeToWin()"></span>
+                购买座驾
+            </div>
+        </header>
+        <div class="listbox">
+            <div class="list">
+                <div class="item">
+                    <div class="name">{{ffInfo.name}}</div>
+                    <img :src="returnImg(ffInfo.cover)" onerror="this.src='../../image/error-img.png'" alt="">
+                </div>
+                <img class="bg hh" v-if="ffInfo.types==2" src="../../image/more/hhzjzt@2x.png" alt="">
+                <img class="bg" v-else src="../../image/more/jdzt@2x.png" alt="">
+                <!-- <div class="carname">{{ffInfo.name}}</div>
+                <div class="lr">
+                    <img :src="returnImg(ffInfo.cover)" onerror="this.src='../../image/error-img.png'" alt="">
+                </div>
+                <img class="bg hh" v-if="ffInfo.types==2" src="../../image/more/hhzjzt@2x.png" alt="">
+                <img class="bg" v-else src="../../image/more/jdzt@2x.png" alt=""> -->
+            </div>
+            <div class="info">
+                <div class="tab">商品说明</div>
+                <div class="content" v-html="ffInfo.description">
+                    <!-- <div>1.进入家族、群聊派对时拥有炫酷的进场特效，闪亮登场</div>
+                    <div>2.个人主页显示您的座驾图标，随时邂逅一段感情</div>
+                    <div>3.商品一经购买，不支持退换</div> -->
+                </div>
+            </div>
+            <div class="guige" v-if="ffInfo.price">
+                <div class="gitem" @click="submitBuy(0)">
+                    <div class="label"><span>1</span> 个月</div>
+                    <div class="price">{{ffInfo.price[0]}}元</div>
+                </div>
+                <div class="gitem" @click="submitBuy(1)">
+                    <div class="label"><span>3</span> 个月</div>
+                    <div class="price">{{ffInfo.price[1]}}元</div>
+                </div>
+                <div class="gitem" @click="submitBuy(2)">
+                    <div class="label"><span>12</span> 个月</div>
+                    <div class="price">{{ffInfo.price[2]}}元</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script src="../../script/zhifu.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+            hh: 0, //豪华款
+        },
+        methods: {
+            submitBuy(index) {
+                submitBuy(index);
+            },
+            // 跳转
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+        }
+    })
+    apiready = function() {
+        $api.fixStatusBar($api.dom('header'));
+        view.ffInfo = api.pageParam['data'];
+        console.log(JSON.stringify(view.ffInfo))
+        // view.imgurl = view.ffInfo.cover;
+    }
+
+    // 购买 1余额|2支付A|3vx
+    function submitBuy(index) {
+        var price = view.ffInfo.price[index];
+        showPayWay(price, function(pIndex) {
+            if (pIndex != -1) {
+                if (pIndex == 0) {
+                    var method = 3;
+                    var payType = 'pay_w';
+                } else {
+                    var method = 2;
+                    var payType = 'pay_a';
+                }
+                _ajax('api/car/buy', function(ret, err) {
+                    if (ret && ret.code == 200) {
+                        openOtherPay({
+                            payType: payType,
+                            info: ret.data,
+                            money: price
+                        })
+                    } else {
+                        _msg(ret.msg);
+                    }
+                }, {
+                    user_id: $api.getStorage('userid'),
+                    method: method,
+                    expire: index,
+                    id: view.ffInfo.id
+                })
+            }
+        })
+    }
+</script>
+
+</html>

@@ -1,0 +1,361 @@
+.ulist-wrap .list {
+    margin: 0 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid #eeeeee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.ulist-wrap .list .content-wrap {
+    display: flex;
+    width: calc(100% - 60px);
+}
+
+.ulist-wrap .list .content {
+    width: calc(100% - 20vw - 10px);
+}
+
+.ulist-wrap .tx {
+    width: 20vw;
+    height: 22vw;
+    position: relative;
+    margin-right: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    overflow: visible;
+}
+
+.ulist-wrap .tx img {
+    width: 20vw;
+    height: 22vw;
+    border-radius: 6px;
+}
+
+.ulist-wrap .list .online-tag {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    background: rgba(0, 0, 0, 0.41);
+    color: #09F175;
+    border-radius: 15px;
+    padding: 2px 5px;
+    display: flex;
+    align-items: center;
+    font-size: 10px;
+}
+
+.ulist-wrap .list .online-tag::before {
+    display: inline-block;
+    content: '';
+    width: 5px;
+    height: 5px;
+    background: #09F175;
+    border-radius: 50%;
+    margin-right: 3px;
+}
+
+/* 语音 */
+.ulist-wrap .list .voice-wrap {
+    position: absolute;
+    width: 100%;
+    box-sizing: border-box;
+    bottom: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ulist-wrap .list .voice-tag {
+    background-color: rgba(0, 0, 0, 0.66);
+    border-radius: 7px;
+    font-size: 10px;
+    height: 14px;
+    width: 89%;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.ulist-wrap .voice-tag::before {
+    display: inline-block;
+    content: '';
+    background-image: url('../image/icon/voice2.png');
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 20px;
+    height: 10px;
+    margin-right: 10px;
+}
+
+.ulist-wrap .voice-tag::after {
+    display: inline-block;
+    content: '';
+    background-image: url('../image/icon/play1.png');
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 10px;
+    height: 14px;
+    position: absolute;
+    right: 2px;
+}
+
+.ulist-wrap .img-tag {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    background: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    border-radius: 0 7px 0 0;
+    font-size: 10px;
+    padding: 2px 5px;
+}
+
+/* 名字 */
+.ulist-wrap .name-wrap {
+    display: flex;
+    align-items: center;
+}
+
+.ulist-wrap .name {
+    word-break: keep-all;
+    margin-right: 4px;
+    font-size: 16px;
+    word-break: keep-all;
+
+    margin-right: 4px;
+    display: -webkit-box !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-wrap: break-word;
+    word-break: break-all;
+    white-space: normal !important;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    max-width: 154px;
+    color: #000;
+}
+
+/* 属性 */
+.ulist-wrap .tag-wrap {
+    margin-top: 10px;
+    display: flex;
+    align-items: baseline;
+    /* width: 100%;
+    overflow: hidden; */
+}
+
+.ulist-wrap .tag-wrap .tag {
+    font-size: 12px;
+    color: #757575;
+    word-break: keep-all;
+    /* display: flex;
+    align-items: center; */
+    white-space: nowrap;
+}
+
+.ulist-wrap .tag-wrap .tag.city-tag {
+    max-width: 48px;
+    overflow: hidden;
+}
+
+/* .ulist-wrap .tag-wrap .tag:last-child {
+    max-width:59px;
+    overflow: hidden;
+} */
+
+.ulist-wrap .tag-wrap .tag::before {
+    content: '';
+    display: inline-block;
+    height: 10px;
+    width: 1px;
+    background: #757575;
+    margin: 0 5px;
+}
+
+.ulist-wrap .tag-wrap .tag:first-child::before {
+    display: none;
+}
+
+
+.ulist-wrap .tag-wrap .tag .base-icon {
+    width: 8px;
+    height: 10px;
+    margin-right: 3px;
+}
+
+.ulist-wrap .tag-wrap .tag.area-tag {
+    background: #EDEFF0;
+    color: #666;
+}
+
+.ulist-wrap .tag-wrap .tag.online-tag {
+    background: #e1f7c7;
+    color: #4caf50;
+}
+
+.ulist-wrap .tag-wrap .tag.no-online-tag {
+    background: #EDEFF0;
+    color: #666;
+}
+
+
+.ulist-wrap .tag-wrap .tag.lock-tag {
+    background: #e7f1f5;
+    color: #3e94cd;
+}
+
+.ulist-wrap .tag-wrap .tag.money-tag {
+    background: #f9d3e0;
+    color: #e91e63;
+}
+
+.ulist-wrap .tag-wrap .tag .iconfont {
+    font-size: 12px;
+}
+
+.ulist-wrap .more {
+    /* border: 1px solid #aaa; */
+    /* border-radius: 3px; */
+    color: #aaa;
+    /* padding: 0 3px;
+    font-size: 12px; */
+}
+
+.ulist-wrap .more .aui-iconfont {
+    font-size: 18px;
+}
+
+.ulist-wrap
+
+/* 签名 */
+.sign {
+    color: #666666;
+    font-size: 12px;
+    margin-top: 10px;
+}
+
+/* 相册 */
+.ulist-wrap .xc-wrap {
+    margin-top: 1.5vw;
+    display: flex;
+    align-items: center;
+}
+
+.ulist-wrap .xc-wrap img {
+    width: 6.7vw;
+    height: 6.7vw;
+    object-fit: cover;
+    margin-right: 4px;
+    border-radius: 5px;
+}
+
+.ulist-wrap .more.active {
+    color: #F46CEF;
+}
+
+.ulist-wrap .float {
+    position: fixed;
+    bottom: 40px;
+    right: 16px;
+    background: linear-gradient(to right, rgba(221, 35, 165, 0.692), rgb(241, 155, 174));
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    padding: 2px 10px;
+    width: 90px;
+    font-size: 12px;
+}
+
+.ulist-wrap .float .fl {
+    width: 24px;
+    height: 24px;
+    border-radius: 12px;
+    margin-right: 6px;
+}
+
+.ulist-wrap .float .fname {
+    color: #fff;
+}
+
+.ulist-wrap .float .fcontent {
+    color: #fff;
+    font-size: 10px;
+}
+
+.ulist-wrap .float.b {
+    width: 42px;
+    background: transparent;
+}
+
+.ulist-wrap .float.b img {
+    width: 42px;
+    height: 42px;
+}
+
+.ulist-wrap .dashan {
+    display: flex;
+    align-items: center;
+    font-size: 10px;
+    /* border: 1px solid #ddd; */
+    border-radius: 20px;
+    padding: 2px 4px;
+    color: #EE2797;
+    flex-direction: column;
+    word-break: keep-all;
+}
+
+.ulist-wrap .dashan img {
+    width: 25px;
+    object-fit: contain;
+    /* height: 18px; */
+    /* margin-right: 6px; */
+}
+
+
+/* 方格模式 */
+.fangge {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.fangge .list {
+    margin: 0;
+    box-sizing: border-box;
+    border: 0;
+    width: 50vw;
+    padding: 5px;
+}
+
+
+.fangge .list .content-wrap {
+    flex-direction: column;
+}
+
+.fangge .list .content {
+    width: 100%;
+}
+
+.fangge .tx {
+    margin: 0;
+    width: calc(50vw - 10px);
+    height: calc(50vw - 10px);
+    margin-bottom: 7px;
+}
+
+.fangge .tx img {
+    width: calc(50vw - 10px);
+    height: calc(50vw - 10px);
+}
+.fangge .tag-wrap , .fangge .new-index-voice, .fangge .sign{
+    display: none;
+}
+.fangge .tag-wrap .tag {
+    margin-right: 5px;
+}

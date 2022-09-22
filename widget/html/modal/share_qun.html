@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>title</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/news.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/share.css" />
+</head>
+
+<body>
+    <div class="content">
+        <div class="share_way">
+            <p>邀请好友加入家族</p>
+            <div class="share">
+                <div class="li">
+                    <img src="../../image/wx.png" alt="" onclick="_share('session')" />
+                    <span>微信</span>
+                </div>
+                <div class="li">
+                    <img src="../../image/wxq.png" alt="" onclick="_share('timeline')" />
+                    <span>朋友圈</span>
+                </div>
+                <div class="li">
+                    <img src="../../image/qq.png" alt="" onclick="_share('QFriend')" />
+                    <span>QQ</span>
+                </div>
+                <div class="li">
+                    <img src="../../image/qqkong.png" alt="" onclick="_share('QZone')" />
+                    <span>QQ空间</span>
+                </div>
+                <div class="li">
+                    <img src="../../image/logo.png" alt="" onclick="_share('app')" />
+                    <span>小火苗好友</span>
+                </div>
+            </div>
+            <div class="close" onclick="_close()">
+                <img src="../../image/x.png" alt="" style="width:20px;" />
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/share.js"></script>
+<script type="text/javascript" src="../../script/jquery.js"></script>
+<script type="text/javascript" src="../../script/ffkj.js"></script>
+<script type="text/javascript">
+    apiready = function() {
+
+    };
+
+    function _share(type) {
+        var share = new Share();
+        var name = api.pageParam['name'];
+        var id = api.pageParam['id']
+        var title = `邀请你加入小火苗家族：${name}(ID: ${id})`;
+        switch (type) {
+            case 'session':
+            case 'timeline':
+                share.shareWX(type, {
+                    title: title
+                });
+                break;
+            case 'QFriend':
+            case 'QZone':
+                share.shareQQ(type, {
+                    title: title
+                });
+                break;
+            default:
+                _url({
+                    name: name,
+                    id: id
+                }, 'frame2/share_list_win');
+                _close();
+                break;
+        }
+    }
+
+    $('.content').on('click', function(e) {
+        _close()
+    })
+    $('.content div').on('click', function(e) {
+        e.stopPropagation();
+    })
+
+    function _close() {
+        api.closeFrame({});
+    }
+</script>
+
+</html>

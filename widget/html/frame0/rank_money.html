@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>小火苗</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/rank.css">
+    <style></style>
+</head>
+
+<body>
+    <div class="paihang" id="view" v-cloak>
+        <div class="pmainbox" @click.stop>
+            <!--财富榜、魅力榜-->
+            <div class="back">
+                <div class="top" :class="{'flex-c': !ffList[1]}">
+                    <div class="arrow" v-if="ffList[1]" @click="go_userInfo(ffList[1].user_id, ffList[1].name)">
+                        <div class="head">
+                            <img :src="returnImg(ffList[1].head_100)" onerror="this.src='../../image/touxiang.png'">
+                            <img src="../../image/index/icon_silver_medal_bg.png">
+                            <span>No.2</span>
+                        </div>
+                        <div>{{ffList[1].name}}</div>
+                        <!-- <div>99活力值</div> -->
+                    </div>
+                    <div class="arrow middle" v-if="ffList[0]" @click="go_userInfo(ffList[0].user_id, ffList[0].name)">
+                        <div class="head">
+                            <img :src="returnImg(ffList[0].head_100)" onerror="this.src='../../image/touxiang.png'">
+                            <img src="../../image/index/icon_gold_medal_bg.png">
+                            <span>No.1</span>
+                        </div>
+                        <div>{{ffList[0].name}}</div>
+                        <!-- <div>199活力值</div> -->
+                    </div>
+                    <div class="arrow" v-if="ffList[2]" @click="go_userInfo(ffList[2].user_id, ffList[2].name)">
+                        <div class="head">
+                            <img :src="returnImg(ffList[2].head_100)" onerror="this.src='../../image/touxiang.png'">
+                            <img src="../../image/index/icon_bronze_medal_bg.png">
+                            <span>No.3</span>
+                        </div>
+                        <div>{{ffList[2].name}}</div>
+                        <!-- <div>79活力值</div> -->
+                    </div>
+                </div>
+                <div class="list">
+                    <div class="item" v-for="(m, index) in ffList" v-if="index>2" @click="go_userInfo(m.user_id, m.name)">
+                        <div class="index">{{index+1}}</div>
+                        <div class="info">
+                            <div class="left">
+                                <img :src="returnImg(m.head_100)" onerror="this.src='../../image/touxiang.png'">
+                                <div class="name">{{m.name}}</div>
+                            </div>
+                            <!-- <div class="right">55活力值</div> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+            types: 0
+        },
+        methods: {
+            // 跳转
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+            // 跳转 查看用户详情
+            go_userInfo(data) {
+                go_userInfo(data.user_id, data.user_name, data.user_sex)
+            },
+        }
+    })
+    apiready = function() {
+        view.types = api.pageParam['index'];
+        view.id = api.pageParam['id'];
+        getData();
+    }
+
+    function getData() {
+        _ajax('api/cluster/ranking', function(ret, err) {
+            if (ret && ret.code == 200) {
+                view.ffList = ret.data;
+            }
+        }, {
+            id: view.id,
+            types: view.types,
+        })
+    }
+</script>
+
+</html>

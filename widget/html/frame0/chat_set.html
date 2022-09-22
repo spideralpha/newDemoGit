@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>小火苗</title>
+    <link rel="stylesheet" href="../../css/aui_font.css">
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <style>
+        .base-icon {
+            width: 42px;
+            height: 25px;
+            display: inline-block;
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+        }
+
+        /* 我的 消息开启 */
+        .base-icon.my-msg {
+            background-image: url('../../image/icon/c2.png');
+        }
+
+        /* 我的 消息关闭 */
+        .base-icon.my-msg-close {
+            background-image: url('../../image/icon/c1.png');
+        }
+
+        .set .list {
+            padding: 15px 10px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .list .tx {
+            width: 80px;
+            height: 80px;
+            border-radius: 7px;
+            object-fit: cover;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <ul class="set">
+            <li class="list" onclick="go_userInfo(view.touserid)">
+                <div class="left flex">
+                    <img class="tx" :src="returnImg(ffInfo.another.avatar)" onerror="this.src='../../image/touxiang.png'" alt="">
+                    <span class="name">{{ffInfo.another.name}}</span>
+                </div>
+                <i class="aui-iconfont aui-icon-right"></i>
+            </li>
+            <li class="list">
+                <span class="name">置顶聊天</span>
+                <i class="base-icon my-msg" :class="{'my-msg-close':!info.topChat}" onclick="setMsgTop()"></i>
+            </li>
+            <li class="list" onclick="clearMsg()">
+                <span class="name">清空聊天记录</span>
+                <i class="aui-iconfont aui-icon-right"></i>
+            </li>
+            <li class="list" onclick="_url({ url: 'frame0/ju_bao_frame', title: '匿名举报', uid: view.touserid })">
+                <span class="name">举报</span>
+                <i class="aui-iconfont aui-icon-right"></i>
+            </li>
+            <li class="list" onclick="addBlack()">
+                <span class="name">{{info.blacklist?'已拉黑':'拉黑'}}</span>
+                <i class="aui-iconfont aui-icon-right"></i>
+            </li>
+        </ul>
+        <button class="new-submit" v-if="!info.attention" onclick="guanzhu()">关注</button>
+        <button class="new-submit" v-else onclick="guanzhu()">已关注</button>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {
+                another: {},
+                self: {},
+                data: {}
+            },
+            ios: 1, // 1上架 0非上架
+            touserid: 0,
+            info: {}
+        },
+        methods: {
+            // 跳转
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+        }
+    })
+    apiready = function() {
+        view.ffInfo = api.pageParam['data'];
+        view.info = view.ffInfo.data;
+        view.touserid = api.pageParam['uid']
+    }
+    // 拉黑
+    function addBlack() {
+        _addBlack(view.touserid, function(type) {
+            view.info.blacklist = type;
+        })
+    }
+    // 关注
+    function guanzhu() {
+        _ajax('api/user/attention', function(ret, err) {
+            _msg(ret.msg);
+            if (ret && ret.code == 200) {
+                if (ret.msg == '关注成功') {
+                    view.info.attention = 1;
+                } else {
+                    view.info.attention = 0;
+                }
+                pushMsg(view.touserid);
+            }
+        }, {
+            user_id: $api.getStorage('userid'),
+            to_user: view.touserid,
+        })
+    }
+
+    // 清空聊天记录
+    function clearMsg() {
+        var obj = {
+            msg: '确定要删除和' + view.ffInfo.another.name + '的聊天记录吗？',
+        }
+        _confirm(obj, function(bIndex) {
+            if (bIndex == 1) {
+                _ajax('home/privatechat/delete', function(ret, err) {
+                    _msg(ret.msg);
+                    if (ret && ret.code == 200) {
+                        _send('clearMsg', {
+                            uid: view.touserid
+                        });
+                    }
+                }, {
+                    user_id: $api.getStorage('userid'),
+                    to_user: view.touserid
+                })
+            }
+        })
+    }
+
+    // 聊天置顶
+    function setMsgTop() {
+        _ajax('home/privatechat/topChat', function(ret, err) {
+            _msg(ret.msg);
+            if (ret && ret.code == 200) {
+                view.info.topChat = view.info.topChat ? 0 : 1;
+                _send('setMsgTop', {
+                    uid: view.touserid,
+                    val: view.info.topChat
+                });
+            }
+        }, {
+            types: 1, // 1私聊|2群聊
+            uid: $api.getStorage('userid'),
+            touid: view.touserid
+        })
+    }
+</script>
+
+</html>

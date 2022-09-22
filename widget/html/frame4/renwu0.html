@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <style>
+        html,
+        body {
+            background-color: rgb(245, 245, 245);
+            margin: 0;
+        }
+
+        .main {
+            padding: 14px;
+        }
+
+        .yq {
+            width: 100%;
+            border-radius: 6px;
+        }
+
+        .tab {
+            margin-top: 16px;
+            background-color: #fff;
+            border-radius: 6px;
+            padding: 8px;
+        }
+
+        .tab .list {
+            padding: 8px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #eee;
+        }
+
+        .tab .list:last-child {
+            border-bottom: none;
+        }
+
+        .tab .list .left {}
+
+        .tab .list .left .title {
+            font-size: 14px;
+            margin-bottom: 6px;
+        }
+
+        .tab .list .left .title span {
+            color: #f40;
+            font-size: 12px;
+        }
+
+        .tab .list .left .label {
+            color: #999;
+            font-size: 12px;
+        }
+
+        .tab .list .right {
+            text-align: center;
+            width: 70px;
+            border-radius: 13px;
+            height: 26px;
+            font-size: 13px;
+            line-height: 26px;
+            border: 1px solid;
+            color: #F46CEF;
+        }
+
+        .tab .list .right.success {
+            color: #ccc;
+        }
+
+        .signmodal {
+            z-index: 999;
+            width: 100vw;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: rgba(0, 0, 0, 0.205);
+        }
+
+        .signmodal .signbg {
+            width: 90vw;
+            height: 122vw;
+            position: fixed;
+            left: 5vw;
+            top: calc(50vh - 61vw);
+        }
+
+        .signmodal .signbg img {
+            width: 100%;
+        }
+
+        .signmodal .signbg img.successbg {
+            width: 90%;
+            margin-left: 5%;
+            margin-top: 6%;
+        }
+
+        .signmodal .signmain {
+            width: 76%;
+            position: absolute;
+            height: 68%;
+            top: 30%;
+            left: 12%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .signmodal .signmain .tip {
+            font-size: 10px;
+            text-align: center;
+            padding: 6px 0;
+        }
+
+        .signmodal .signmain .list {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        .signmodal .signmain .list .item {
+            width: 23%;
+            margin-bottom: 8px;
+        }
+
+        .signmodal .signmain .list .item:nth-child(7) {
+            width: 48.666666666%;
+        }
+
+        .signmodal .signmain .list .item .top {
+            width: 100%;
+            height: 56px;
+            background-color: rgba(104, 129, 255, 0.062);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 6px;
+        }
+
+        .signmodal .signmain .list .item.active .top {
+            border: 1px solid #F46CEF;
+            background-color: rgba(104, 129, 255, 0.295);
+            box-sizing: border-box;
+        }
+
+        .signmodal .signmain .list .item .top img {
+            margin-bottom: 6px;
+            width: 25px;
+            height: 21px;
+        }
+
+        .signmodal .signmain .list .item .top .desc {
+            font-size: 10px;
+            color: #F46CEF;
+        }
+
+        .signmodal .signmain .list .item .day {
+            text-align: center;
+            font-size: 12px;
+            margin-top: 8px;
+        }
+
+        .signmodal .signmain .btn {
+            text-align: center;
+            height: 32px;
+            line-height: 32px;
+            box-sizing: border-box;
+            margin: 6px 0;
+            font-size: 14px;
+            border-radius: 30px;
+            color: #fff;
+            background: linear-gradient(to right, rgb(93, 161, 255), rgb(249, 61, 255));
+        }
+
+        .signmodal .signmain .btn.plain {
+            background: transparent;
+            border: 1px solid #F46CEF;
+            color: #F46CEF;
+        }
+
+        .signmodal .signmain .btn.signed {
+            background: #ccc;
+        }
+
+        .signmodal .signmain .tips {
+            font-size: 10px;
+            text-align: center;
+            color: #999;
+        }
+
+        .signmodal .signmain.successbg {
+            width: 60%;
+            left: 20%;
+        }
+
+        .signmodal .signmain.successbg .content {
+            text-align: center;
+        }
+
+        .signmodal .signmain.successbg .content img {
+            width: 66px;
+            height: 56px;
+        }
+
+        .signmodal .signmain.successbg .content .signtext {
+            width: 70%;
+            margin-left: 15%;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        .signmodal .signmain.successbg .content .signtext span {
+            color: #F46CEF;
+        }
+
+        .signmodal .signmain.successbg .content .tip {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .head {
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="main" id="view" v-cloak>
+        <!-- <div class="signmodal" v-show="signmodal" @click="closemodal">
+            <div class="signbg" v-if="!signsuccess" @click.stop>
+                <img src="../../image/bg_sign_in.png" alt="">
+                <div class="signmain">
+                    <div class="tip">可喜可贺！您已连续签到0天啦！</div>
+                    <div class="list">
+                        <div class="item" :class="{active:item==1}" v-for="item in 7">
+                            <div class="top">
+                                <img src="../../image/icon_ranking_diamon.png" alt="">
+                                <div class="desc">金币+10</div>
+                            </div>
+                            <div class="day">
+                                第{{item}}天
+                            </div>
+                        </div>
+                    </div>
+                    <div class="btn" @click="sign" v-if="!todaysign">签到</div>
+                    <div class="btn signed" v-else>今日已签到</div>
+                    <div class="tips">连续签到奖励更多，中断需要重新累计哦</div>
+                </div>
+            </div>
+            <div class="signbg" v-else @click.stop>
+                <img class="successbg" src="../../image/bg_sign_succeed.png" alt="">
+                <div class="signmain successbg">
+                    <div class="content">
+                        <img src="../../image/icon_ranking_diamon.png" alt="">
+                        <div class="signtext">当前已连续签到1天获得<span>10金币</span></div>
+                        <div class="tip">今日24点前邀请好友成功注册，10金币双倍奖励</div>
+                    </div>
+                    <div class="btns">
+                        <div class="btn" onclick="yq()">邀请好友领福利</div>
+                        <div class="btn plain" @click="closemodal">开心收下</div>
+                    </div>
+                </div>
+            </div>
+        </div> -->
+        <!-- <img class="yq" onclick="_url({ url: 'frame4/yaoqing', title: '我的邀请' })" src="../../image/yaoqing.png" alt=""> -->
+        <div class="tab" v-if="ffList[0] && ffList[0][0] && ffList[0][0].id">
+            <div class="head">新手任务</div>
+            <div class="list" v-for="(m, index) in ffList[0]" @click="openTask(m.id)">
+                <div class="left">
+                    <div class="title">{{m.title}} <span>{{m.msg}}</span><span
+                            v-if="Number(m.max) !=0">(最高可得{{m.max}}金币)</span></div>
+                    <div class="label">{{m.description}}</div>
+                </div>
+                <div class="right">去完成</div>
+            </div>
+            <!-- <div class="list">
+                <div class="left">
+                    <div class="title">完善资料 <span>+3金币</span></div>
+                    <div class="label">完善个人基本资料</div>
+                </div>
+                <div class="right">去完善</div>
+            </div>
+            <div class="list">
+                <div class="left">
+                    <div class="title">上传照片 <span>+3金币</span></div>
+                    <div class="label">上传至少4张你的照片</div>
+                </div>
+                <div class="right">去上传</div>
+            </div> -->
+        </div>
+        <div class="tab">
+            <div class="head">日常任务</div>
+            <div class="list" v-for="(m, index) in ffList[1]" @click="openTask(m.id)">
+                <div class="left">
+                    <div class="title">{{m.title}} <span>{{m.msg}}</span><span
+                            v-if="Number(m.max) !=0">(最高可得{{m.max}}金币)</span></div>
+                    <div class="label">{{m.description}}</div>
+                </div>
+                <div class="right">去完成</div>
+            </div>
+            <!-- <div class="list">
+                <div class="left">
+                    <div class="title">签到 <span>连签可得100金币</span></div>
+                    <div class="label">签到得金币</div>
+                </div>
+                <div class="right" :class="{success:todaysign}" @click="SignShow">{{todaysign?'已签到':'去签到'}}</div>
+            </div>
+            <div class="list">
+                <div class="left">
+                    <div class="title">文字聊天 <span>+3金币</span></div>
+                    <div class="label">文字私信喜欢的人</div>
+                </div>
+                <div class="right">去完成</div>
+            </div>
+            <div class="list">
+                <div class="left">
+                    <div class="title">语音通话 <span>+3金币</span></div>
+                    <div class="label">与喜欢的人语音通话</div>
+                </div>
+                <div class="right">去聊天</div>
+            </div> -->
+        </div>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+
+            signmodal: false,
+            signsuccess: false,
+            todaysign: false
+        },
+        methods: {
+            openTask(id) {
+                openTask(id)
+            },
+            // 跳转
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+            SignShow() {
+                this.signmodal = true
+            },
+            sign() {
+                this.signsuccess = true
+                this.todaysign = true
+            },
+            closemodal() {
+                this.signmodal = false
+                this.signsuccess = false
+            }
+        }
+    })
+
+    apiready = function () {
+        // if (api.pageParam['sign']) {
+        //     view.SignShow()
+        // }
+        getTask();
+    }
+
+    // 获取任务列表
+    function getTask() {
+        _ajax('api/task/lists', function (ret, err) {
+            if (ret && ret.code == 200) {
+                view.ffList = ret.data;
+            }
+        }, {
+            user_id: $api.getStorage('userid')
+        })
+    }
+
+    // 任务
+    function openTask(id) {
+        switch (id) {
+            case 1:
+                // 上传头像
+            case 2:
+                // 完善资料
+                _url({
+                    url: 'frame4/user',
+                    title: '个人资料',
+                    moreTitle: '保存'
+                })
+            case 3:
+                // 上传照片
+                _url({
+                    url: 'frame4/xiangce',
+                    title: '我的相册'
+                })
+                break;
+            case 4:
+                // 签到
+                // view.SignShow();
+                _url({
+                    url: 'frame4/sign',
+                    title: '签到'
+                })
+                break;
+            case 5:
+                // 文字聊天
+            case 6:
+                // 语音通话
+                _index(0);
+                break;
+            case 7:
+                // 真人认证
+            case 8:
+                // 实名认证
+                _url({
+                    url: 'rz/rzcenter',
+                    title: '认证'
+                })
+                break;
+            default:
+                // _msg('任务不存在');
+                break;
+        }
+    }
+
+    // 获取签到
+</script>
+
+</html>

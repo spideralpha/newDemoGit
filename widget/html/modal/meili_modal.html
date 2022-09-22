@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>小火苗</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/modal.css">
+    <style>
+        .modal {
+            border-width: 150px 0px 10px;
+            border-style: solid;
+            border-color: transparent;
+            border-image-source: url('../../image/modal/prompt_medal_head2.9.png');
+            border-image-slice: 90% 0% 5% fill;
+            display: flex;
+            justify-content: center;
+            width: 65vw;
+        }
+
+        .content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            width: 70%;
+        }
+
+        .tx {
+            width: 100px;
+            height: 100px;
+            margin: 0;
+            border-radius: 50%;
+        }
+
+        .txt {
+            color: #757575;
+            font-size: 14px;
+            margin-top: 20px;
+        }
+
+        .tag-icon {
+            background-image: url('../../image/modal/meili.png');
+            background-size: auto 100%;
+            background-repeat: no-repeat;
+            background-position: center center;
+            width: 120px;
+            height: 28px;
+            text-align: center;
+            color: #fff;
+            z-index: 1;
+            margin-top: -22px;
+        }
+
+
+        .bg {
+            position: absolute;
+            left: -25vw;
+            width: 150vw;
+            animation-name: zhuan;
+            animation-duration: 5s;
+            animation-timing-function: linear;
+            animation-iteration-count: infinite;
+        }
+
+        @keyframes zhuan {
+            0% {
+                transform: rotate(0);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <div class="modal-bg" onclick="_close()">
+            <img class="bg" src="../../image/modal/prompt_medal_gif01.png" alt="">
+            <div class="modal" @click.stop>
+                <div class="content">
+                    <img src="../../image/test/03.jpg" class="tx" alt="">
+                    <span class="tag-icon">既酷又帅</span>
+                    <p class="txt">恭喜，你的魅力值已经升级到LV1既酷又帅</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

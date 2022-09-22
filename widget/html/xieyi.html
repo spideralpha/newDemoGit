@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Document</title>
+    <link rel="stylesheet" href="../css/api.css">
+    <link rel="stylesheet" href="../css/news.css">
+    <style>
+        html,
+        body {
+            background: none;
+        }
+
+        .wrap-bg {
+            position: fixed;
+            background: rgba(0, 0, 0, 0.5);
+            width: 100vw;
+            height: 100vh;
+            top: 0;
+            left: 0;
+        }
+
+        .wrap {
+            background: #fff;
+            width: 70vw;
+            border-radius: 5px;
+            box-shadow: 0 1px 5px #333;
+        }
+
+        .wrap h3 {
+            font-size: 14px;
+            text-align: center;
+            padding-top: 20px;
+        }
+
+        .xieyi p {
+            font-size: 12px;
+            color: #aaaaaa;
+            line-height: 1.8;
+        }
+
+        .xieyi a,
+        .xieyi a:active {
+            color: #2196f3;
+        }
+
+        .wrap .content {
+            margin: 10px;
+            overflow-y: auto;
+            max-height: 35vh;
+            color: #333333;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .footer {
+            border-top: 1px solid #eeeeee;
+
+        }
+
+        .footer .btn {
+            padding: 15px 0;
+
+            border-right: 1px solid #eeeeee;
+            width: 50%;
+            text-align: center;
+            outline: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap-bg flex-c">
+        <div class="wrap">
+            <h3 class="title"></h3>
+            <div class="content">
+            </div>
+            <div class="xieyi new-padding-10">
+                <p>查看<a href="javascript:;" tapmode onclick="_url({url:'about',id:'3',title:'用户隐私政策'})">《用户隐私政策》</a></p>
+                <p>查看<a href="javascript:;" tapmode onclick="_url({url:'about',id:'2',title:'用户使用协议'})">《用户使用协议》</a></p>
+            </div>
+            <div class="footer flex">
+                <button class="btn" style="color: #757575;" tapmode onclick="cancel();">拒绝</button>
+                <button class="btn" style="border: none;color:#FF5D6E;" tapmode onclick="submit();">同意</button>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="../script/api.js"></script>
+<script src="../script/jquery.js"></script>
+<script src="../script/ffkj.js"></script>
+<script>
+    apiready = function() {
+        getPageContent(6, function(data) {
+            $('.title').html(data.title);
+            $('.content').html(data.body);
+        })
+    }
+    // 不同意协议
+    function cancel() {
+        api.closeWidget({
+            silent: true
+        });
+    }
+
+    // 同意协议
+    function submit() {
+        $api.setStorage('indexXY', 1);
+        _send('indexXY');
+        api.closeFrame({
+            name: 'xieyi'
+        });
+    }
+</script>
+
+</html>

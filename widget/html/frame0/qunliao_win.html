@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/aui_font.css">
+    <link rel="stylesheet" href="../../css/win.css">
+    <link rel="stylesheet" href="../../css/liao_win.css">
+
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <header>
+            <div class="head new-padding-10 flex-c">
+                <div class="back" tapmode onclick="_close()"></div>
+                <div class="title">{{title}}</div>
+                <div class="more new-hide" tapmode onclick="_more()">更多</div>
+                <div id="js-jiazu" class="more jiazu ">
+                    <div class="avatar" @click="showDetail('frame0/rank_win', {id:touserid})">
+                        <img :src="returnImg(head)" onerror="this.src='../../image/touxiang.png'" alt="">
+                    </div>
+                    <button class="btn" v-if="qunType==1" @click="_url({id:touserid}, 'frame0/jiazupage')">主页</button>
+                    <span class="aui-iconfont aui-icon-my" v-else @click="_url({id:touserid}, 'frame3/qun_cheng_yuan')"></span>
+                </div>
+            </div>
+        </header>
+        <!-- 聊天背景 -->
+        <div class="ltbg">
+            <img id="ltbg" :src="returnImg(head)" onerror="this.src='../../image/touxiang.png'" alt="">
+        </div>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+            head: '', // 头像
+            score: 0,
+            myHead: '',
+            title: '',
+            touserid: '',
+
+            qunType: 1, // 1 家乡 2 群聊
+        },
+        methods: {
+            // 跳转
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+            showDetail(url, data, topH, footerH) {
+                showDetail(url, data, topH, footerH);
+            },
+        }
+    })
+    var moreType = 0;
+    apiready = function() {
+        view.touserid = api.pageParam['touserid'];
+        $api.fixStatusBar($api.dom('header'));
+        view.title = api.pageParam['title'];
+        // $api.text($api.dom('.title'), api.pageParam['title']);
+        view.qunType = api.pageParam['qunType'];
+
+        if (api.pageParam['keyback'] == 1) {
+            keyback();
+        } else {
+            _listener('keyback', function() {
+                _close();
+            })
+        }
+        api.pageParam.frmBg = 0; // frame背景设为透明
+
+
+        setQunStatus(1);
+
+        // _listener('viewdisappear', function() {
+        //     setQunStatus(0);
+        // })
+        // 当前应用进入前台。
+        _listener('resume', function() {
+            setQunStatus(1);
+        })
+        // 当前应用退入到后台。
+        _listener('pause', function() {
+            setQunStatus(0);
+        })
+
+        getQun(function() {
+            setTimeout(function() {
+                _openFrame('frame0/qunliao', '', '1', api.pageParam);
+            }, 300)
+        })
+    }
+
+    // 获取群资料
+    function getQun(callback) {
+        _ajax('api/family/info', function(ret, err) {
+            if (ret && ret.code == 200) {
+                view.head = ret.data.logo;
+                api.pageParam['info'] = ret.data;
+                if (typeof callback == 'function') {
+                    callback();
+                }
+            }
+        }, {
+            id: view.touserid,
+            user_id: $api.getStorage('userid')
+        })
+    }
+
+    // 更多
+    function _more() {
+        if (!moreType) return;
+        api.execScript({
+            frameName: 'frame0/qunliao',
+            script: '_more()'
+        })
+    }
+
+    // 进入 | 离开 群聊  0离开聊天窗口|1进入聊天窗口
+    function setQunStatus(status) {
+        if (view.qunType != 2) return;
+        _ajax('api/Cluster/status', function(ret, err) {
+
+        }, {
+            id: view.touserid,
+            user_id: $api.getStorage('userid'),
+            status: status,
+        })
+    }
+
+    // 关闭
+    function _close() {
+        setQunStatus(0);
+        _closeToWin();
+    }
+</script>
+
+</html>

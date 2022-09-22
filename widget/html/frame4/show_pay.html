@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Document</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/news.css" />
+    <style>
+        html,
+        body {
+            background: none;
+        }
+
+        .bg {
+            width: 100vw;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .wrap {
+            background: #fff;
+            width: 100vw;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            border-radius: 10px 10px 0 0;
+        }
+
+        /*  */
+        .top {
+            padding: 10px;
+            background: rgba(102, 61, 251, 0.1);
+            color: #666666;
+            font-size: 14px;
+        }
+
+        .top .title {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        /* 刷新 */
+        .reflash {
+            width: 15px;
+            margin-left: 5px;
+        }
+
+        /* 列表 */
+        .ul .list {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #666666;
+            font-size: 14px;
+            padding: 10px;
+        }
+
+        .money {
+            text-align: right;
+        }
+
+        .money b {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .chong-btn {
+            background: rgba(102, 61, 251, 0.1);
+            width: 30vw;
+            margin: 0 10px;
+            height: 40px;
+            border-radius: 20px;
+            ;
+        }
+
+        .pay-btn {
+            width: calc(70vw - 30px);
+            height: 40px;
+            border-radius: 20px;
+            color: #fff;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <div class="bg" onclick="api.closeFrame();"></div>
+        <div class="wrap">
+            <div class="top flex-bt">
+                <span class="title new-theme-color">支付</span>
+                <div class="flex">
+                    <span>可用余额：<span class="new-theme-color">{{myMoney}}</span>个 | </span>
+                    <img onclick="getMyMoney();" class="reflash" src="../../image/icon/m5.png" alt="">
+                </div>
+            </div>
+            <ul class="ul">
+                <li class="list">
+                    <span class="name">支付项目</span>
+                    <span class="name">特权兑换</span>
+                </li>
+                <li class="list">
+                    <span class="name">支付总额</span>
+                    <div class="content">
+                        <div class="money new-theme-color"> <b>{{ffInfo.vip_price}}</b> 币 </div>
+                        <p style="text-align: right;" v-if="ffInfo.pingjun">约{{(ffInfo.pingjun).toFixed(2)}}币/月</p>
+                    </div>
+                </li>
+            </ul>
+            <div class="btn-wrap" style="padding-bottom: 10px;">
+<!--                <button class="chong-btn new-theme-color" tapmode onclick="showDetail('frame4/show_chong')">充值</button>-->
+                <button class="chong-btn new-theme-color" tapmode onclick="_url({url:'frame4/chongzhicenter',title:'充值中心'})">充值</button>
+                <button class="pay-btn new-theme-bg" tapmode onclick="submit()">确认支付</button>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/jquery.js"></script>
+<script type="text/javascript" src="../../script/ffkj.js"></script>
+<script type="text/javascript" src="../../script/vue.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            myMoney: 0,
+        },
+        methods: {
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+        }
+    })
+    apiready = function () {
+        view.ffInfo = api.pageParam['data'];
+        getMyMoney();
+    }
+
+    // 获取余额
+    function getMyMoney() {
+        _ajax('api/user/userVolley', function (ret, err) {
+            console.log(JSON.stringify(ret));
+            console.log(JSON.stringify(err));
+            if (ret && ret.code == 200) {
+                view.myMoney = ret.volley;
+            }
+        }, {
+            user_id: $api.getStorage('userid'),
+        })
+    }
+
+
+    // 确定
+    function submit() {
+        buyVip(0)
+
+    }
+    // 获取订单号 登录后购买会员
+    function buyVip(index) {
+        _ajax('api/vipstyle/buy', function (ret, err) {
+            console.log(JSON.stringify(ret))
+            console.log(JSON.stringify(err))
+            if (ret && ret.code == 200) {
+                if (index != 0) {
+                    getPay(index, ret.vip_order);
+                } else {
+                    _msg(ret.result);
+                    api.closeFrame();
+                }
+            } else {
+                _msg(ret.result)
+            }
+        }, {
+            type: view.ffInfo.type,
+            user_id: $api.getStorage('userid'),
+            price: view.ffInfo.vip_price,
+            leixing: index,
+        })
+    }
+
+    // 调起支付
+    function getPay(index, ordernum) {
+        _loading();
+        var pays = new pay(view.ffInfo.vip_price, ordernum, base_url + 'apis/', 2);
+        if (index == 0) {
+            // _loadingClose();
+            // if (ret && ret.code == 200) {
+            //     _msg(ret.msg);
+            //     paySuccess();
+            // } else if (ret.code == 201) {
+            //     _msg('余额不足');
+            // }
+        } else if (index == 1) {
+            pays.zhifubao(function (win) {
+                _loadingClose();
+                if (win) {
+                    _msg('支付成功');
+                    paySuccess();
+                } else {
+                    _msg('支付失败');
+                }
+            });
+        } else if (index == 2) {
+            pays.weixinzhifu(function (win) {
+                _loadingClose();
+                if (win) {
+                    _msg('支付成功');
+                    paySuccess();
+                } else {
+                    _msg('支付失败');
+                }
+            });
+        }
+    }
+
+    // 支付成功后 处理
+    function paySuccess() {
+        _ajax('Home/User/getNewMsg', function () {}); // 要求后端推送公告
+        _send('fresh');
+        api.closeFrame();
+    }
+</script>
+
+</html>

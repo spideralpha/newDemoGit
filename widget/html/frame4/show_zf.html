@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Document</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/news.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui_font.css" />
+    <style>
+        html,
+        body {
+            background: none;
+        }
+
+        .chongzhimodal {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, .2);
+        }
+
+        .chongzhimodal .chongzhibox {
+            background: #fff;
+            height: 300px;
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            border-radius: 16px 16px 0 0;
+        }
+
+        .chongzhimodal .chongzhibox img {
+            width: 30px;
+            height: 30px;
+        }
+
+        .chongzhimodal .chongzhibox .head {
+            text-align: center;
+            padding: 14px 0;
+        }
+
+        .chongzhimodal .chongzhibox .info {
+            padding: 20px 0;
+            background: rgb(246, 247, 251);
+            text-align: center;
+        }
+
+        .chongzhimodal .chongzhibox .info .price {
+            font-size: 12px;
+        }
+
+        .chongzhimodal .chongzhibox .info .price span {
+            font-size: 24px;
+        }
+
+        .chongzhimodal .chongzhibox .info .buy {
+            display: flex;
+            align-items: center;
+            font-size: 12px;
+            color: #787878;
+            justify-content: center;
+            margin-top: 6px;
+        }
+
+        .chongzhimodal .chongzhibox .info img {
+            width: 16px;
+            height: 16px;
+            margin-right: 6px;
+        }
+
+        .chongzhimodal .chongzhibox .item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 14px;
+        }
+
+        .chongzhimodal .chongzhibox .item .left {
+            display: flex;
+            align-items: center;
+        }
+
+        .chongzhimodal .chongzhibox .item .left img {
+            margin-right: 6px;
+        }
+
+        .chongzhimodal .chongzhibox .aui-icon-close {
+            position: absolute;
+            right: 16px;
+            top: 16px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <div class="chongzhimodal" onclick="submit(-1)">
+            <div class="chongzhibox" @click.stop>
+                <div class="head">订单确认</div>
+                <div class="info">
+                    <div class="price">￥<span>{{price}}</span></div>
+                    <!-- <div class="buy"> <img src="../../image/icon/icon_diamonds_p.png" alt=""> {{price}}金币 </div> -->
+                </div>
+                <div class="item" v-if="PAY_W" onclick="submit(0)">
+                    <div class="left">
+                        <img src="../../image/wxZF.png" alt="">
+                        {{escape_w}}支付
+                    </div>
+                    <span class="aui-iconfont aui-icon-right"></span>
+                </div>
+                <div class="item" v-if="PAY_A" onclick="submit(1)">
+                    <div class="left">
+                        <img src="../../image/zfbZF.png" alt="">
+                        {{escape_a}}
+                    </div>
+                    <span class="aui-iconfont aui-icon-right"></span>
+                </div>
+                <!-- <div class="item" onclick="submit(2)">
+                    <div class="left">
+                        <img src="../../image/zfbZF.png" alt="">
+                        余额
+                    </div>
+                    <span class="aui-iconfont aui-icon-right"></span>
+                </div> -->
+                <span class="aui-iconfont aui-icon-close" onclick="submit(-1)"></span>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/jquery.js"></script>
+<script type="text/javascript" src="../../script/ffkj.js"></script>
+<script type="text/javascript" src="../../script/vue.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            myMoney: 0,
+            showindex: 0,
+            price: 0,
+            PAY_A: PAY_A,
+            PAY_W: PAY_W,
+            escape_a: escape_a,
+            escape_w: escape_w
+        },
+        methods: {
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+        }
+    })
+    apiready = function() {
+        view.price = api.pageParam['price'];
+    }
+
+    function submit(index) {
+        _send('payways', {
+            type: index
+        })
+    }
+</script>
+
+</html>

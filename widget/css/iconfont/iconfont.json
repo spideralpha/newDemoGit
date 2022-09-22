@@ -1,0 +1,100 @@
+{
+  "id": "2354885",
+  "name": "11-5",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "748088",
+      "name": "设置",
+      "font_class": "shezhi",
+      "unicode": "e668",
+      "unicode_decimal": 58984
+    },
+    {
+      "icon_id": "838042",
+      "name": "客服",
+      "font_class": "kefu",
+      "unicode": "e60b",
+      "unicode_decimal": 58891
+    },
+    {
+      "icon_id": "1346232",
+      "name": "退出",
+      "font_class": "tuichu",
+      "unicode": "e65d",
+      "unicode_decimal": 58973
+    },
+    {
+      "icon_id": "1418211",
+      "name": "购物车",
+      "font_class": "gouwuche",
+      "unicode": "e606",
+      "unicode_decimal": 58886
+    },
+    {
+      "icon_id": "2932819",
+      "name": "地址",
+      "font_class": "dizhi",
+      "unicode": "e7fc",
+      "unicode_decimal": 59388
+    },
+    {
+      "icon_id": "3262791",
+      "name": "首页 店铺 集市 商城",
+      "font_class": "shouyedianpujishishangcheng",
+      "unicode": "e61b",
+      "unicode_decimal": 58907
+    },
+    {
+      "icon_id": "5252505",
+      "name": "版本",
+      "font_class": "banben",
+      "unicode": "e628",
+      "unicode_decimal": 58920
+    },
+    {
+      "icon_id": "5643522",
+      "name": "清理缓存",
+      "font_class": "qinglihuancun",
+      "unicode": "e607",
+      "unicode_decimal": 58887
+    },
+    {
+      "icon_id": "6489010",
+      "name": "协议详情",
+      "font_class": "xieyixiangqing",
+      "unicode": "e63a",
+      "unicode_decimal": 58938
+    },
+    {
+      "icon_id": "11125228",
+      "name": "订单",
+      "font_class": "6",
+      "unicode": "e61c",
+      "unicode_decimal": 58908
+    },
+    {
+      "icon_id": "11391538",
+      "name": "我的",
+      "font_class": "wode",
+      "unicode": "e639",
+      "unicode_decimal": 58937
+    },
+    {
+      "icon_id": "15568796",
+      "name": "资料",
+      "font_class": "ziliao-miaobian",
+      "unicode": "e691",
+      "unicode_decimal": 59025
+    },
+    {
+      "icon_id": "18211621",
+      "name": "意见反馈",
+      "font_class": "yijianfankui",
+      "unicode": "e7d2",
+      "unicode_decimal": 59346
+    }
+  ]
+}

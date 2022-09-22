@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>小火苗</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <style>
+        .wrap {
+            position: fixed;
+            top: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #000;
+            overflow-y: auto;
+        }
+
+        .wrap img {
+            width: 100%;
+        }
+
+        .word {
+            font-size: 14px;
+            color: #F46CEF;
+
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <div class="wrap flex-c">
+            <img v-if="show==1" :src="img" alt="">
+            <p v-else-if="show==0" class="word">已焚毁</p>
+        </div>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/vue.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            id: 0, // 消息id
+            uid: 0, // 用户id
+            touid: '',
+            is_burn: 0, // -1 已焚毁 0 正常 1未焚毁
+            img: '', // 图片
+            show: 0, // 是否显示
+        },
+        methods: {
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+            
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+        }
+    })
+
+    apiready = function () {
+        view.id = api.pageParam['id'];
+        view.uid = api.pageParam['uid']; // 该消息的所属用户
+        view.touid = api.pageParam['touid']; // 该消息的接收方
+
+        view.img = api.pageParam['img'];
+        view.is_burn = api.pageParam['is_burn'];
+        var obj = {
+            id: api.pageParam['id'],
+            uid: api.pageParam['uid'], // 该消息的所属用户
+            img: api.pageParam['img'],
+            is_burn: api.pageParam['is_burn'],
+        }
+        if (view.is_burn != -1) {
+            view.show = 1;
+        }
+        if (view.uid == $api.getStorage('userid')) {
+            view.show = 1;
+        }
+        console.log(JSON.stringify(obj))
+        burnImg();
+    }
+
+    // 焚毁图片
+    function burnImg() {
+        if (view.uid == $api.getStorage('userid')) return;
+        _ajax('home/privatechat/burnImg', function (ret, err) {
+            console.log(JSON.stringify(ret))
+            console.log(JSON.stringify(err))
+            // _send('burnImg', { id: view.id })
+        }, {
+            id: view.id,
+            user_id: view.uid,
+            touserid: view.touid
+        })
+    }
+</script>
+
+</html>

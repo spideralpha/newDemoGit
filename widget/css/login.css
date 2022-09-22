@@ -1,0 +1,131 @@
+.login-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: calc(100vw - 20px);
+    height: 100vh;
+    /* background-image: url('../image/login_bg.jpg'); */
+    background-color: #ffffff;
+    background-repeat: no-repeat;
+    background-size: 100%;
+    padding: 10px;
+    font-size: 14px;
+    overflow-y: auto;
+}
+
+.new-btn {
+    /* border: 1px solid #03A9F4;; */
+    /* border: 1px solid #AAA;; */
+}
+
+/* 第三方登录 */
+.other-login {
+    position: fixed;
+    bottom: 10vh;
+    width: calc(100vw - 20px);
+}
+
+.line-wrap {
+    position: relative;
+}
+
+.line {
+    width: 30%;
+    height: 1px;
+    background: #CCCCCC;
+}
+
+.line-wrap .tip {
+    /* color: #ffffff; */
+    color: #999999;
+    font-size: 12px;
+    padding: 0 20px;
+}
+
+.login-img img {
+    width: 36px;
+    margin: 15px 10px;
+}
+
+/* 登录input */
+.input-wrap .li {
+    border-bottom: 1px solid #eee;
+    /* color: #eee; */
+    color: #253B3E;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.input-wrap .li span {
+    width: 100px;
+}
+
+.input-wrap .li span.name {
+    font-weight: bold;
+}
+
+.input-wrap .li input {
+    padding-left: 10px;
+    /* color: #eee; */
+    color: #253B3E;
+}
+
+.input-wrap .li input::placeholder {
+    color: #AEB3B7;
+}
+
+.input-wrap .li.footer {
+    background: #AAA;
+    border-bottom: none;
+    padding: 5px 10px;
+}
+
+.input-wrap .li.footer span {
+    width: auto;
+}
+
+/* 忘记密码 */
+.input-wrap .forget {
+    position: absolute;
+    right: 10px;
+    text-align: right;
+    font-size: 12px;
+}
+
+/* 协议 */
+.xieyi {
+    /* color: #eee; */
+    /* color: #253B3E; */
+    color: #999999;
+    font-size: 12px;
+    /* margin: 20px 0; */
+}
+
+.xieyi a {
+    color: #2196f3;
+}
+
+.box {
+    width: 15px;
+    height: 15px;
+    margin-right: 10px;
+    border: 1px solid #aaa;
+}
+
+.check .box {
+    background-image: url('../image/select.png');
+    background-repeat: no-repeat;
+    background-color: #663DFB;
+    background-size: 100% 100%;
+}
+
+/* 下一步 */
+.next-btn {
+    background: rgba(250, 159, 202, 0.2);
+    /* color: #fff; */
+    color: #253B3E;
+    border: 1px solid;
+
+}

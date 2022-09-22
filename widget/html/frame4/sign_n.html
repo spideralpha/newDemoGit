@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>小火苗</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/sign.css">
+    <!-- 无需样式 直接显示后端图片 -->
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <div class="s-top">
+            <img class="sign-bg" src="../../image/task/qd_top.jpg" alt="">
+            <h3>1<span>天</span></h3>
+        </div>
+        <div class="s-wrap">
+            <img class="sign-bg" src="../../image/task/qd_img.png" alt="">
+            <ul class="s-ul">
+                <li class="list" v-for="(m, index) in ffList"><img :src="m.img" alt=""></li>
+            </ul>
+        </div>
+        <div class="flex-c">
+            <button class="sign-btn success">立即签到</button>
+        </div>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script src="../../json/sign.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: retJson,
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+        },
+        methods: {
+            // 跳转
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+        }
+    })
+</script>
+
+</html>

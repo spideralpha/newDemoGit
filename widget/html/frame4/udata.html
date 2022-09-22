@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/aui_font.css">
+    <link rel="stylesheet" href="../../css/user.css">
+    <link rel="stylesheet" type="text/css" href="../../css/frame3.css" />
+
+</head>
+
+<body>
+    <div class="wrap" id="view" v-cloak>
+        <!-- <p class="tab">基本资料</p> -->
+        <ul class="ul w-bg">
+            <li class="li" v-if="listData.name">
+                <div class="content">
+                    <div class="title">昵称</div>
+                    <input type="text" placeholder="未填写" readonly v-model="listData.name">
+                </div>
+            </li>
+            <li class="li" v-if="listData.sex">
+                <div class="content">
+                    <div class="title">性别</div>
+                    <input type="text" placeholder="未填写" readonly v-model="listData.sex">
+                </div>
+            </li>
+            <li class="li" v-if="listData.age">
+                <div class="content">
+                    <div class="title">年龄</div>
+                    <input type="text" placeholder="未设置" readonly v-model="listData.age">
+                </div>
+            </li>
+            <li class="li" v-if="listData.constellation">
+                <div class="content">
+                    <div class="title">星座</div>
+                    <input type="text" placeholder="未设置" readonly v-model="listData.constellation">
+                </div>
+            </li>
+            <li class="li" v-if="listData.self_slogan">
+                <div class="content flex-col" style="align-items: flex-start;">
+                    <div class="title">交友宣言</div>
+                    <input style="text-align: left;" type="text" placeholder="介绍一下我自己" readonly
+                        v-model="listData.self_slogan">
+                </div>
+            </li>
+            <li class="li" v-if="listData.city">
+                <div class="content">
+                    <div class="title">所在地</div>
+                    <input type="text" placeholder="未设置" v-model="listData.city" readonly>
+                </div>
+            </li>
+            <li class="li" v-if="listData.stature">
+                <div class="content">
+                    <div class="title">身高</div>
+                    <input type="text" placeholder="未设置" readonly v-model="listData.stature">
+                </div>
+            </li>
+            <li class="li" v-if="listData.occupation">
+                <div class="content">
+                    <div class="title">职业</div>
+                    <input type="text" placeholder="未设置" readonly v-model="listData.occupation">
+                </div>
+            </li>
+            <!-- <li class="li" v-if="!ios && listData.dy_program">
+                <div class="title">交友节目</div>
+                <div class="content">
+                    <input type="text" placeholder="未设置" readonly v-model="listData.dy_program">
+                </div>
+            </li> -->
+            <!-- <li class="li" v-if="!ios  && listData.dy_conditions">
+                <div class="title">期望对象</div>
+                <div class="content">
+                    <input type="text" placeholder="未设置" readonly v-model="listData.dy_conditions">
+                </div>
+            </li> -->
+        </ul>
+        <!-- <div v-if="listData.stature || listData.weight || listData.self_slogan">
+            <p class="tab">更多信息</p>
+            <ul class="ul w-bg">
+                <li class="li" v-if="listData.stature">
+                    <div class="title">身高</div>
+                    <div class="content">
+                        <input type="text" placeholder="未设置" readonly v-model="listData.stature">
+                    </div>
+                </li>
+                <li class="li" v-if="listData.weight">
+                    <div class="title">体重</div>
+                    <div class="content">
+                        <input type="text" placeholder="未设置" readonly v-model="listData.weight">
+                    </div>
+                </li>
+                <li class="li flex-col" v-if="listData.self_slogan" style="align-items: flex-start;">
+                    <div class="title">个人介绍</div>
+                    <div class="content">
+                        <textarea name="" id="" placeholder="介绍一下我自己" readonly
+                            v-model="listData.self_slogan"></textarea>
+                    </div>
+                </li>
+            </ul>
+        </div> -->
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgUrl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            head: '',
+            listData: {},
+            ios: 1, // 1上架 0非上架
+        },
+        methods: {
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+        }
+    })
+    apiready = function () {
+        view.ios = $api.getStorage('shang');
+        view.listData = api.pageParam['data'];
+    }
+</script>
+
+</html>

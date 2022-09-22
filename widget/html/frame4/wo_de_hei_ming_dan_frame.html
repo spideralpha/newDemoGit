@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <style>
+        html,
+        body {
+            background: #f7f6fb;
+        }
+
+        .wrap .tx {
+            width: 50px;
+            height: 50px;
+            border-radius: 7px;
+            overflow: hidden;
+            position: relative;
+            margin-right: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50%;
+        }
+
+        .wrap .tx img {
+            width: 50px;
+            height: 50px;
+        }
+
+
+        /* 列表 */
+        .wrap li {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            background: #fff;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .wrap li .remove-btn {
+            font-size: 12px;
+            color: #F46CEF;
+        }
+    </style>
+</head>
+
+<body>
+    <ul class="wrap" id="view" v-cloak>
+        <li class="flex-bt" v-for="(m, index) in ffList" @click="goUserInfo(m)">
+            <div class="name-wrap flex">
+                <div class="tx img-h">
+                    <img :src="returnImg(m.user_head)" onerror="this.src='../../image/touxiang.png'" alt="">
+                </div>
+                <span class="name">{{m.user_name}}</span>
+            </div>
+            <button @click.stop @click="remove(index)" class="remove-btn">移出黑名单</button>
+        </li>
+        <!-- <li class="flex-bt">
+            <div class="name-wrap flex">
+                <div class="tx img-h">
+                    <img src="../../image/test/01.jpg" alt="">
+                </div>
+                <span class="name">张三</span>
+            </div>
+            <button class="remove-btn">移出黑名单</button>
+        </li> -->
+        <div id="no_more" class="null" v-if="ffList.length==0"></div>
+        <div id="no_more" v-else>暂无更多</div>
+    </ul>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+        },
+        methods: {
+            // 跳转 查看用户详情
+            goUserInfo(data) {
+                go_userInfo(data.user_id, data.user_name, data.user_sex)
+            },
+            // 移出黑名单
+            remove(index) {
+                var _this = this;
+                _ajax('api/user/addBlackList', function(ret, err) {
+                    console.log(JSON.stringify(ret));
+                    console.log(JSON.stringify(err));
+                    _msg(ret.msg);
+                    if (ret && ret.code == 200) {
+                        view.ffList.splice(index, 1);
+                    }
+                }, {
+                    to_user: _this.ffList[index].user_id,
+                    user_id: $api.getStorage('userid'),
+                })
+            },
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+            
+        }
+    })
+
+    apiready = function() {
+        var param = {
+            user_id: $api.getStorage('userid')
+        }
+        // _shangla(function () {
+        //     _lists('api/user/blackList', 0, 1, param);
+        // })
+
+        // _scrollToBottom(function () {
+        //     if (heigutgao == 1) {
+        //         pagenum++;
+        //         _lists('api/user/blackList', pagenum, '', param);
+        //     }
+        // })
+        _shangla(function() {
+            getData()
+        })
+    }
+
+    function getData() {
+        _ajax('api/user/blackList', function(ret, err) {
+            api.refreshHeaderLoadDone();
+            if (ret && ret.code == 200) {
+                view.ffList = ret.result;
+            }
+        }, {
+            user_id: $api.getStorage('userid')
+        })
+    }
+</script>
+
+</html>

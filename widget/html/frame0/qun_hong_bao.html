@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/fhb.css">
+</head>
+
+<body>
+    <header>
+        <div class="head new-padding-10 flex-bt">
+            <div class="back" style="color: #fff;" tapmode onclick="_closeToWin()">取消</div>
+            <div class="title">发红包</div>
+            <div class="more hide">占位</div>
+        </div>
+    </header>
+    <div class="wrap" id="view" v-cloak>
+        <div class="flex-bt w-bg new-margin-10 new-padding-10">
+            <span>个数</span>
+            <div class="input count">
+                <input type="number" style="text-align: right;" placeholder="填写个数" onkeyup="limitNum(this)">
+                <span>个</span>
+            </div>
+        </div>
+        <div class="flex-bt w-bg new-margin-10 new-padding-10">
+            <span>金额</span>
+            <div class="input money">
+                <input type="number" style="text-align: right;" placeholder="0.00" onkeyup="limitMoney(this)">
+                <span>币</span>
+            </div>
+        </div>
+        <div class="content w-bg new-margin-10 new-padding-10">
+            <textarea name="" id="js-content" placeholder="恭喜发财，大吉大利"></textarea>
+        </div>
+        <h1 style="text-align: center;" id="js-money">0.00</h1>
+        <button class="new-submit" onclick="selectType()">塞钱进红包</button>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script src="../../script/fhb.js"></script>
+<script>
+    var touserid;
+    apiready = function() {
+        $api.fixStatusBar($api.dom('header'));
+        touserid = api.pageParam['touserid'];
+        view.payType = 0;
+
+        // 自己的用户信息
+        _getUser(function(ret) {
+            console.log(JSON.stringify(ret))
+            view.ffInfo = ret.result;
+        })
+        // 设置了支付密码
+        _listener('pay_refresh', function(ret) {
+            _getUser(function(ret) {
+                console.log(JSON.stringify(ret))
+                view.ffInfo = ret.result;
+            });
+        })
+        _listener('hongbao_pwd', function(ret) {
+            var pwd = ret.value.pwd;
+            submit(pwd);
+        })
+    }
+
+
+    // 发红包
+    function submit(pwd) {
+        var content = $.trim($('#js-content').val());
+        var money = $.trim($('.money input').val());
+        if (!content) {
+            content = '恭喜发财，大吉大利';
+        }
+        var count = $.trim($('.count input').val());;
+        count = parseInt(count);
+        _loading();
+        _ajax('api/Cluster/addTalk', function(ret, err) {
+            console.log(JSON.stringify(ret));
+            console.log(JSON.stringify(err));
+            if (ret && ret.msg) {
+                _msg(ret.msg);
+            } else {
+                _loadingClose();
+                timerWin()
+            }
+        }, {
+            money: money,
+            ways: view.payIndex,
+            content: content,
+            type: 5,
+            user_id: $api.getStorage('userid'),
+            cluster_id: touserid,
+            count: count
+        })
+    }
+</script>
+
+</html>

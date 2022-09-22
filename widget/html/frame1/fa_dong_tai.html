@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/aui_font.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <style>
+        html,
+        body {
+            background-color: rgb(250, 250, 250);
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            padding: 8px 16px;
+            justify-content: space-between;
+            background-color: #fff;
+            box-shadow: 0 0 6px #eee;
+        }
+
+        header img {
+            width: 16px;
+            height: 16px;
+        }
+
+        header .pub {
+            background: linear-gradient(-10deg, #E63BE4, #FF82CC);
+            border-radius: 30px;
+            padding: 7px 16px;
+            color: #fff;
+            font-size: 14px;
+        }
+
+        textarea {
+            width: calc(100% - 32px);
+            margin: 10px 16px;
+            outline: none;
+            resize: none;
+            box-sizing: border-box;
+            caret-color: #F46CEF;
+        }
+
+        textarea::placeholder {
+            color: #B3B3B3;
+        }
+
+        footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100vw;
+        }
+
+        footer .options {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 16px;
+        }
+
+        footer .options .option {
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            color: #808080;
+        }
+
+        footer .options .option.address {
+            padding: 2px 8px;
+            border: 1px solid #D6D6D6;
+            border-radius: 30px;
+        }
+
+        footer .options .option.address span {
+            color: #808080;
+        }
+
+        footer .options .option img {
+            width: 16px;
+            height: 16px;
+            margin-right: 4px;
+        }
+
+        footer .bottom-wrap {
+            background-color: #fff;
+            box-shadow: 0 0 6px #eee;
+        }
+
+        footer .bottom {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 16px;
+        }
+
+        footer .bottom .left {
+            display: flex;
+            align-items: center;
+        }
+
+        footer .bottom .left .oitem {
+            width: 20px;
+            height: 20px;
+        }
+
+        footer .bottom .left .oitem:nth-child(n+2) {
+            margin-left: 30px;
+        }
+
+        footer .bottom .right {
+            background-color: #F5F5F5;
+            color: #B3B3B3;
+            padding: 6px 12px;
+            border-radius: 30px;
+        }
+
+        .pics {
+            padding: 12px 10px;
+            display: flex;
+            flex-wrap: wrap;
+            max-height: 30vh;
+            overflow-y: auto;
+        }
+
+        .pics .picitem {
+            position: relative;
+            width: 90px;
+            height: 90px;
+            margin: 0 10px 10px 0;
+        }
+
+        .pics .picitem img {
+            width: 90px;
+            height: 90px;
+            border-radius: 8px;
+        }
+
+        .pics .picitem .remove {
+            position: absolute;
+            right: 6px;
+            top: 6px;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background-color: rgba(0, 0, 0, 0.2);
+        }
+
+        .pics .picitem .remove i {
+            font-weight: bold;
+            color: #fff;
+            font-size: 10px;
+        }
+
+        /* 视频 */
+        .video {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .video::after {
+            display: inline-block;
+            content: '';
+            background-image: url('../../image/icon/album_ic_playclip.png');
+            background-size: 100%;
+            width: 20px;
+            height: 20px;
+            position: absolute;
+        }
+
+        .tip-content {
+            /*color: rgb(90, 92, 95); */
+            font-family: -apple-system, BlinkMacSystemFont, 微软雅黑, "PingFang SC", Helvetica, Arial, "Hiragino Sans GB", "Microsoft YaHei", SimSun, 宋体, Heiti, 黑体, sans-serif; 
+            font-size: 11px; 
+            /*background-color: rgb(255, 255, 255);*/
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <header>
+            <img src="../../image/icon/close3.png" alt="" onclick="_closeToWin()">
+            <div class="pub" onclick="submit()">发布</div>
+        </header>
+        <textarea rows="6" placeholder="认真写下此刻的想法，能获得更多的评论和点赞哦" maxlength="200" v-model="content"></textarea>
+        <footer>
+            <div class="pics" v-if="!keyboard">
+                <div class="picitem" v-for="(item, index) in imgArr">
+                    <img :src="returnImg(item.thumbPath)" onerror="this.src='../../image/error-img.png'" alt="">
+                    <div class="remove" @click="rmImg(index)">
+                        <i class="aui-iconfont aui-icon-close"></i>
+                    </div>
+                </div>
+                <div class="picitem video" v-if="video" @click="_url({ video: video, cover: videoImg, animationType: 0 }, 'frame0/liaotian_video')">
+                    <img :src="returnImg(videoImg)" onerror="this.src='../../image/error-img.png'" alt="">
+                    <div class="remove" @click.stop="rmVideo()">
+                        <i class="aui-iconfont aui-icon-close"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="options">
+                <div class="option address" onclick="getCity()">
+                    <img src="../../image/icon/address.png" alt="">
+                    <span v-if="!city">位置</span>
+                    <span v-else>{{city}}</span>
+                </div>
+                <!-- <div class="option">
+                    所有人可见<i class="aui-iconfont aui-icon-right"></i>
+                </div> -->
+            </div>
+            <div class="bottom-wrap">
+                <div class="bottom">
+                    <div class="left">
+                        <!-- <img src="../../image/icon/voice.png" class="oitem" style="width: 22px;height: 22px;" alt=""> -->
+                        <img src="../../image/icon/picture.png" class="oitem" style="width: 25px;height: 25px;" alt="" onclick="selectPic()">
+                        <!-- <img src="../../image/icon/face.png" class="oitem" alt=""> -->
+                    </div>
+                    <div class="right">{{content.length}}/200字</div>
+                </div>
+            </div>
+
+            <div style="margin: 20px 0 15px 7px;">
+                <span class="tip-content">1、禁止发布任何涉及宗教、政治、暴力、危害国家安全、不当言论等违规内容</span>
+                <span class="tip-content">2、禁止发布任何色情、低俗、淫秽等违规内容</span>
+                <span class="tip-content">3、禁止发布任何引流、广告、第三方平台推广等违规内容</span>
+                <span class="tip-content">4、一经发现立即删除封号处理，并上报有关部门</span>
+                <span class="tip-content">5、上传本人真实高清正脸照片可获得红包奖励和平台的优先推荐</span>
+            </div>
+        </footer>
+
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script src="../../script/map.js"></script>
+<script src="../../script/fabu.js"></script>
+<script>
+    var imgArr = []; // 选中的图片
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+
+            imgArr: [],
+            city: '',
+            content: '',
+            video: '',
+            videoImg: '',
+            keyboard: 0,
+            winH: 0
+        },
+        methods: {
+            rmVideo() {
+                view.video = '';
+                view.videoImg = ''
+            },
+            // 删除图片
+            rmImg(index) {
+                var _this = this;
+                _this.imgArr.splice(index, 1);
+            },
+            // 跳转
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+        }
+    })
+    var map;
+    apiready = function() {
+        view.winH = api.frameHeight;
+        map = new Map();
+        $api.fixStatusBar($api.dom('header'));
+        $api.fixTabBar($api.dom('.bottom-wrap'))
+        // 获取广播规则
+        // getPageContent(8, function (data) {
+        //     $('#js-tip').html(data.body);
+        // })
+        if ($api.getStorage('appCity')) {
+            view.city = $api.getStorage('appCity').c;
+        } else {
+            getCity()
+        }
+
+        _listener('dt_img', function(ret) {
+            console.log(JSON.stringify(ret.value.img))
+            view.imgArr = view.imgArr.concat(ret.value.img);
+        })
+        _listener('dt_video', function(ret) {
+            var data = ret.value.video;
+            view.video = data.path;
+            view.videoImg = data.cover;
+
+        })
+        _listener('submitPay', function(ret) {
+            fabuPay(ret.value.money, function() {
+                publishDY();
+            })
+        })
+
+        $(window).on('resize', function() {
+            if (view.winH - window.innerHeight > 100) {
+                view.keyboard = 1;
+            } else {
+                view.keyboard = 0;
+            }
+        })
+    }
+
+    // 获取城市
+    function getCity() {
+        map.getLocation(function(ret, err) {
+            returnArea(ret.lon, ret.lat, function(reg) {
+                var data = reg.result.addressComponent;
+                $api.setStorage('appCity', {
+                    p: data.province,
+                    c: data.city,
+                    q: data.district
+                }); // 设置app当前城市
+                view.city = data.city;
+            })
+        })
+    }
+
+    // 确定
+    function submit() {
+        if (!view.content) {
+            _msg('请输入内容');
+            return;
+        }
+        if (view.imgArr.length == 0 && !view.video) {
+            _msg('请选择图片');
+            return;
+        }
+        judegFB(2)
+    }
+
+    // 发布
+    function publishDY() {
+        _loading();
+        var obj = {
+            content: view.content,
+            userid: $api.getStorage('userid'),
+            type: 0, // 动态
+        }
+        if (view.city) {
+            obj.citys = view.city;
+        }
+        // if (!view.imgArr.length && !view.video) {
+        //     submitDY(obj)
+        //     return;
+        // }
+        if (view.video) {
+            // 发布视频
+            pushVideo(view.video, function(v) {
+                _upImg({
+                    image: view.videoImg
+                }, function(u) {
+                    obj.video = v;
+                    obj.cover = u;
+                    submitDY(obj)
+                })
+            })
+            return;
+        }
+        if (view.imgArr.length != 0) {
+            // 发布图片
+            var arr = [];
+            for (var i = 0, len = view.imgArr.length; i < len; i++) {
+                arr.push(view.imgArr[i].path);
+            }
+            _upImgs({
+                image: arr
+            }, function(u) {
+                obj.masterimg = u;
+                submitDY(obj)
+            })
+        }
+    }
+
+    function submitDY(obj) {
+        _ajax('home/Dymanic/adddymanic', function(ret, err) {
+            console.log(JSON.stringify(ret))
+            console.log(JSON.stringify(err))
+            _loadingClose();
+            _msg(ret.msg);
+            if (ret && ret.code == 200) {
+                timerWin();
+            }
+        }, obj)
+    }
+
+    // 资源选择
+    function selectPic() {
+        getPermission(['photos', 'camera'], function(code) {
+            if (code != 0) {
+                _msg('请先开启相应权限');
+            } else {
+                if (!view.video && !view.imgArr.length) {
+                    var buttons = ['图片', '视频（小于15s）'];
+                    _action('', buttons, function(bIndex) {
+                        if (bIndex == 1) {
+                            showDetail('modal/img_modal', {
+                                event: 'dt_img',
+                                max: 9
+                            })
+                        } else if (bIndex == 2) {
+                            showDetail('modal/video_modal', {
+                                event: 'dt_video'
+                            })
+                        }
+                    })
+                    return;
+                }
+                if (view.video) {
+                    showDetail('modal/video_modal', {
+                        event: 'dt_video'
+                    })
+                    return;
+                }
+                showDetail('modal/img_modal', {
+                    event: 'dt_img',
+                    max: 9
+                })
+            }
+        })
+
+    }
+</script>
+
+</html>

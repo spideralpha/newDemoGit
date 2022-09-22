@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>小火苗</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/aui_font.css">
+    <style>
+        html,
+        body {
+            background: transparent;
+        }
+
+        /* 常用语 */
+        .cyy {
+            z-index: 99999999999999;
+            width: 100vw;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            /* background: rgba(0, 0, 0, 0.219); */
+        }
+
+        .cyy .cyybox {
+            background-color: #fff;
+            height: 65vh;
+            min-height: 65vh;
+            max-height: 65vh;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            box-sizing: border-box;
+            padding: 4px 12px;
+            width: 100%;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+
+        .cyy .cyybox .head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 50px;
+            font-size: 12px;
+        }
+
+        .cyy .cyybox .head .title {
+            color: #787878;
+        }
+
+        .cyy .cyybox .head .aui-iconfont {
+            font-size: 14px;
+        }
+
+        .cyy .cyybox .item {
+            font-size: 13px;
+            padding: 10px 0;
+        }
+
+        .cyy .cyybox .list {
+            height: calc(100% - 30px);
+            overflow: auto;
+        }
+
+        .cyy .cyybox .item:nth-child(n+2) {
+            border-top: 1px solid #f6f6f6;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <div class="cyy" onclick="_close()">
+            <div class="cyybox" @click.stop>
+                <div class="head">
+                    <span class="aui-iconfont aui-icon-close" onclick="_close()"></span>
+                    <div class="title">常用语</div>
+                    <span class="aui-iconfont aui-icon-plus" onclick="_url({url:'frame3/addcyy',title:'自定义常用语',moreTitle:'确定'});_close();"></span>
+                </div>
+                <div class="list">
+                    <div class="item" v-for="(m, index) in ffList" @click="sendmsg(m.content)">{{m.content}}</div>
+                    <!-- <div class="item" @click="sendmsg('分享我的心动女孩')">分享我的心动女孩</div>
+                    <div class="item" v-for="item in 20" @click="sendmsg('如果你愿意，我讲个故事给你听')">如果你愿意，我讲个故事给你听</div> -->
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+        },
+        methods: {
+            // 发送常用语
+            sendmsg(msg) {
+                var data = {
+                    type: 0,
+                    content: msg,
+                }
+                api.execScript({
+                    name: 'frame0/liaotian_win',
+                    frameName: 'frame0/liaotian',
+                    script: 'sendMsg(' + JSON.stringify(data) + ')'
+                })
+
+                _close();
+            },
+            // 跳转
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+        }
+    })
+
+    // 关闭
+    function _close() {
+        api.closeFrame();
+    }
+
+    apiready = function() {
+        getData();
+    }
+
+    // 获取常用语
+    function getData() {
+        _ajax('api/Privatechat/commonWords', function(ret, err) {
+            if (ret && ret.code == 200) {
+                view.ffList = ret.data;
+            }
+        }, {
+            user_id: $api.getStorage('userid'),
+            channel: 2,  // 1语音|2文字
+        })
+    }
+</script>
+
+</html>

@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>小火苗</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <style>
+        .hongbao-icon {
+            width: 14px;
+            height: 16px;
+            display: inline-block;
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+
+            background-image: url(../../image/task/icon_hongbao.png);
+        }
+
+        .top img {
+            width: 100%;
+        }
+
+        html,
+        body {
+            background: #F2F2F2;
+        }
+
+        .task-title {
+            padding: 10px 15px;
+        }
+
+        .task-ul {
+            background: #ffffff;
+        }
+
+        .task-ul .list {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .task-ul .list>div {
+            display: flex;
+            align-items: center;
+        }
+
+        .task-ul .icon {
+            width: 40px;
+            margin-right: 10px;
+        }
+
+        .task-ul .txt {
+            color: #888888;
+            font-size: 13px;
+            margin-top: 5px;
+        }
+
+        .task-ul .money {
+            color: red;
+            font-size: 12px;
+            margin-right: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak style="padding-bottom: 50px;">
+        <div class="top" onclick="_url({url:'frame4/yaoqing', title:'邀请好友'})">
+            <img src="../../image/index/banner_img3.jpg" alt="">
+        </div>
+        <div class="task-wrap" v-for="(t, tindex) in ffList" v-if="t.length>0">
+            <p class="task-title">{{t[0].types==1?'新手任务':'日常任务'}}</p>
+            <ul class="task-ul">
+                <li class="list" v-for="(m, index) in t" @click=" openTask(m.name)">
+                    <div class="left">
+                        <img :src="returnImg(m.icon)" onerror="this.src='../../image/error-img.png'" class="icon" alt="">
+                        <div class="content">
+                            <p class="title">{{m.title}}</p>
+                            <p class="txt">{{m.description}}</p>
+                        </div>
+                    </div>
+                    <div class="right" v-if="m.name=='sign_in' && m.had_sign==1">
+                        <span class="money" style="color: #757575;">今日已签到</span>
+                    </div>
+                    <div class="right" v-else>
+                        <span class="money">{{m.msg}}</span>
+                        <i class="hongbao-icon"></i>
+                    </div>
+                </li>
+                <!-- <li class="list">
+                    <div class="left">
+                        <img src="../../image/task/icon_dianzan.png" class="icon" alt="">
+                        <div class="content">
+                            <p class="title">点赞</p>
+                            <p class="txt">点赞3个喜欢的语音签名</p>
+                        </div>
+                    </div>
+                    <div class="right">
+                        <span class="money">+0.18元</span>
+                        <i class="hongbao-icon"></i>
+                    </div>
+                </li> -->
+            </ul>
+        </div>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script src="../../json/renwu.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+        },
+        methods: {
+            // 跳转
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+            openTask(name) {
+                openTask(name)
+            }
+        }
+    })
+
+    apiready = function() {
+        // if (api.pageParam['sign']) {
+        //     view.SignShow()
+        // }
+        getTask();
+        _listener('viewappear', function(ret) {
+            getTask();
+        })
+    }
+
+    // 获取任务列表
+    function getTask() {
+        _ajax('api/task/lists', function(ret, err) {
+            if (ret && ret.code == 200) {
+                view.ffList = ret.data;
+            }
+        }, {
+            user_id: $api.getStorage('userid')
+        })
+    }
+
+    // 任务
+    function openTask(name) {
+        switch (name) {
+            case 'avatar': // 上传头像
+            case 'info': // 完善资料
+            case 'perfect_info': // 完善自我介绍
+            case 'more_info': // 完善更多资料
+            case 'tags': // 添加个性标签
+                _url({
+                    url: 'frame4/user',
+                    title: '个人资料',
+                    moreTitle: '保存'
+                });
+                break;
+            case 'photo': // 上传照片
+                _url({
+                    url: 'frame4/xiangce',
+                    title: '我的相册'
+                })
+                break;
+            case 'sign_in': // 签到
+                // view.SignShow();
+                _url({
+                    url: 'frame4/sign',
+                    title: '签到'
+                })
+                break;
+            case 'real_auth': // 真人认证
+            case 'name_auth': // 实名认证
+            case 'education_auth': // 学历认证
+            case 'car_auth': // 车辆认证
+            case 'house_auth': // 房产认证
+            case 'phone_auth': // 手机认证
+                _url({
+                    url: 'rz/rzcenter',
+                    title: '认证'
+                })
+                break;
+            case 'cluster_chat': // 广场互动
+                _url({
+                    url: 'frame0/groupchat',
+                    title: '群聊派对'
+                })
+                break;
+            case 'dymanic_comment': // 动态评论
+                _index(1);
+                break;
+            case 'join_family': // 加入家族
+                _url({}, 'jiazu_win')
+                break;
+            case 'voice': // 语音签名
+                _url({
+                    url: 'frame4/jiao_you_xuan_yan',
+                    title: '语音签名'
+                })
+                break;
+            case 'attention': // 关注
+            case 'like': // 点赞
+            case 'voice_mate': // 语音速配
+            case 'video_mate': // 视频速配
+            case 'defend': // 守护女生
+            case 'word_chat': // 文字聊天
+            case 'voice_chat': // 语音通话
+            case 'video_chat': // 视频聊天
+            case 'greet': // 心动美女
+                _home();
+                break;
+            case 'dymanic_day': // 发动态
+                _url({
+                    type: 0,
+                }, 'frame1/fa_dong_tai')
+                break;
+            case 'invite': // 发动态
+                _url({
+                    url: 'frame4/yaoqing',
+                    title: '我的邀请'
+                })
+                break;
+            default:
+                // _msg('任务不存在');
+                break;
+        }
+    }
+</script>
+
+</html>

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../css/aui_font.css">
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <title>Document</title>
+    <style>
+        html,
+        body {
+            margin: 0;
+            background-color: rgb(61, 185, 243);
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            padding: 0 14px;
+            height: 50px;
+            z-index: 2;
+            line-height: 50px;
+            color: rgb(3, 3, 3);
+            font-size: 14px;
+            position: sticky;
+            background-color: rgb(255, 255, 255);
+            top: 0;
+        }
+
+        header .aui-icon-left {
+            margin-right: 6px;
+            font-size: 14px;
+        }
+
+        header .right {
+            font-size: 12px;
+        }
+
+        .listbox {
+            margin: 50px 14px 0px 14px;
+            background: #fff;
+            padding: 30px 0;
+            position: relative;
+            margin-bottom: 16px;
+            border-radius: 6px;
+        }
+
+        .tag {
+            position: absolute;
+            top: -20px;
+            width: 120px;
+            left: calc(50% - 60px)
+        }
+
+        .list {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .bg {
+            width: 96%;
+            margin-top: -100px;
+        }
+
+        .bg.hh {
+            margin-top: -150px;
+        }
+
+        .item {
+            width: 100vw;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .item img {
+            height: 250px;
+            width: 250px;
+            object-fit: contain;
+            z-index: 1;
+        }
+
+        .item .name {
+            font-size: 14px;
+        }
+
+        .item .price {
+            font-size: 12px;
+            color: rgb(236, 162, 1);
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view">
+        <header>
+            <div class="hleft">
+                <span class="aui-iconfont aui-icon-left" onClick="_closeToWin()"></span>
+                购买座驾
+            </div>
+            <div class="right" onClick="_url({},'frame4/mycar')">我的车库</div>
+        </header>
+        <div class="listbox" v-for="(list, fIndex) in ffList" v-if="list.length>0">
+            <img v-if="list[0].types==1" src="../../image/more/ms_car_classify_title1.png" alt="" class="tag">
+            <img v-else-if="list[0].types==2" src="../../image/more/ms_car_classify_title2.png" alt="" class="tag">
+            <div class="list" v-for="(m, index) in list" v-if="m" @click="_url({data:m}, 'frame4/carinfo')">
+                <div class="item">
+                    <img :src="returnImg(m.cover)" onerror="this.src='../../image/error-img.png'" alt="">
+                    <!-- <img src="../../image/more/10-32-22.png" alt=""> -->
+                </div>
+                <img class="bg" v-if="m.types==1" src="../../image/more/jdzt@2x.png" alt="">
+                <img class="bg hh" v-else src="../../image/more/hhzjzt@2x.png" alt="">
+                <div class="item">
+                    <div class="name">{{m.name}}</div>
+                    <div class="price">{{m.price[0]}}元起</div>
+                </div>
+            </div>
+        </div>
+        <!-- <div class="listbox">
+            <img src="../../image/more/ms_car_classify_title2.png" alt="" class="tag">
+            <div class="list">
+                <img class="bg" src="../../image/more/jdzt@2x.png" alt="">
+                <div class="lr">
+                    <div class="item" @click="info">
+                        <img src="../../image/more/10-32-22.png" alt="">
+                        <div class="name">烈焰传奇跑车</div>
+                        <div class="price">88.00元起</div>
+                    </div>
+                </div>
+            </div>
+        </div> -->
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script src="../../json/car.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [
+                [],
+                []
+            ],
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+        },
+        methods: {
+            // 跳转
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+        }
+    })
+    apiready = function() {
+        $api.fixStatusBar($api.dom('header'));
+        getData();
+    }
+
+    // 座驾列表
+    function getData() {
+        _ajax('api/car/lists', function(ret, err) {
+            console.log(JSON.stringify(ret));
+            console.log(JSON.stringify(err));
+            if (ret && ret.code == 200) {
+                view.ffList = ret.data;
+            }
+        })
+    }
+</script>
+
+</html>

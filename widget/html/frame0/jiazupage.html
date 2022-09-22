@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/aui_font.css">
+    <link rel="stylesheet" href="../../css/base_icon.css">
+    <link rel="stylesheet" href="../../css/jiazu_detail.css">
+    <style>
+        footer {
+            width: 100%;
+            position: fixed;
+            bottom: 0;
+            background: #fafafa;
+        }
+
+        .btn-wrap {
+            width: 70vw;
+        }
+
+        .btn-wrap .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .btn-wrap .btn span {
+            font-size: 10px;
+            color: #944BF6;
+        }
+
+        .btn-wrap img {
+            width: 20px;
+        }
+
+        .btn-wrap .chat-btn {
+            position: relative;
+        }
+
+        .btn-wrap .chat-btn img {
+            width: 50px;
+        }
+
+        .btn-wrap .chat-btn span {
+            color: #fff;
+            position: absolute;
+            bottom: 3px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <header>
+            <img :src="returnImg(ffInfo.logo)" onerror="this.src='../../image/touxiang.png'" alt="" class="bg">
+            <!-- <img src="../../image/test/03.jpg" alt="" class="bg"> -->
+            <div class="headmain">
+                <!-- <section></section> -->
+                <div class="tops">
+                    <div onClick="_closeToWin()"><span class="new-back"></span></div>
+                    <!-- <div><span class="aui-iconfont aui-icon-more"></span></div> -->
+                    <div class="name-wrap">
+                        <div class="name">{{ffInfo.name}}</div>
+                        <div class="id">ID:{{ffInfo.id}}</div>
+                    </div>
+                    <div class="new-more" onclick="_more()"></div>
+                </div>
+                <div class="flex-c" style="margin: 30px 0;">
+                    <img class="qun-img" :src="returnImg(ffInfo.logo)" onerror="this.src='../../image/touxiang.png'" alt="">
+                    <!-- <img class="qun-img" src="../../image/test/03.jpg" alt=""> -->
+                </div>
+                <div class="ph flex-a">
+                    <div class="phitem">
+                        <div class="value">{{ffInfo.rank_week}}</div>
+                        <div class="label">周排名</div>
+                    </div>
+                    <div class="phitem">
+                        <div class="value">{{ffInfo.rank}}</div>
+                        <div class="label">总排名</div>
+                    </div>
+                    <div class="phitem">
+                        <div class="value">{{ffInfo.active}}</div>
+                        <div class="label">总活跃</div>
+                    </div>
+                </div>
+                <!-- <div class="sign" v-if="join" :class="{ed:sign}" @click="signed">{{sign?'已签到':'签到'}}</div> -->
+                <div class="desc">简介：{{ffInfo.description}} </div>
+            </div>
+            <div class="jy">
+                <div class="progress" :style="'width:'+ffInfo.grade/(ffInfo.grade+ffInfo.nextGrade)*100+'%'"></div>
+                <div class="text">距离升级还差：{{ffInfo.nextGrade}}</div>
+            </div>
+        </header>
+        <!-- <div class="tab">家族简介</div>
+        <div class="description">{{ffInfo.description}}</div> -->
+        <div class="men-wrap" style="margin-bottom: 100px;">
+            <div class="tab"><img src="../../image/icon/leader.png" alt=""><span class="tab-title">族长</span></div>
+            <div class="zuzhang leader" @click="go_userInfo(ffInfo.user_id)">
+                <div class="left">
+                    <div class="avatar big-img">
+                        <img :src="returnImg(ffInfo.founder_avatar)" onerror="this.src='../../image/touxiang.png'" alt="">
+                        <!-- <div class="new-submit label">族长</div> -->
+                    </div>
+                    <div class="name-wrap">
+                        <div class="name">{{ffInfo.founder_name}}</div>
+                        <div class="flex">
+                            <span class="new-tag rz-tag" v-if="ffInfo.founder_is_identity_authentication==2"></span>
+                            <span class="boy-tag" :class="{'girl-tag':ffInfo.founder_sex == '女'}">{{ffInfo.founder_age}}岁</span>
+                        </div>
+                    </div>
+                </div>
+                <span class="aui-iconfont aui-icon-right"></span>
+            </div>
+            <div class="tab"><img src="../../image/icon/people.png" alt=""><span class="tab-title">家族成员<span class="num">({{ffInfo.count}})</span></span></div>
+            <div class="zuzhang" @click="_url({id:id, identity: ffInfo.identity},'frame3/jia_zu_cheng_yuan')">
+                <div class="left">
+                    <div class="item" v-for="(m, index) in ffInfo.users" @click.stop @click="go_userInfo(m.id)">
+                        <div class="avatar">
+                            <img :src="returnImg(m.head_100)" onerror="this.src='../../image/touxiang.png'" alt="">
+                            <!-- <div class="label">长老</div> -->
+                        </div>
+                        <div class="name">{{m.name}}</div>
+                    </div>
+                </div>
+                <!-- <span class="aui-iconfont aui-icon-right"></span> -->
+            </div>
+        </div>
+        <footer>
+            <div class="flex-c footer">
+                <!-- 	-2未加入|-1拒绝|0审核|1通过 -->
+                <div class="new-tbtn apply" v-if="ffInfo.status<0" @click="showDetail('modal/jz_apply', {id:id})">申请加入</div>
+                <div class="new-tbtn apply" v-else-if="ffInfo.status==0">审核中</div>
+                <div class="btn-wrap flex-a" v-else>
+                    <div class="btn" onclick="qiandao()">
+                        <img src="../../image/chat/ms_family_sign_n.png" alt="">
+                        <span>签到</span>
+                    </div>
+                    <div class="btn chat-btn" onclick="openQun(view.id, view.ffInfo.name)">
+                        <img src="../../image/chat/ms_family_chat_room.png" alt="">
+                        <span>聊天室</span>
+                    </div>
+                    <div class="btn" @click="showDetail('modal/share_qun', {id:id, name: ffInfo.name})">
+                        <img src="../../image/chat/ms_family_share_n.png" alt="">
+                        <span>邀请</span>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script src="../../json/jz.js"></script>
+
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+            sign: false,
+            join: false,
+            id: 0,
+        },
+        methods: {
+            showDetail(url, data, topH, footerH) {
+                showDetail(url, data, topH, footerH);
+            },
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+            go_userInfo(id, name, sex) {
+                go_userInfo(id, name, sex)
+            },
+            signed() {
+                if (!this.sign) {
+                    this.sign = true
+                }
+            },
+        }
+    })
+    apiready = function() {
+        view.ios = $api.getStorage('shang');
+        $api.fixTabBar($api.dom('footer'))
+        $api.fixStatusBar($api.dom('.headmain'));
+        // $api.fixStatusBar($api.dom('section'));
+        view.id = api.pageParam['id'];
+
+        getData();
+
+        _listener('viewappear', function() {
+            getData();
+        })
+    }
+
+    // 获取家族详情
+    function getData() {
+        _ajax('api/family/info', function(ret, err) {
+            if (ret && ret.code == 200) {
+                view.ffInfo = ret.data;
+            }
+        }, {
+            id: view.id,
+            user_id: $api.getStorage('userid'),
+        })
+    }
+
+    // 右上角更多
+    function _more() {
+        if (view.ffInfo.status < 1) return;
+        if (view.ffInfo.user_id == $api.getStorage('userid')) {
+            var buttons = ['解散家族'];
+            var keyArr = [1];
+        } else {
+            if (view.ffInfo.identity == 0) {
+                var buttons = ['退出家族', '申请成为副族长', '申请成为长老'];
+                var keyArr = [2, 3, 4];
+            } else if (view.ffInfo.identity == 2) {
+                var buttons = ['退出家族', '申请成为长老'];
+                var keyArr = [2, 4];
+            } else if (view.ffInfo.identity == 3) {
+                var buttons = ['退出家族', '申请成为副族长'];
+                var keyArr = [2, 3];
+            }
+        }
+        _action('', buttons, function(bIndex) {
+            if (bIndex != buttons.length + 1) {
+                var key = keyArr[bIndex - 1];
+                switch (key) {
+                    case 1:
+                    case 2:
+                        tuichu();
+                        break;
+                    case 3:
+                    case 4:
+                        var identity = key - 1;
+                        showDetail('modal/jz_apply', {
+                            id: view.id,
+                            identity: identity
+                        })
+                        break;
+                    default:
+                        break;
+                }
+            }
+        })
+    }
+
+    //  解散 | 退出
+    function tuichu() {
+        var url = view.ffInfo.user_id == $api.getStorage('userid') ? 'dissolve' : 'quit';
+        url = 'api/family/' + url;
+        _ajax(url, function(ret, err) {
+            _msg(ret.msg);
+            if (ret && ret.code == 200) {
+                timerWin();
+            }
+        }, {
+            id: view.id,
+            user_id: $api.getStorage('userid'),
+        })
+    }
+
+    // 签到
+    function qiandao() {
+        _ajax('api/Family/signIn', function(ret, err) {
+            _msg(ret.msg);
+        }, {
+            id: view.id,
+            user_id: $api.getStorage('userid'),
+        })
+    }
+</script>
+
+</html>

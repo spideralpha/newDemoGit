@@ -1,0 +1,250 @@
+/* .paihang {
+    z-index: 99999999999999;
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    background: rgba(0, 0, 0, 0.3);
+} */
+
+/* .paihang .pmainbox {
+    background-color: #fff;
+    height: 65vh;
+    min-height: 65vh;
+    max-height: 65vh;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+} */
+
+.paihang .pmainbox .phead {
+    display: flex;
+    justify-content: space-around;
+    height: 50px;
+    box-shadow: 0 0 6px #ccc;
+}
+
+.paihang .pmainbox .phead .phitem {
+    height: 50px;
+    line-height: 50px;
+    font-size: 14px;
+    position: relative;
+}
+
+.paihang .pmainbox .phead .phitem.active::after {
+    content: "";
+    display: inline-block;
+    position: absolute;
+    width: 20px;
+    height: 3px;
+    bottom: 0px;
+    border-radius: 3px;
+    left: calc(50% - 10px);
+    background: #F46CEF;
+}
+
+.back {
+    position: relative;
+    vertical-align: top;
+    display: inline-block;
+    width: 100%;
+    /* height: calc(100% - 50px);
+    overflow-y: scroll; */
+}
+
+.back .top {
+    display: flex;
+    /* justify-content: space-between; */
+    width: 100%;
+    font-size: 14px;
+    padding: 20px 0 20px 0;
+}
+
+.back .top .arrow {
+    width: 33%;
+    /* height: 30vw; */
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.back .top .arrow .head {
+    width: 60px;
+    height: 70px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+}
+
+.back .top .arrow.middle .head {
+    width: 80px;
+    height: 93.33px;
+}
+
+.back .top .arrow .head img {
+    width: 60px;
+    height: 70px;
+    /* z-index: 999; */
+    z-index: 1;
+}
+
+.back.double .top .arrow .head img {
+    width: 78px;
+    height: 60px;
+}
+
+.back .top .arrow.middle .head img {
+    width: 80px;
+    height: 93px;
+    z-index: 999;
+}
+
+.back.double .top .arrow.middle .head img {
+    width: 177px;
+    height: 83px;
+}
+
+.back .top .arrow .head img:first-child {
+    border-radius: 30px;
+    width: 52px;
+    height: 52px;
+    position: absolute;
+    left: 4.5px;
+    /* z-index: 998; */
+    top: 14px;
+}
+
+.back .top .arrow .head img.avatar {
+    border-radius: 30px;
+    width: 40px;
+    height: 40px;
+    /* z-index: 998; */
+    position: absolute;
+}
+
+.back .top .arrow .head img.avatar:first-child {
+    left: -7px !important;
+    top: 10px !important;
+}
+
+.back .top .arrow .head img.avatar:nth-child(2) {
+    left: 26px !important;
+    top: 10px !important;
+    z-index: 0;
+
+}
+
+.back .top .arrow.middle .head img:first-child {
+    width: 68px;
+    height: 68px;
+    left: 6.5px;
+    top: 20px;
+}
+
+.back .top .arrow.middle .head img.avatar {
+    width: 54px;
+    height: 54px;
+}
+
+.back .top .arrow.middle .head img.avatar:first-child {
+    left: -8px !important;
+    top: 14px !important;
+}
+
+.back .top .arrow.middle .head img.avatar:nth-child(2) {
+    left: 36px !important;
+    top: 14px !important;
+
+}
+
+.back .top .arrow .head span {
+    position: absolute;
+    z-index: 9999;
+    bottom: 0px;
+    font-size: 8px;
+    color: rgb(255, 255, 255);
+    border-radius: 12px;
+    padding: 3px 5px;
+}
+
+.back .top .arrow:nth-child(1) .head span {
+    background: rgb(221, 221, 221);
+}
+
+.back .top .arrow:nth-child(2) .head span {
+    background: rgb(255, 184, 52);
+}
+
+.back .top .arrow:nth-child(3) .head span {
+    background: rgb(235, 174, 62);
+}
+
+
+
+.arrow div {
+    color: #000;
+    font-size: 12px;
+}
+
+.back .top .arrow div {
+    color: #fff;
+}
+
+.list {
+    font-size: 14px;
+    padding: 0 8px;
+}
+
+.list .item {
+    display: flex;
+    align-items: center;
+    padding: 20px 0;
+}
+
+.list .index {
+    display: flex;
+    align-items: center;
+    width: 20px;
+}
+
+.list .info {
+    width: calc(100% - 25px);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.list .info .left {
+    display: flex;
+    align-items: center;
+}
+
+.list .info .left img {
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+    border-radius: 20px;
+}
+
+.list .info .left img.avatar:nth-child(1) {
+    z-index: 1;
+}
+
+.list .info .left img.avatar:nth-child(2) {
+    margin-left: -20px;
+}
+
+.list .info .right {
+    color: #999;
+}
+
+.null {
+    background-color: #fff;
+}
+
+#no_more {
+    background-color: #fff;
+    min-height: 100px;
+}

@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/aui_font.css">
+    <link rel="stylesheet" href="../../css/base_icon.css">
+    <style>
+        .infobox {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            /* height: calc(100vh - 110px); */
+            padding-bottom: 110px;
+            overflow-x: hidden;
+        }
+
+        .huiyuanicon {
+            height: 100px;
+            margin: 50px 0;
+        }
+
+        .tab {
+            padding: 10px 0;
+            font-size: 13px;
+            color: slateblue;
+            position: relative;
+        }
+
+        .list {
+            width: 100vw;
+            display: flex;
+            padding-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .list .item {
+            display: flex;
+            flex-direction: column;
+            width: 30vw;
+            margin-left: 2.5vw;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .list .item img {
+            width: 30px;
+            height: 30px
+        }
+
+        .list .item .title {
+            font-weight: bold;
+            font-size: 13px;
+            padding: 8px 0 10px 0;
+        }
+
+        .list .item .label {
+            font-size: 10px;
+            color: #999;
+            text-align: center;
+        }
+
+        footer {
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+            background: #fff;
+        }
+
+        .guige {
+            padding: 20px 14px 10px;
+            justify-content: space-between;
+            box-shadow: 0 0 10px #ccc;
+            display: -webkit-box;
+            width: 100%;
+            overflow-x: auto;
+            box-sizing: border-box;
+        }
+
+        .guige .gitem {
+            position: relative;
+            width: 33%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .guige .gitem .g-bg {
+            width: 100%;
+        }
+
+        .guige .gitem .g-content {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .guige .gitem .reward {
+            background-image: url('../../image/member/noble_money_give6.png');
+            background-size: 100%;
+            width: 59px;
+            height: 17px;
+            position: absolute;
+            right: 5px;
+            top: -3px;
+            font-size: 10px;
+            text-align: center;
+            color: #fff;
+        }
+
+        .guige .gitem .time {
+            font-size: 14px;
+            color: rgb(204, 99, 0);
+            font-weight: bold;
+        }
+
+        .guige .gitem .price {
+            font-size: 12px;
+            text-align: center;
+            color: rgb(231, 112, 0);
+        }
+
+        .tab-wrap img {
+            width: 30vw;
+        }
+
+        .desc {
+            font-size: 12px;
+            zoom: .8;
+            padding: 0 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <div class="infobox">
+            <img class="huiyuanicon" :src="returnImg(ffInfo.icon)" onerror="this.src='../../image/error-img.png'" alt="">
+            <!-- <div class="huiyuanicon"></div> -->
+            <!-- <img class="huiyuanicon" v-show="index==2" src="../../image/index/m3s.png" alt="">
+            <img class="huiyuanicon" v-show="index==3" src="../../image/index/m4s.png" alt="">
+            <img class="huiyuanicon" v-show="index==4" src="../../image/index/m5s.png" alt="">
+            <img class="huiyuanicon" v-show="index==5" src="../../image/index/m6s.png" alt="">
+            <img class="huiyuanicon" v-show="index==6" src="../../image/index/m7s.png" alt=""> -->
+            <div class="flex-c tab-wrap">
+                <img src="../../image/index/line.png" alt="">
+                <div class="tab new-margin-lr-10"> {{ffInfo.name}}专属特权</div>
+                <img style="transform: rotate(180deg);" src="../../image/index/line.png" alt="">
+            </div>
+            <div class="list">
+                <div class="item" v-for="(m, mindex) in ffInfo.privilege">
+                    <img :src="returnImg(m.icon)" onerror="this.src='../../image/error-img.png'" alt="">
+                    <div class="title">{{m.name}}</div>
+                    <div class="desc">{{m.description}}</div>
+                </div>
+            </div>
+        </div>
+        <footer>
+            <div class="guige" v-if="ffInfo.style &&  ffInfo.style.length>0">
+                <!-- <div class="gitem" onclick="submit()">
+                    <div class="time">{{ffInfo.description}}</div>
+                    <div class="price">￥ {{ffInfo.price}}</div>
+                </div> -->
+                <div class="gitem" v-for="(m ,index) in ffInfo.style" @click="chongzhi(m)">
+                    <img class="g-bg" src="../../image/member/noble_money_bg.png" alt="">
+                    <div class="g-content">
+                        <div class="time">{{m.name}}</div>
+                        <div class="price">￥ {{m.price}}</div>
+                    </div>
+                    <span class="reward" v-if="m.reward!=0">送{{m.reward}}金币</span>
+                </div>
+                <!-- <div class="gitem" @click="chongzhi" v-for="i in 10">
+                    <img class="g-bg" src="../../image/member/noble_money_bg.png" alt="">
+                    <div class="g-content">
+                        <div class="time">12个月</div>
+                        <div class="price">￥ 38</div>
+                    </div>
+                    <span class="reward">送20金币</span>
+                </div> -->
+            </div>
+        </footer>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script src="../../script/zhifu.js"></script>
+<script src="../../json/vip.js"></script>
+
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            ios: 1,
+            index: 1,
+            chongzhimodal: false,
+            ffList: [],
+            ffInfo: {},
+        },
+        methods: {
+            chongzhi(data) {
+                submit(data)
+            },
+            returnImg(url) {
+                return returnImg(url);
+            }
+        }
+    })
+    apiready = function() {
+        view.index = api.pageParam['index'];
+        view.ffInfo = api.pageParam['data'];
+    }
+
+    // 购买会员
+    function submit(data) {
+        // 1余额|2支付A|3vx
+        var money = data.price;
+        showPayWay(money, function(index) {
+            console.log(index)
+            if (index != -1) {
+                _loading();
+                if (index == 0) {
+                    var method = 3;
+                    var payType = 'pay_w';
+                } else if (index == 1) {
+                    var method = 2;
+                    var payType = 'pay_a';
+                } else if (index == 2) {
+                    var method = 1;
+                }
+                _ajax('api/order/noble', function(ret, err) {
+                    if (ret && ret.code == 200) {
+                        if (method != 1) {
+                            openOtherPay({
+                                payType: payType,
+                                info: ret.data,
+                                money: money
+                            })
+                        } else {
+                            _msg(ret.msg);
+                        }
+                    } else {
+                        _msg(ret.msg);
+                    }
+                }, {
+                    user_id: $api.getStorage('userid'),
+                    id: data.id,
+                    method: method
+                })
+            }
+        })
+    }
+</script>
+
+</html>

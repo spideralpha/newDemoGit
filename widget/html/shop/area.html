@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html class="htmlWeiLei">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <style>
+        .a-wrap .list {
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .a-wrap .a-top {
+            margin-bottom: 5px;
+        }
+
+        .a-wrap .address {
+            width: calc(85vw - 20px);
+            font-size: 14px;
+        }
+
+        .a-wrap .address .tab {
+            color: #fff;
+            background: orangered;
+            padding: 0 5px;
+            border-radius: 2px;
+        }
+
+        .a-wrap .name {
+            font-size: 16px;
+            margin-right: 10px;
+        }
+
+        .a-wrap .phone {
+            font-size: 13px;
+            color: #757575;
+        }
+
+        .a-wrap .edit {
+            color: #757575;
+            font-size: 13px;
+            width: 10vw;
+            border-left: 1px solid #eee;
+            text-align: right;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <ul class="a-wrap new-padding-lr-10">
+            <li class="list" v-for="(g, index) in ffList">
+                <div class="a-top">
+                    <span class="name"> {{ g.receiver }}</span>
+                    <span class="phone">{{ g.mobile }}</span>
+                </div>
+                <div class="flex-bt">
+                    <div class="address">
+                        <span class="tab" v-if="g.is_default==1">默认</span>
+                        {{ g.area }}，{{ g.address }}
+                    </div>
+                    <div class="edit" @click="edit(g.id, index)">编辑</div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+        },
+        methods: {
+            _url(param, url) {
+                _url(param, url);
+            },
+            
+            // 编辑
+            edit(id, index) {
+                var _this = this;
+                var buttons = ['修改', '删除'];
+                api.actionSheet({
+                    buttons: buttons
+                }, function (rets, errs) {
+                    if(rets.buttonIndex == 1){
+                        var data = _this.ffList[index];
+                        _url({url:'shop/add_area', title:'修改地址', id:id, data:data})
+                    }else if(rets.buttonIndex == 2){
+                        _ajax('api/mall.member/delAddress', function(ret, err){
+                            console.log(JSON.stringify(ret))
+                            console.log(JSON.stringify(err))
+                            var msg = ret.ret ? ret.ret : ret.err;
+                            _msg(msg);
+                            if(ret.ret){
+                                _this.ffList.splice(index, 1);
+                            }
+                        }, {id:id, uid: $api.getStorage('userid')})
+                    }
+                });
+            }
+        }
+    })
+
+    apiready = function () {
+        _listener('viewappear', function () {
+            _lists('api/mall.member/addressList', 1, 1, {
+                uid: $api.getStorage('userid')
+            });
+        })
+        _shangla(function () {
+            _lists('api/mall.member/addressList', 1, 1, {
+                uid: $api.getStorage('userid')
+            });
+        })
+        _scrollToBottom(function () {
+            if (heigutgao == 1) {
+                pagenum++;
+                _lists('api/mall.member/addressList', pagenum, '', {
+                    uid: $api.getStorage('userid')
+                });
+            }
+        })
+    }
+
+    // 设置为收货地址
+    function setShou(id) {
+        // var type = api.pageParam['type'];  // 是否是下单时跳转过来
+        // if(type != 1){
+        //     return;
+        // }
+        // var data = $('#id'+id).attr('data-data');
+        // console.log(data)
+        // api.sendEvent({
+        //     name:'setShou',
+        //     extra: {
+        //         address: data
+        //     }
+        // })
+        // timerWin();
+    }
+
+    // 打开更多
+    function _more() {
+        _url({
+            url: 'shop/add_area',
+            title: '增加收货地址'
+        })
+    }
+
+    // 编辑
+    function edit(id) {
+        var buttons = ['修改', '删除'];
+        api.actionSheet({
+            buttons: buttons
+        }, function (ret, err) {
+            // if(ret.buttonIndex == 1){
+            //     var data = $('#id'+id).attr('data-data');
+            //     _url({url:'shop/change_address', title:'修改地址', id:id, data:data, bounces:0})
+            // }else if(ret.buttonIndex == 2){
+            //     delAddress(id)
+            // }
+        });
+    }
+
+    // 删除收货地址
+    function delAddress(id) {
+        console.log(id)
+        
+    }
+</script>
+
+</html>

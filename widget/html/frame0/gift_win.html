@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/aui_font.css">
+    <link rel="stylesheet" href="../../css/win.css">
+    <style>
+        .wrap {
+            background: #fff;
+            color: #333333;
+            /* border-bottom: 1px solid #eee; */
+        }
+
+        .wrap .list {
+            padding: 10px 0;
+            font-size: 14px;
+            /* border-bottom: 1px solid #eee; */
+            color: #666;
+            position: relative;
+        }
+
+        .wrap .list.active {
+            /* border-bottom: 2px solid #F46CEF; */
+            color: #F46CEF;
+        }
+
+        .wrap .list.active .l-title {
+            color: #F46CEF;
+        }
+
+        footer {
+            position: fixed;
+            bottom: 0;
+            background: #fff;
+            width: 100%;
+        }
+
+        .footer {
+            padding: 10px;
+
+        }
+
+        .footer .left {
+            color: #aaa;
+            font-size: 13px;
+        }
+
+        .footer .left img {
+            height: 15px;
+            margin-right: 5px;
+        }
+
+        .footer .left .money {
+            color: orangered;
+        }
+
+        .new-btn {
+            width: auto;
+            margin: 0;
+            line-height: 30px;
+            padding: 0 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="head new-padding-10 flex-c">
+            <div class="back" tapmode onclick="_closeToWin()"></div>
+            <div class="title">礼物商店</div>
+        </div>
+        <ul class="wrap flex-a">
+            <li class="list" tapmode onclick="randomSwitchBtn(0)">
+                <div class="l-title">礼物</div>
+            </li>
+            <li class="list" tapmode onclick="randomSwitchBtn(1)">
+                <div class="l-title">贵族</div>
+            </li>
+        </ul>
+    </header>
+    <footer>
+        <div class="footer flex-bt">
+            <div class="left flex">
+                <img src="../../image/icon/m6.png" alt="">
+                金币余额：
+                <span class="money">0</span>
+            </div>
+            <button class="new-btn" onclick="_url({url:'frame4/chongzhicenter',title:'充值中心', moreTitle: '账单'})">充值</button>
+        </div>
+    </footer>
+</body>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/api.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/group.js"></script>
+<script>
+    var moreType = 0;
+    apiready = function() {
+        $api.fixStatusBar($api.dom('header'));
+        $api.fixTabBar($api.dom('footer'))
+        openGroup();
+
+        getMyMoney();
+        _listener('pay_refresh', function() {
+            getMyMoney()
+        })
+    }
+
+    // 获取余额
+    function getMyMoney() {
+        _ajax('api/user/userVolley', function(ret, err) {
+            console.log(JSON.stringify(ret));
+            console.log(JSON.stringify(err));
+            if (ret && ret.code == 200) {
+                $('.money').text(ret.volley);
+            }
+        }, {
+            user_id: $api.getStorage('userid'),
+        })
+    }
+
+    // 打开组
+    function openGroup() {
+        var footerH = footerh = $api.offset($api.dom('footer')).h;;
+        var headerh = $api.offset($api.dom('header')).h;
+        var uid = api.pageParam['touid'];
+        var frameArr = [];
+        var pageParam = [];
+        for (var i = 1, len = 3; i < len; i++) {
+            var frm = 'frame0/gift';
+            var obj = {
+                index: i,
+                uid: uid
+            };
+            frameArr.push(frm);
+            pageParam.push(obj);
+        }
+        groupInit('gift', frameArr, headerh, footerH, 0, '.wrap .list', pageParam);
+    }
+
+    // 点击分类栏目时，设置 frame 组当前可见 frame
+    function randomSwitchBtn(index) {
+        active(index, '.wrap .list'); // cls 使用与组名一致，便于复用
+        api.setFrameGroupIndex({
+            name: 'gift',
+            index: index,
+            scroll: true, //是否平滑滚动至目标窗口，即是否带有动画
+            reload: false, // 刷新
+        });
+    }
+</script>
+
+</html>

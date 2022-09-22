@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/aui.css">
+    <style>
+        .proflie {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 30px 10px;
+        }
+
+        .lr {
+            width: 20vw;
+            text-align: center;
+            color: #787878;
+            font-size: 13px;
+        }
+
+        .lr .value {
+            font-size: 20px;
+        }
+
+        .avatar {
+            width: 40vw;
+            position: relative;
+            text-align: center;
+        }
+
+        .avatar .aicon {
+            width: 100px;
+            height: 100px;
+            border-radius: 10px;
+            object-fit: cover;
+        }
+
+        .avatar .djicon {
+            height: 20px;
+            position: absolute;
+            bottom: 0;
+            left: calc(50% - 23.5px);
+        }
+
+        .aui-progress {
+            width: 86vw;
+            margin: 30px 0 10px 0;
+            margin-left: 7vw;
+        }
+
+        .tips {
+            font-size: 12px;
+            text-align: center;
+        }
+
+        .help {
+            margin: 30px 0 10px 0;
+        }
+
+        .lab {
+            text-align: center;
+            position: relative;
+            font-size: 14px;
+            padding: 20px 0;
+            width: 60px;
+            color: #666;
+            margin-left: calc(50% - 30px);
+        }
+
+        .lab::before {
+            content: '';
+            width: 60px;
+            height: 2px;
+            background: linear-gradient(to left, #666, rgba(0, 0, 0, 0.178));
+            position: absolute;
+            top: calc(50% - 1px);
+            left: -70px;
+        }
+
+        .lab::after {
+            content: '';
+            width: 60px;
+            right: -70px;
+            height: 2px;
+            background: linear-gradient(to right, #666, rgba(0, 0, 0, 0.178));
+            position: absolute;
+            top: calc(50% - 1px);
+        }
+
+        .list {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .litem {
+            width: 33.33%;
+            font-size: 13px;
+            text-align: center;
+            margin-bottom: 14px;
+        }
+
+        .litem img {
+            width: 50px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak v-if="ffInfo">
+        <div class="proflie">
+            <div class="lr">
+                <div class="value">{{ffInfo.count}}</div>
+                <div class="label">{{index==1?'魅力值':'财富值'}}</div>
+            </div>
+            <div class="avatar">
+                <img class="aicon" :src="returnImg(myInfo.head_portrait)" onerror="this.src='../../image/touxiang.png'" alt="">
+                <img class="djicon" :src="returnImg(ffInfo.icon)" onerror="this.src='../../image/error-img.png'" alt="">
+            </div>
+            <div class="lr">
+                <div class="value">{{ffInfo.grade ? ffInfo.grade : 0}}</div>
+                <div class="label">等级</div>
+            </div>
+        </div>
+        <div class="aui-progress aui-progress-xs">
+            <div class="aui-progress-bar" :style="'width: '+progress+'%;'"></div>
+        </div>
+        <div class="tips" v-if='ffInfo.next_grade!=0'>距离升级还差：{{ffInfo.upgrade}}</div>
+        <div class="tips" v-else>恭喜您！已达到满级</div>
+        <!-- <div class="help">
+            <div class="lab">如何升级</div>
+            <div class="list">
+                <div class="litem" v-for="item in 10">
+                    <img src="../../image/icon/icon_userdetail_gift.png" alt="">
+                    <div>收礼物</div>
+                </div>
+            </div>
+        </div> -->
+    </div>
+    <script src="../../script/api.js"></script>
+    <script src="../../script/jquery.js"></script>
+    <script src="../../script/vue.js"></script>
+    <script src="../../script/ffkj.js"></script>
+    <script>
+        var view = new Vue({
+            el: '#view',
+            data: {
+                imgurl: imgurl,
+                ffList: [],
+                ffInfo: {},
+                ios: 1, // 1上架 0非上架
+                myInfo: {},
+                index: 0,
+                progress: 0
+            },
+            methods: {
+                // 跳转
+                _url(param, url) {
+                    _url(param, url);
+                },
+                // 返回图片路径
+                returnImg(url) {
+                    return returnImg(url);
+                },
+            }
+        })
+
+        apiready = function () {
+            view.index = api.pageParam['index'];
+            _getUser(function (ret) {
+                console.log(JSON.stringify(ret))
+                view.myInfo = ret.result;
+            })
+            getData()
+        }
+
+        function getData() {
+            // 	1魅力|2土豪
+            _ajax('api/Grade/myGrade', function (ret, err) {
+                if (ret && ret.code == 200) {
+                    view.ffInfo = ret.data;
+                    view.ffInfo.upgrade = view.ffInfo.upgrade.toFixed(2);
+                    // alert(ret.data.next_grade)
+                    if (!ret.data.next_grade) {
+                        view.progress = 100;
+                    } else {
+                        view.progress = ((view.ffInfo.next_grade - view.ffInfo.upgrade) / view.ffInfo.next_grade) * 100;
+                    }
+                }
+            }, {
+                types: view.index,
+                user_id: $api.getStorage('userid'),
+            })
+        }
+    </script>
+
+</html>

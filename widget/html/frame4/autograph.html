@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/beizhu.css">
+</head>
+<style>
+    .bitem {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 22%;
+        background-color: #fff;
+        /* color: rgb(86, 197, 241); */
+        padding: 10px;
+        /* width: 22%; */
+        text-align: center;
+        border-radius: 30px;
+        /* box-shadow: 0 4px 6px #bbb; */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+    }
+
+    .bitem {
+        display: flex;
+        flex-direction: column;
+        font-size: 12px;
+        padding: 0 10px;
+    }
+
+    .bitem:last-child {
+        flex-direction: row;
+    }
+
+    .bitem img {
+        height: 14px;
+        margin-right: 6px;
+    }
+
+    .bitem:nth-child(-n+3) img {
+        margin-right: 0px;
+    }
+
+    .bitem.pink {
+        background: linear-gradient(to bottom, #FF82CC, #E63BE4);
+        color: #fff;
+        padding: 10px 25px;
+    }
+</style>
+
+<body>
+    <div id="view" v-cloak>
+        <div class="wrap">
+            <div class="container">
+                <p class="name">交友宣言</p>
+                <textarea name="" id="" placeholder="他（她）的交友宣言" v-text="autograph" readonly></textarea>
+            </div>
+            <div class="bitem pink" onclick="dashan()"><img src="../../image/icon/dashan_bai.png" alt="">&nbsp;&nbsp;心动</div>
+            <!-- <button class="new-submit" onclick="submit()">确定</button> -->
+        </div>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            autograph: '该用户还未发表交友宣言哦'
+        },
+        methods: {
+
+        }
+    })
+    
+    apiready = function () {
+        view.autograph = $api.getStorage('autograph');
+        view.$forceUpdate();
+    }
+
+     // 心动
+     var dashanIndex = 0;
+     function dashan() {
+        if (dashanIndex == 1) return;
+        dashanIndex = 1;
+        _ajax('api/privatechat/greet', function (ret, err) {
+            _msg(ret.msg);
+        }, {
+            user_id: $api.getStorage('userid'),
+            id: $api.getStorage('otherId'),
+        })
+    }
+</script>
+
+</html>

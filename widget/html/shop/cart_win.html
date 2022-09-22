@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/aui_font.css">
+    <link rel="stylesheet" href="../../css/base_icon.css">
+    <link rel="stylesheet" href="../../css/footer.css">
+    <link rel="stylesheet" href="../../css/iconfont/iconfont.css">
+</head>
+
+<body>
+    <header id="view" v-cloak>
+        <ul class="h-wrap">
+            <!-- 第二个头部 -->
+            <li class="h-list ">
+                <div class="two flex-c">
+                    <div class="title">商城</div>
+                </div>
+            </li>
+        </ul>
+    </header>
+    <!-- 脚部 -->
+    <footer>
+        <ul class="f-wrap flex shang">
+            <li class="f-list " onclick="_index(0)">
+                <i class="iconfont icon-shouyedianpujishishangcheng"></i>
+                <span>商城</span>
+            </li>
+            <li class="f-list active">
+                <i class="iconfont icon-gouwuche"></i>
+                <span>购物车</span>
+            </li>
+            <li class="f-list" onclick="_index(2)">
+                <i class="iconfont icon-6"></i>
+                <span>订单</span>
+            </li>
+            <li class="f-list" onclick="_index(3)">
+                <i class="iconfont icon-wode"></i>
+                <span>我的</span>
+            </li>
+        </ul>
+    </footer>
+</body>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/api.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script>
+    apiready = function() {
+        $api.fixStatusBar($api.dom('header'));
+        $api.fixTabBar($api.dom('footer'));
+        _heibai(1)
+        keyback();
+        _openFrame('shop/cart');
+    }
+</script>
+
+</html>

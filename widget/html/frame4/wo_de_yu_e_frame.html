@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>小火苗</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <style>
+        .shouyi-ul img {
+            width: 25px;
+            margin-right: 7px;
+        }
+
+        .shouyi-ul .list {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .price b {
+            color: orange;
+        }
+
+        .price {
+            color: orange;
+        }
+
+
+        .btn-wrap .btn {
+            border-radius: 5px;
+            width: 50%;
+            margin: 25px 10px;
+            border: 1px solid #CD7DFE;
+            color: #CD7DFE;
+            line-height: 35px;
+        }
+
+        .btn-wrap .btn2 {
+            background: #CD7DFE;
+            color: #fff;
+
+        }
+
+        .tip {
+            text-align: center;
+            padding: 10px 0;
+            font-size: 14px;
+            color: #CD7DFE;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <ul class="shouyi-ul">
+            <li class="list">
+                <div class="flex">
+                    <img src="../../image/icon/jifen.png" alt="">
+                    <span>积分余额</span>
+                </div>
+                <span class="price"><b>{{myMoney}}</b>积分</span>
+            </li>
+            <li class="list">
+                <div class="flex">
+                    <img src="../../image/icon/qianbao.png" alt="">
+                    <span>最多可提现</span>
+                </div>
+                <span class="price"><b>{{(myMoney/rate).toFixed(2)}}</b>元</span>
+            </li>
+        </ul>
+        <div class="flex-bt btn-wrap">
+            <button class="btn btn1" onclick="tixian()">提现</button>
+            <button class="btn btn2" onclick="_url({url:'shop/shop', title:'积分商城', moreTitle:'兑换记录'})">积分商城</button>
+        </div>
+        <p class="tip" @click="_url({ url: 'frame4/set_paya', title: escape_a})">修改{{escape_a}}</p>
+        <p class="tip" onclick="_url({url:'about', id: 4, title:'提现说明'})">提现说明</p>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/jquery.js"></script>
+<script type="text/javascript" src="../../script/ffkj.js"></script>
+<script type="text/javascript" src="../../script/vue.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            myMoney: 0,
+            rate: 1,
+            escape_a: escape_a
+        },
+        methods: {
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+            returnName(s, all) {
+                return returnName(s, all);
+            },
+        }
+    })
+    apiready = function() {
+        // 提现/充值后 刷新用户余额
+        _listener('money_get', function(ret) {
+            getMyMoney();
+        })
+
+        // 刷新用户信息 重新获取提现信息
+        _listener('pay_refresh', function() {
+            getMyMoney();
+        })
+        _listener('viewappear', function() {
+            getMyMoney();
+        })
+
+        getMyMoney();
+
+        getRate();
+
+        getPageContent(11, function(data) {
+            $api.html($api.dom('.rule'), data.body)
+        })
+    };
+
+    // 获取余额
+    function getMyMoney() {
+        _getUser(function(ret) {
+            view.ffInfo = ret.result;
+            view.myMoney = ret.result.score;
+        })
+
+    }
+    // 打开提现窗口
+    function tixian() {
+        if (view.ffInfo.is_identity_authentication != 2) {
+            _alert('请先身份认证，再进行提现操作', function() {
+                _url({
+                    url: 'frame4/authentication_frame',
+                    title: '身份认证'
+                })
+            }, '尚未身份认证');
+
+            return;
+        }
+        // // 设置支付密码
+        // if (!parseInt(view.ffInfo.paypwd)) {
+        //     showDetail('frame4/paypwd');
+        //     return;
+        // }
+        // 设置支付A
+        if (!view.ffInfo.zhifucount) {
+            if (!view.ffInfo.phone) {
+                _url({
+                    url: 'frame4/bang_ding_shou_ji_frm',
+                    title: '绑定手机'
+                })
+            } else {
+                _url({
+                    url: 'frame4/set_paya',
+                    title: '设置'+escape_a,
+                    phone: view.ffInfo.phone
+                })
+            }
+            return;
+        }
+
+        _url({
+            url: 'frame4/ti_xian_frame',
+            title: '提现'
+        })
+    }
+
+    // 获取兑换比例
+    function getRate() {
+        _ajax('home/withdraw/rate', function(ret, err) {
+            console.log(JSON.stringify(ret));
+            console.log(JSON.stringify(err));
+            if (ret && ret.code == 200) {
+                view.rate = ret.data.rate;
+            }
+        })
+    }
+
+    function _more() {
+        _url({
+            url: 'frame4/shouru',
+            title: '收支明细'
+        }, 'frame4/shouru_win')
+    }
+</script>
+
+</html>

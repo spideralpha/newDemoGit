@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport"
+        content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>title</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/aui_font.css" />
+    <style>
+        html,
+        body {
+            background-color: rgb(250, 248, 251);
+        }
+
+        body {
+            padding: 10px;
+        }
+
+        .header {
+            padding: 10px 12px;
+            background-color: #fff;
+            border-radius: 10px;
+        }
+
+        .top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .top img {
+            width: 60px;
+            height: 60px;
+            border-radius: 6px;
+            margin-right: 8px;
+        }
+
+        .headleft {
+            display: flex;
+        }
+
+        .top .name {
+            padding: 8px 0;
+        }
+
+        .top .info span {
+            font-size: 12px;
+            color: #787878;
+        }
+
+        .bottom {
+            padding: 12px 0 6px 0;
+            font-size: 13px;
+            display: flex;
+        }
+
+        .bottom .item {
+            color: #787878;
+        }
+
+        .bottom .item:nth-child(n+2) {
+            margin-left: 10px;
+        }
+
+        .bottom .item span {
+            font-size: 17px;
+            margin-left: 6px;
+        }
+
+        .second {
+            display: flex;
+            padding: 14px 0;
+            background-color: #fff;
+            margin-top: 10px;
+            border-radius: 10px;
+        }
+
+        .second .sitem {
+            width: 25%;
+            max-width: 25%;
+            min-width: 25%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .second .sitem span {
+            font-size: 12px;
+            margin-top: 8px;
+        }
+
+        .second .sitem .imgbox {
+            width: 50%;
+            height: calc(((100vw - 20px)/4)*0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 16px;
+        }
+
+        .second .sitem .imgbox.blue {
+            background-color: rgb(50, 163, 255);
+        }
+
+        .second .sitem .imgbox.red {
+            background-color: rgb(255, 71, 71);
+        }
+
+        .second .sitem .imgbox.yellow {
+            background-color: rgb(255, 187, 0);
+        }
+
+        .second .sitem .imgbox.pink {
+            background-color: rgb(255, 106, 180);
+        }
+
+        .second .sitem .imgbox img {
+            width: 70%;
+            height: 70%;
+        }
+
+        .second .sitem .imgbox.lw img {
+            width: 55%;
+            height: 55%;
+        }
+
+        .three {
+            padding: 0 14px;
+            background-color: #fff;
+            border-radius: 10px;
+            margin-top: 10px;
+        }
+
+        .three .titem {
+            display: flex;
+            align-items: center;
+        }
+
+        .three .titem img {
+            width: 28px;
+            height: 28px;
+            object-fit: contain;
+            margin-right: 14px;
+        }
+
+        .three .titem .right {
+            padding: 16px 0;
+            width: calc(100% - 42px);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .three .titem:nth-child(n+2) .right {
+            border-top: 1px solid #f2f2f2;
+        }
+
+        .three .titem .right span {
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <div class="header">
+            <div class="top" onclick="_url({},'frame4/ucenter')">
+                <div class="headleft">
+                    <img class="avatar" :src="returnImg(listData.head_portrait)"
+                        onerror="this.src='../image/touxiang.png'" alt="">
+                    <div class="infos">
+                        <div class="name">
+                            {{listData.name}}
+                        </div>
+                        <div class="info">
+                            <span class="tag" v-if="listData.city">{{listData.city}}</span>
+                            <span class="tag">{{listData.age}}岁 · {{listData.constellation}}</span>
+                            <span class="tag">{{listData.occupation}}</span>
+                        </div>
+                    </div>
+                </div>
+                <span class="aui-iconfont aui-icon-right"></span>
+            </div>
+            <div class="bottom">
+                <div class="item" onclick="_url({index:0},'frame2/tongxunlu')">关注<span>{{listData.attention}}</span></div>
+                <div class="item" onclick="_url({index:1},'frame2/tongxunlu')">粉丝<span>{{listData.following}}</span></div>
+                <div class="item" onclick="_url({index:2},'frame2/tongxunlu')">好友<span>{{listData.friend}}</span></div>
+            </div>
+        </div>
+        <div class="second">
+            <div class="sitem" onclick="_index(5)">
+                <div class="imgbox blue"><img src="../image/index/jz.png" alt=""></div>
+                <span>家族</span>
+            </div>
+            <div class="sitem" onclick="_url({url:'frame4/renwu',title:'任务中心'})">
+                <div class="imgbox red"><img src="../image/index/hb.png" alt=""></div>
+                <span>任务奖励</span>
+            </div>
+            <div class="sitem" onclick="_url({url: 'frame4/wo_de_yu_e_frame', title: '收益'})">
+                <div class="imgbox yellow lw"><img src="../image/index/qd.png" alt=""></div>
+                <span>收益</span>
+            </div>
+            <div class="sitem" onclick="_url({url:'frame4/chongzhicenter',title:'充值中心'})">
+                <div class="imgbox pink"><img src="../image/index/cz.png" alt=""></div>
+                <span>充值</span>
+            </div>
+        </div>
+
+        <div class="three">
+            <div class="titem" onclick="_url({url:'frame4/huafeifuli', title:'话费免费领 金币秒到账'})">
+                <img src="../image/index/hf.png" alt="">
+                <div class="right">
+                    <span>领取话费</span>
+                    <span class="aui-iconfont aui-icon-right"></span>
+                </div>
+            </div>
+            <div class="titem" onclick="_url({},'frame4/shouhu_win')">
+                <img src="../image/index/sh.png" alt="">
+                <div class="right">
+                    <span>守护</span>
+                    <span class="aui-iconfont aui-icon-right"></span>
+                </div>
+            </div>
+            <div class="titem" onclick="_url({url:'frame4/yaoqing', title:'我的邀请'})">
+                <img src="../image/index/yq.png" alt="">
+                <div class="right">
+                    <span>邀请有奖</span>
+                    <span class="aui-iconfont aui-icon-right"></span>
+                </div>
+            </div>
+            <div class="titem" onclick="openVIP()">
+                <img src="../image/index/vip.png" alt="">
+                <div class="right">
+                    <span>贵族</span>
+                    <span class="aui-iconfont aui-icon-right"></span>
+                </div>
+            </div>
+            <div class="titem" onclick="_url({},'frame4/car')">
+                <img src="../image/index/zj.png" alt="">
+                <div class="right">
+                    <span>座驾</span>
+                    <span class="aui-iconfont aui-icon-right"></span>
+                </div>
+            </div>
+            <div class="titem" onclick="_url({url:'frame4/broadcast_frame', title:'我的动态'})">
+                <img src="../image/index/dt.png" alt="">
+                <div class="right">
+                    <span>动态</span>
+                    <span class="aui-iconfont aui-icon-right"></span>
+                </div>
+            </div>
+            <div class="titem" onclick="_url({url:'frame4/dengji_win',title:'我的等级'})">
+                <img src="../image/index/dj.png" alt="">
+                <div class="right">
+                    <span>等级</span>
+                    <span class="aui-iconfont aui-icon-right"></span>
+                </div>
+            </div>
+            <div class="titem" onclick="openService()">
+                <img src="../image/index/kf.png" alt="">
+                <div class="right">
+                    <span>客服</span>
+                    <span class="aui-iconfont aui-icon-right"></span>
+                </div>
+            </div>
+            <div class="titem" @click="_url({url:'frame3/sz', title:'设置', phone: listData.phone})">
+                <img src="../image/index/sz.png" alt="">
+                <div class="right">
+                    <span>设置</span>
+                    <span class="aui-iconfont aui-icon-right"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/jquery.js"></script>
+<script type="text/javascript" src="../script/vue.js"></script>
+<script type="text/javascript" src="../script/ffkj.js"></script>
+<script type="text/javascript" src="../json/imglist.js"></script>
+<script type="text/javascript" src="../script/video_deal.js"></script>
+<script type="text/javascript" src="../script/update.js"></script>
+<script type="text/javascript">
+    var userid;
+    var closeid;
+    var imgurls = [];
+    var view = new Vue({
+        el: '#view',
+        data: {
+            listData: {},
+            imgUrl: imgurl,
+            imgList: [],
+            bigImgList: [],
+            upType: 0, // 0图片 1视频
+            ios: 1, // 1上架 0非上架
+        },
+        methods: {
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+            
+        }
+    });
+    apiready = function () {
+        view.ios = $api.getStorage('shang');
+        userid = $api.getStorage('userid');
+        if (api.systemType == 'ios') {
+            userid = $api.getStorage('userid');
+            getUserInfo();
+            _heibai(1);
+        }
+        _listener('viewappear', function () {
+            userid = $api.getStorage('userid');
+            getUserInfo();
+            _heibai(1);
+        })
+
+        _shangla(function () {
+            userid = $api.getStorage('userid');
+            getUserInfo();
+            _heibai(1);
+        }, 1)
+
+    };
+
+
+    // 获取用户信息
+    function getUserInfo() {
+        _getUser(function (ret) {
+            console.log(JSON.stringify(ret.result),1688)
+            view.listData = ret.result;
+        })
+    }
+
+    // 联系客服
+    function openService() {
+        _ajax('api/Member/kefu', function (ret, err) {
+            if (ret && ret.data && ret.data.id) {
+                _url({
+                    txt: '客服',
+                    touserid: ret.data.id,
+                    url: 'frame0/liaotian',
+                    title: '与客服的聊天',
+                })
+            } else {
+                _msg('暂无法联系客服');
+            }
+        })
+    }
+</script>
+
+</html>

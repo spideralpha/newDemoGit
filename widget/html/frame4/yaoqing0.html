@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>小火苗</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/aui_font.css">
+    <style>
+        html,
+        body {
+            background: #2a292e;
+            color: #d5a054;
+        }
+
+        .num-ul {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .num-ul .list {
+            text-align: center;
+            font-size: 12px;
+            width: calc(100% / 3);
+        }
+
+        .num-ul .name {
+            color: #d5a054;
+        }
+
+        .num-ul .num {
+            font-size: 18px;
+            color: #d5a054;
+            font-weight: 700;
+        }
+
+        .num-ul .big-num {
+            font-size: 25px;
+        }
+
+        .lq-btn {
+            background: #d5a054;
+            color: #2a292e;
+            border-radius: 20px;
+            line-height: 30px;
+            padding: 0 25px;
+            font-size: 12px;
+            margin-top: 15px;
+        }
+
+        /* 分享 */
+        .share-code {
+            border-radius: 5px;
+            background: linear-gradient(to right, #d59f55, #48382b);
+            color: #2a292e;
+            font-size: 14px;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 30px 0;
+        }
+
+        .share-code * {
+            color: #2a292e;
+        }
+
+        .share-code img {
+            width: 20px;
+        }
+
+        .share-code .code {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .share-code .copy-btn {
+            border-radius: 20px;
+            padding: 0 20px;
+            line-height: 30px;
+            font-size: 12px;
+            background: #d4a053;
+        }
+
+        .bg {
+            margin-bottom: 30px;
+            border-radius: 5px;
+            padding: 1px;
+            background: linear-gradient(#d59f55, #48382b);
+        }
+
+        .bg * {
+            color: #a77e3b;
+        }
+
+        .bg .bg-content {
+            border-radius: 5px;
+            background: #1b1a1f;
+            font-size: 14px;
+            padding: 10px;
+        }
+
+        .bg .bg-content p {
+            margin-bottom: 10px;
+            max-width: 100%;
+        }
+
+        .bg .bg-title {
+            text-align: center;
+        }
+
+        /* 表格 */
+        .mem-table {
+            width: 100%;
+            text-align: center;
+        }
+
+        .mem-table tr th,
+        .mem-table tr td {
+            width: 33.33%;
+            text-align: center;
+        }
+
+        .mem-table tr td {
+            font-size: 12px;
+        }
+
+        #ff-footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .ewm-btn {
+            background: linear-gradient(to right, #d5a14e, #b57d30);
+            color: #fff;
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 85vw;
+            line-height: 50px;
+            margin: 10px 0;
+        }
+
+        .ewm-btn img {
+            width: 30px;
+            margin-right: 5px;
+        }
+
+        .ewm-btn span {
+            font-weight: 700;
+            font-size: 15px;
+        }
+
+        /* 二维码 */
+        .ewm-wrap {
+            position: fixed;
+            background: #1b1a1f;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            visibility: hidden;
+        }
+
+        .ewm-wrap img {
+            width: 30vw;
+        }
+
+        .ewm-wrap .ewm-title {
+            margin-bottom: 20px;
+        }
+
+        .tabs {
+            display: flex;
+            width: 100%;
+            border-radius: 5px 5px 0 0;
+            overflow: hidden;
+        }
+
+        .tabs .tab {
+            padding: 6px 0;
+            width: 33.33333%;
+            text-align: center;
+            font-size: 12px;
+            color: #74531f;
+            background-color: rgb(27, 26, 31);
+        }
+
+        .tabs .tab.active {
+            color: #000;
+            background-color: #d5a14e
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <div class="wrap new-margin-10" v-if="ffInfo">
+            <!-- <ul class="num-ul">
+                <li class="list">
+                    <span class="num">{{ffInfo.invite_count || 0}}</span>
+                    <p class="name">累计邀请(人)</p>
+                </li>
+                <li class="list">
+                    <span class="num big-num">{{ffInfo.vip_num|| 0}}</span>
+                    <p class="name">可以领取会员(天)</p>
+                </li>
+                <li class="list">
+                    <span class="num">{{ffInfo.vip_count|| 0}}</span>
+                    <p class="name">累计获取会员(天)</p>
+                </li>
+            </ul> -->
+
+            <!-- <div class="bg">
+                <div class="bg-content">
+                    <p class="bg-title">如何赚钱</p>
+                    <p v-html="text" style="color: #a77e3b !important;"></p>
+                </div>
+            </div> -->
+            <!-- <div class="btn-wrap flex-c" v-if="ffInfo.vip_num>0">
+                <button class="lq-btn" onclick="lingqu()">领取</button>
+            </div> -->
+            <div class="share-code">
+                <div class="flex">
+                    <img src="../../image/icon/share.png" alt="">
+                    <span class="share-title">专属邀请码</span>
+                </div>
+                <span class="code">{{ffInfo.send_code}}</span>
+                <button class="copy-btn" @click="copyTxt(ffInfo.send_code)">点击复制</button>
+            </div>
+
+            <div class="bg">
+                <div class="bg-content">
+                    <p class="bg-title">累计收益(币)</p>
+                    <p style="text-align: center;">{{ffInfo.shouyi}}</p>
+                </div>
+            </div>
+            <div class="tabs">
+                <div class="tab" @click="settab(0)" :class="{active:tabindex==0}">收益明细</div>
+                <div class="tab" @click="settab(1)" :class="{active:tabindex==1}">邀请明细</div>
+                <div class="tab" @click="settab(2)" :class="{active:tabindex==2}">奖励排行</div>
+            </div>
+            <div class="bg" style="border-radius: 0 0 5px 5px;">
+                <div class="bg-content" style="border-radius: 0 0 5px 5px;min-height: 200px;">
+                    <table class="mem-table">
+                        <tr>
+                            <th>标识</th>
+                            <th>邀请用户</th>
+                            <!-- <th>是否成为会员</th> -->
+                            <th>收益(币)</th>
+                        </tr>
+                        <tr v-for="(m, index) in ffList">
+                            <td>{{m.id}}</td>
+                            <td>{{m.name}}</td>
+                            <!-- <td v-if="m.is_vip==1">是</td>
+                            <td v-else>不是</td> -->
+                            <td>{{m.shouyi}}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="bg" style="margin-bottom: 80px;">
+                <div class="bg-content">
+                    <p class="bg-title">规则说明</p>
+                    <p v-html="text"></p>
+                </div>
+            </div>
+        </div>
+        <footer id="ff-footer" class="flex-c">
+            <button class="ewm-btn" onclick="_url({url:'frame4/ewm', title:'查看邀请二维码'})">
+                <img src="../../image/icon/ewm.png" alt="">
+                <span>查看邀请二维码</span>
+            </button>
+        </footer>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/vue.js"></script>
+<script src="../../script/qrcode.js"></script>
+<script src="../../script/html2canvas.js"></script>
+<script src="../../script/img.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            ewm: 0,
+            text: '',
+            level: 1,
+            tabindex: 0
+        },
+        methods: {
+            settab(index) {
+                this.tabindex = index
+            },
+            copyTxt(str) {
+                copyTxt(str);
+            },
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+            
+        }
+    })
+
+    apiready = function () {
+        getPageContent(7, function (data) {
+            view.text = data.body;
+        })
+        _getUser(function (ret) {
+            view.ffInfo = ret.result;
+        })
+        _lists('api/Member/team', 1, 1, {
+            id: $api.getStorage('userid'),
+            level: view.level
+        })
+        _scrollToBottom(function () {
+            if (heigutgao == 1) {
+                pagenum++;
+                _lists('api/Member/team', pagenum, '', {
+                    id: $api.getStorage('userid'),
+                    level: view.level
+                })
+            }
+        })
+    }
+
+    function lingqu() {
+        _ajax('api/member/receive', function (ret, err) {
+            console.log(JSON.stringify(ret))
+            console.log(JSON.stringify(err))
+            _msg(ret.msg);
+            if (ret && ret.code == 200) {
+                _getUser(function (ret) {
+                    view.ffInfo = ret.result;
+                })
+            }
+        }, {
+            id: $api.getStorage('userid')
+        })
+    }
+
+    // 修改显示等级
+    function changeLevel() {
+        var buttons = ['1级', '2级', '3级'];
+        _action('选择显示类型', buttons, function (bIndex) {
+            if (bIndex != buttons.length + 1) {
+                view.level = bIndex;
+                _lists('api/Member/team', 1, 1, {
+                    id: $api.getStorage('userid'),
+                    level: view.level
+                })
+            }
+        })
+    }
+</script>
+
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>小火苗</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <style>
+        .list {
+            border-bottom: 1px solid #f3f3f3;
+            padding: 10px;
+            margin: 0 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <ul class="cyy-ul">
+            <li class="list" v-for="(m, index) in ffList" @click="sendmsg(m.content)">{{m.content}}</li>
+        </ul>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+        },
+        methods: {
+            // 发送常用语
+            sendmsg(msg) {
+                var data = {
+                    type: 0,
+                    content: msg,
+                }
+                api.execScript({
+                    name: 'frame0/liaotian_win',
+                    frameName: 'frame0/liaotian',
+                    script: 'sendMsg(' + JSON.stringify(data) + ')'
+                })
+
+                _closeToWin();
+            },
+            // 跳转
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+        }
+    })
+
+    apiready = function() {
+        getData();
+        _listener('viewappear', function() {
+            getData();
+        })
+    }
+
+    // 获取常用语
+    function getData() {
+        _ajax('api/Privatechat/commonWords', function(ret, err) {
+            if (ret && ret.code == 200) {
+                view.ffList = ret.data;
+            }
+        }, {
+            user_id: $api.getStorage('userid'),
+            channel: 2, // 1语音|2文字
+        })
+    }
+
+    function _more() {
+        _url({
+            url: 'frame3/addcyy',
+            title: '自定义常用语',
+            moreTitle: '确定'
+        })
+    }
+</script>
+
+</html>

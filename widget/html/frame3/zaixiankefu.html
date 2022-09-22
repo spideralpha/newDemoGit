@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>title</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui_font.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/news.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/frame3.css" />
+    <style>
+
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak></div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/jquery.js"></script>
+<script type="text/javascript" src="../../script/ffkj.js"></script>
+<script type="text/javascript" src="../../script/vue.js"></script>
+<script type="text/javascript">
+    var view = new Vue({
+        el: '#view',
+        data: {
+        },
+        methods: {
+        }
+    })
+    apiready = function() {
+        window.location.href='https://chaten.sobot.com/chat/h5/v2/index.html?sysnum=2dc365c4a115420fbb8eae514b1d936d&source=2';
+    }
+</script>
+
+</html>

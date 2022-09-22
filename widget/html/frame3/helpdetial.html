@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/news.css">
+    <style>
+        body {
+            padding: 4px 14px;
+        }
+
+        .title {
+            font-size: 14px;
+            font-weight: bold;
+            padding: 10px 0;
+        }
+
+        .content {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.8;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <div class="title">{{title}}</div>
+        <div class="content" v-html="content">
+        </div>
+        <!-- <div class="title">什么是亲密度？如何维护？</div>
+        <div class="content">
+            什么是亲密度？如何维护？什么是亲密度？如何维护？什么是亲密度？如何维护？什么是亲密度？如何维护？什么是亲密度？如何维护？什么是亲密度？如何维护？什么是亲密度？如何维护？什么是亲密度？如何维护？什么是亲密度？如何维护？什么是亲密度？如何维护？什么是亲密度？如何维护？
+        </div> -->
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+            title: '',
+            content: ''
+        },
+        methods: {
+            // 跳转
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+        }
+    })
+    apiready = function () {
+        view.title = api.pageParam['title'];
+        view.content = api.pageParam['content'];
+    }
+</script>
+
+</html>

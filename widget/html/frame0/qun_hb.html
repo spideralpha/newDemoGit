@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/hb.css">
+    <style>
+        .tip {
+            position: absolute;
+            bottom: 10px;
+            font-size: 14px;
+            text-align: center;
+            width: 100%;
+            color: orange;
+        }
+
+        .top {
+            position: absolute;
+            padding-bottom: 40%;
+        }
+
+        .no-money {
+            color: orange;
+            margin-top: 20px;
+            font-size: 20px;
+            text-align: center;
+        }
+
+        .user .tx {
+            width: 20px;
+            height: 20px;
+        }
+
+        .user .u-name {
+            font-size: 14px;
+            color: #fff;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <div class="bg"></div>
+        <div class="wrap flex-c flex-col">
+            <div class="img flex-c">
+                <div class="top" v-if="rwInfo.status==1">
+                    <div class="user flex-c">
+                        <img class="tx" :src="returnImg(ffInfo.head_portrait)" onerror="this.src='../../image/touxiang.png'" alt="">
+                        <span class="u-name">{{ffInfo.name}} 发出的红包</span>
+                    </div>
+                    <h3 class="no-money" v-if="!rwInfo.money">手慢了，红包派完了</h3>
+                    <h3 class="no-money" v-else style="font-size: 50px; font-weight: normal;">{{rwInfo.money}}</h3>
+                </div>
+                <img class="red-bg" src="../../image/icon/bg_luckybag_2.png" alt="">
+                <img v-if="rwInfo.status==0" class="red-click" src="../../image/icon/mp_btn_openluckybag.png" alt="" onclick="openRed()">
+                <p class="tip" v-if="rwInfo.status!=0" onclick="openDetail()">查看领取详情 ></p>
+            </div>
+            <div class="close">
+                <img src="../../image/icon/close.png" alt="" onclick="closeFrame()">
+            </div>
+        </div>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            rwInfo: {},
+            ios: 1, // 1上架 0非上架
+            click: 0, // 是否有点击过
+            id: 0
+
+        },
+        methods: {
+            // 跳转
+            _url: function(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg: function(url) {
+                return returnImg(url);
+            },
+        }
+    })
+    apiready = function() {
+        view.id = api.pageParam['id'];
+        view.ffInfo = api.pageParam['data'];
+        getHBStatus();
+    }
+
+    // 获取红包状态
+    function getHBStatus() {
+        _ajax('api/cluster/receiveStatus', function(ret, err) {
+            if (ret && ret.code == 200) {
+                view.rwInfo = ret.data;
+            }
+        }, {
+            chat_id: view.id,
+            user_id: $api.getStorage('userid')
+        })
+    }
+
+    // 关闭
+    function closeFrame() {
+        api.closeFrame();
+    }
+
+    // 打开红包
+    function openRed() {
+        _loading();
+        _ajax('api/Cluster/receive', function(ret, err) {
+            console.log(JSON.stringify(ret));
+            console.log(JSON.stringify(err));
+            _loadingClose();
+            if (ret && ret.code == 200) {
+                view.rwInfo = {
+                    money: ret.data.reward,
+                    status: 1,
+                }
+                _send('updateHB', {
+                    id: view.id,
+                    state: 1
+                });
+            } else {
+                _msg(ret.msg);
+            }
+        }, {
+            chat_id: view.id,
+            user_id: $api.getStorage('userid')
+        })
+    }
+
+    function openDetail() {
+        _url({
+            id: view.id,
+            touserid: api.pageParam['touserid'], // 群id
+            userid: api.pageParam['userid'], // 发红包者
+            data: view.ffInfo
+        }, 'frame0/qun_hb_detail');
+        closeFrame();
+    }
+</script>
+
+</html>

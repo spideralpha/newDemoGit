@@ -1,0 +1,42 @@
+var retJson = [{
+    id: 1,
+    name: '原图',
+    img: '1yuantu.png',
+    img1: '',
+}, {
+    id: 2,
+    name: '黑白',
+    img: '2heibai.png',
+    img1: '2.png',
+}, {
+    id: 3,
+    name: '个性',
+    img: '3gexing.png',
+    img1: '3.png',
+}, {
+    id: 4,
+    name: '温暖',
+    img: '4warm.png',
+    img1: '4.png',
+}, {
+    id: 5,
+    name: '白亮',
+    img: '5bailiang.png',
+    img1: '1.png',
+}, {
+    id: 6,
+    name: '粉嫩',
+    img: '6fennen.png',
+    img1: '6.png',
+}, {
+    id: 7,
+    name: '冷色调',
+    img: '7lengsediao.png',
+    img1: '7.png',
+}, {
+    id: 8,
+    name: '暖色调',
+    img: '8nuansediao.png',
+    img1: '8.png',
+
+}]

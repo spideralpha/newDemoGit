@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/aui_font.css">
+    <link rel="stylesheet" href="../../css/user.css">
+    <style>
+        .yuanfen .title {
+            color: #000 !important;
+        }
+
+        .yuanfen .txt {
+            font-size: 10px;
+            color: #999;
+            line-height: 1.5;
+            padding: 0 10px;
+        }
+
+        .yuanfen .no-go .li::after {
+            display: none;
+        }
+
+        .yuanfen .li {
+            display: block;
+        }
+
+        .yuanfen .li .content {
+            padding: 5px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap" id="view" v-cloak>
+        <ul class="ul w-bg yuanfen">
+            <li class="li no-go">
+                <div class="content nborder" style="width: 100%;text-align: right;">
+                    <div class="title" style="word-break: keep-all;width: auto;;">今日缘分</div>
+                    <i class="base-icon my-msg" :class="{'my-msg-close':ffInfo.fate_switch!=1}" onclick="changeSocial('fate_switch')"></i>
+                </div>
+                <p class="txt">开启后，每日可收到小火苗大数据精准匹配缘分</p>
+            </li>
+        </ul>
+        <ul class="ul w-bg ">
+            <li class="li" onclick="_url({url:'frame3/phoneset', title:'安卓手机指南'})">
+                <div class="content">
+                    <div class="title">无来电设置</div>
+                </div>
+            </li>
+            <li class="li" onclick="_url({url: 'frame4/yi_jian_fan_kui_frame', title: '投诉与建议'})">
+                <div class="content">
+                    <div class="title">投诉与建议</div>
+                </div>
+            </li>
+            <!-- <li class="li">
+                <div class="content nborder" style="width: 100%;text-align: right;">
+                    <div class="title" style="word-break: keep-all;width: auto;;">丘比特牵线</div>
+                    <i class="base-icon my-msg" :class="{'my-msg-close':ffInfo.hide_distance!=1}"
+                        onclick="changeSocial('hide_distance')"></i>
+                </div>
+            </li>
+            <p class="txt">开启后，小火苗将用大数据为您匹配有缘人，牵线成功由女生发消息给男生确认缘分，男生回复代表同意缘分，私聊由男生支付金币</p> -->
+        </ul>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script src="../../script/yinsi.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+        },
+        methods: {
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+
+        }
+    })
+    apiready = function() {
+        getMyConfig()
+    }
+</script>
+
+</html>

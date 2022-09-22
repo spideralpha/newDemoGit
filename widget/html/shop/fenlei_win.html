@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/aui_font.css">
+    <link rel="stylesheet" href="../../css/win.css">
+    <style>
+        /* 导航栏 */
+        .c-wrap {
+            overflow-x: auto;
+            /* margin-right: 80px; */
+        }
+
+        .c-wrap.hide {
+            display: none;
+        }
+
+        .c-wrap .c-list {
+            padding: 10px;
+            text-align: center;
+            white-space: nowrap;
+            font-size: 14px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #757575;
+        }
+
+        .c-wrap .c-list.active {
+            color: #F46CEF;
+        }
+
+        .c-wrap .c-list.active::after {
+            content: '';
+            display: inline-block;
+            width: 15px;
+            height: 1px;
+            background: #fff;
+            margin-top: 2px;
+        }
+
+        .c-wrap .c-btn {
+            background: #ff4500;
+            color: #fff;
+            border-radius: 20px;
+            position: absolute;
+            right: 10px;
+            z-index: 1;
+            font-size: 12px;
+            padding: 3px 7px;
+        }
+
+        .c-wrap .c-btn .aui-icon-menu {
+            font-size: 14px;
+            margin-right: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <header id="view" v-cloak>
+        <div class="head new-padding-10 flex-c">
+            <div class="back" tapmode onclick="_closeToWin()"></div>
+            <div class="title"></div>
+        </div>
+        <ul class="c-wrap flex">
+            <li class="c-list " v-for="(m, index) in ffList" :id="'cid'+m.id" :style="'width:'+typeidstrlen(m.name)+'px;'" @click="changeClass(m.id, index)">{{m.name}}</li>
+            <!-- <li class="c-list" v-for="i in 30">水果</li> -->
+        </ul>
+    </header>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script src="../../script/group.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            ffInfo: {},
+            ffList: [],
+            id: 0,
+
+        },
+        methods: {
+            // 选择分类
+            changeClass(id, index) {
+                if (id) {
+                    changeClass(id, function () {
+                        randomSwitchBtn(index)
+                    })
+                } else {
+                    _msg('当前栏目不可选择');
+                }
+            },
+            typeidstrlen(str) {
+                return typeidstrlen(str);
+            }
+        }
+    })
+    apiready = function () {
+        $api.fixStatusBar($api.dom('header'));
+        $api.text($api.dom('.title'), api.pageParam['title']);
+        view.id = api.pageParam['id'];
+        
+        getTheme()
+    }
+    
+    // 获取当前级别下 所有商品分类
+    function getTheme() {
+        var arr = [];
+        _d(1)
+        function _d(page){
+            _ajax('api/mall.goods/category', function (ret, err) {
+                console.log(JSON.stringify(ret))
+                console.log(JSON.stringify(err))
+                if (ret && ret.ret) {
+                    ret = ret.ret;
+                    if(page == 1){
+                        arr = [];
+                    }
+                    arr = arr.concat(ret.data);
+                    if(ret.data.length==0){
+                        // callback(arr);
+                        view.ffList = arr;
+                        setTimeout(function(){
+                            openGroup();
+                        }, 300)
+                    }else{
+                        page++;
+                        _d(page);
+                    }
+                }
+            }, {parent_id: view.id, page:page})
+        }
+    }
+
+    // 打开组
+    function openGroup() {
+        var headerh = $api.offset($api.dom('header')).h;
+        var frameArr = [];
+        var pageParam = [];
+        var arr = view.ffList;
+        if(arr.length>0){
+            for (var i = 0, len = arr.length; i < len; i++) {
+                var frm = 'shop/fenlei';
+                var obj = { id: arr[i].id };
+                frameArr.push(frm);
+                pageParam.push(obj);
+            }
+            groupInit('fenlei', frameArr, headerh, 0, 0, '', pageParam, '', function(bIndex){
+                randomSwitchBtn(bIndex) 
+            });
+        }else{
+            _openFrame('shop/fenlei', 0, 1, {id:view.id}) 
+        }
+    }
+
+
+    // 点击分类栏目时，设置 frame 组当前可见 frame
+    function randomSwitchBtn(index) {
+        active(index, '.c-wrap .c-list');
+        api.setFrameGroupIndex({
+            name: 'fenlei',
+            index: index,
+            scroll: true, //是否平滑滚动至目标窗口，即是否带有动画,
+            reload: false
+        });
+    }
+
+
+    // 分类取出长度
+    function typeidstrlen(str) {
+        if (!str) {
+            return 0;
+        }
+        if (str.length == 2) {
+            return 50;
+        }
+        var len = 0;
+        for (var i = 0; i < str.length; i++) {
+            var c = str.charCodeAt(i);
+            //单字节加1   
+            // if ((c >= 0x0001 && c <= 0x007e) || (0xff60 <= c && c <= 0xff9f)) {
+            //     len++;
+            // } else {
+            len += 3;
+            // }
+        }
+        console.log(len)
+        return Math.ceil(len * 6.3333333);
+    }
+
+    // 分类选择
+    function changeClass(id, callback) {
+        var winW = window.innerWidth / 2;
+        var left = $('#cid' + id).offset().left; // 距离窗口左边
+        var itemW = $('#cid' + id).width() + 20; // 元素宽度 + padding
+        var sleft = $('.c-wrap').scrollLeft(); // 获取此前已滚动的距离
+        $('#cid' + id).addClass('active').siblings().removeClass('active');
+        // var w = left - winW > 0 ? left - winW + itemW / 2 : 0;
+        var w = left - winW + itemW / 2;
+        $('.c-wrap').scrollLeft(w + sleft);
+        if (typeof callback == 'function') {
+            callback();
+        }
+    }
+</script>
+
+</html>

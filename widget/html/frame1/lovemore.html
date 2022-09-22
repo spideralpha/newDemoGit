@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>爱情故事</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/aui_font.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <style>
+        /* 头部 */
+        header .header {
+            width: 100vw;
+            padding: 10px;
+            font-size: 12px;
+            color: #fff;
+            box-sizing: border-box;
+        }
+
+        header .h-bg {
+            background-image: url('../../image/dynamic/love_bg.png');
+            background-size: 100%;
+            background-repeat: no-repeat;
+            padding: 35px 10px 25px;
+        }
+
+        header .h-fix {
+            position: fixed;
+            top: 0;
+            display: flex;
+            align-items: center;
+            z-index: 1;
+        }
+
+        header .h-fix .text {
+            margin-left: 10px;
+            opacity: 0;
+            color: #000;
+        }
+
+
+
+
+        header .h-content {
+            margin: 10px 0 0 10px;
+        }
+
+        header .aui-icon-left {
+            color: #fff;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        header .text {
+            color: #fff;
+            margin: 5px 0;
+        }
+
+        header .text-tab {
+            border: 1px solid;
+            color: rgba(255, 255, 255, 0.5);
+            border-radius: 20px;
+            padding: 2px 5px;
+        }
+
+        .new-nav {
+            position: sticky;
+            position: -webkit-sticky;
+            top: 0;
+            background: #fff;
+        }
+
+        .list-wrap {
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .list .litem {
+            width: calc((100vw - 15px) / 2);
+            margin-bottom: 16px;
+        }
+
+        .list .litem img.showone {
+            width: calc((100vw - 15px) / 2);
+            /* height: 46vw; */
+            border-radius: 5px;
+        }
+
+        .list .litem .content {
+            margin: 6px 0;
+            font-size: 14px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            display: -moz-box;
+            -moz-line-clamp: 2;
+            -moz-box-orient: vertical;
+            word-wrap: break-word;
+            word-break: break-all;
+            white-space: normal;
+        }
+
+        .list .litem .userinfo {
+            display: flex;
+            align-items: center;
+            font-size: 13px;
+        }
+
+        .list .litem .userinfo img.avatar {
+            width: 20px;
+            border-radius: 50%;
+            height: 20px;
+        }
+
+        .list .litem .userinfo img.avatar:nth-child(2) {
+            margin-left: -7px;
+        }
+
+        .list .litem .userinfo .name {
+            font-size: 8px;
+            color: #757575;
+            margin-left: 7px;
+        }
+
+        .pubbtn {
+            width: 46px;
+            position: fixed;
+            bottom: 10vw;
+            right: 7vw;
+            z-index: 9999999;
+        }
+
+        /* 亲密度 */
+        .count {
+            font-size: 10px;
+            color: #757575;
+        }
+
+        .count img {
+            width: 15px;
+            margin-right: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <header>
+            <div class="header h-fix">
+                <div class="back" onclick="_closeToWin()"><i class="aui-iconfont aui-icon-left"></i></div>
+                <p class="text">小火苗爱情故事</p>
+            </div>
+            <div class="header h-bg">
+                <div class="h-content" style="margin-top: 30px;">
+                    <p class="text">小火苗爱情故事</p>
+                    <p class="text">晒出你在小火苗真实的爱情故事，收获大家的祝福吧！</p>
+                    <span class="text-tab">26306 祝福</span>
+                </div>
+            </div>
+
+        </header>
+
+        <div class="new-nav">
+            <div class="n-list" onclick="changeNav(0)" :class="{active:index==0}">热门</div>
+            <div class="n-list" onclick="changeNav(1)" :class="{active:index==1}">最新</div>
+        </div>
+        <img class="pubbtn" onclick="_url({url:'frame1/love_fabu', title:'爱情故事投稿'})" src="../../image/icon/icon_real_person_add.png" alt="">
+        <div class="list-wrap">
+            <div class="list" v-for="i in 2">
+                <div class="litem" v-for="(m, index) in ffList" v-if="(i==1 && index%2==0) || (i==2 && index%2!=0)" @click="_url({ id:m.dy_id, },'frame1/lovething')">
+                    <img class="showone" v-if="m.video" :src="returnImg(m.cover)" onerror="this.src='../.. /image/error-img.png'" alt="">
+                    <img class="showone" v-else :src="returnImg(m.sumbImage[0])" onerror="this.src='../../image/error-img.png'" alt="">
+                    <div class="content">{{clearHtml(m.content) }}</div>
+                    <div class="footer flex-bt">
+                        <div class="userinfo" @click.stop @click="go_userInfo(m.id, m.name, m.sex)">
+                            <img class="avatar" :src="returnImg(m.head_100)" onerror="this.src='../../image/touxiang.png'" alt="">
+                            <img class="avatar" :src="returnImg(m.another_avatar)" onerror="this.src='../../image/touxiang.png'" alt="">
+                            <span class="name">{{m.name}}<br>{{m.another_name}}</span>
+                        </div>
+                        <span class="count"><img src="../../image/dynamic/love_story_blessing_icon.png" alt="">{{m.comments}}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/api.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script src="../../script/swiper.js"></script>
+<script src="../../json/frame1.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            ios: 1, // 1上架 0非上架
+            index: 0,
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+        },
+        methods: {
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+            // 查看用户资料
+            go_userInfo(id, name, sex) {
+                go_userInfo(id, name, sex)
+            },
+            // 清除html
+            clearHtml(s) {
+                return clearHtml(s);
+            }
+        }
+    })
+    apiready = function() {
+        $api.fixStatusBar($api.dom('.header'));
+        var ht = $api.offset($api.dom('.h-fix')).h;
+        console.log(ht);
+        setTimeout(function() {
+            $('.new-nav').css({
+                'top': ht + 'px'
+            })
+        }, 500)
+        getData(0);
+        _scrollToBottom(function() {
+            if (heigutgao == 1) {
+                pagenum++;
+                getData(pagenum)
+            }
+        })
+    }
+
+    // 获取数据
+    function getData(page) {
+        var param = {
+            userid: $api.getStorage('userid'),
+            count: pagesize,
+            longitude: $api.getStorage('lon'),
+            latitude: $api.getStorage('lat'),
+            type: 1,
+        };
+
+        if (view.index == 0) {
+            param.sort = 'hot';
+        } else {
+            param.sort = 'new';
+        }
+        var loading = page == 0 ? 1 : 0;
+        _lists('home/Dymanic/dymaniclst', page, loading, param);
+    }
+
+    // 切换
+    function changeNav(type) {
+        view.index = type;
+        getData(0);
+    }
+
+
+    function topNavScroll() {
+        //获取当前窗口滚动条顶部所在的像素值 并取整
+        var topScroll = Math.floor($(window).scrollTop());
+        //设置滚动多少像素后透明度变为1
+        // var scrollDist = api.winWidth;
+        // var scrollDist = window.innerWidth;
+        var scrollDist = 50;
+        //定义滚动条在向下滚动180像素后 变成完全不透明
+        // console.log(topScroll / scrollDist)
+        if (topScroll <= scrollDist) {
+            //通过浏览器标题栏显示并检查数据
+            //计算当前透明度 当前所在的像素 除 180(topScroll的最大值 因为透明度的值是0-1之间的小数)
+            // $('#fx-header').css('background','rgba(255,255,255,'+ topScroll / scrollDist+')');
+            $('.h-fix .aui-iconfont').css('color', '#fff');
+            $('.h-fix').css('background', 'rgba(255,255,255, ' + topScroll / scrollDist + ')');
+            $('.h-fix .text').css('opacity', topScroll / scrollDist);
+        } else {
+            $('.h-fix .aui-iconfont').css('color', '#000');
+            $('.h-fix').css('background', 'rgba(255,255,255, 1)');
+            $('.h-fix  .text').css('opacity', 1);
+        }
+    }
+    $(window).on('scroll', function() {
+        topNavScroll();
+    });
+</script>
+
+</html>

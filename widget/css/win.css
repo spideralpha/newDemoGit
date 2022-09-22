@@ -1,0 +1,52 @@
+header {
+    background: #fff;
+    color: #333333;
+    position: relative;
+}
+
+header .aui-iconfont {
+    font-size: 20px;
+    /* font-weight: bold; */
+}
+
+header .head {
+    justify-content: flex-start;
+}
+
+header .title {
+    height: 24px;
+    /* font-size: 18px;
+    font-weight: bold; */
+    margin-left: 30px;
+}
+
+header .more {
+    font-size: 14px;
+    position: absolute;
+    right: 10px;
+    color: #F46CEF;
+}
+
+header .more.hide {
+    visibility: hidden;
+}
+
+header .back {
+    position: absolute;
+    text-align: center;
+    /* background-image: url('../image/icon/back.png'); */
+    background-image: url('../image/back.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 100%;
+    width: 23px;
+    height: 23px;
+    border-style: solid;
+    border-width: 10px 0 10px 10px;
+    border-color: transparent;
+    left: 0;
+}
+
+header .back img {
+    width: 13px;
+}

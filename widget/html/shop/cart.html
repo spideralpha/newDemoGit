@@ -1,0 +1,199 @@
+<!DOCTYPE HTML>
+<html ng-app="myApp" class="htmlWeiLei">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport"
+		content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+	<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+	<title>Hello APP</title>
+	<link rel="stylesheet" type="text/css" href="../../css/api.css" />
+	<link rel="stylesheet" type="text/css" href="../../css/news.css" />
+	<link rel="stylesheet" type="text/css" href="../../css/gou_wu_che.css" />
+</head>
+
+<body>
+	<div id="view" v-cloak>
+
+		<ul class="gouwuche-wrap">
+			<li class="list" @click="_url({url:'shop/shop_detail', title:'商品详情', id:m.goods_id})"
+				:class="{'active': ffInfo[m.id]}" v-for="(m, index) in ffList">
+				<div class="left" @click.stop @click="addCart(index)">
+					<span class="yuan"></span>
+				</div>
+				<div class="middle">
+					<img class="shang_pin_tu" :src="m.image" alt="">
+				</div>
+				<div class="right">
+					<p>{{m.name}}</p>
+					<span class="tab" v-if="m.stock">库存：{{m.stock}}</span><span class="tab" v-else>已下架</span>
+					<div class="jia_ge flex-bt">
+						<span>&#165;&nbsp;{{m.price}}</span>
+						<!-- <div class="shu_liang">
+							<span class="jian">-</span>
+							<input type="text" value="1">
+							<span class="jia">+</span>
+						</div> -->
+						<span class="num">x {{m.num}}</span>
+					</div>
+				</div>
+			</li>
+			<!-- <li class="list active">
+				<div class="left">
+					<span class="yuan"></span>
+				</div>
+				<div class="middle">
+					<img class="shang_pin_tu" src="../../image/frame0/goods_5.png" alt="">
+				</div>
+				<div class="right">
+					<p>哈或或</p>
+					<span class="tab">库存123</span><span class="tab">库存123</span>
+					<div class="jia_ge">
+						<span>&#165;&nbsp;454</span>
+						<div class="shu_liang">
+							<span class="jian">-</span>
+							<input type="text" value="1">
+							<span class="jia">+</span>
+						</div>
+					</div>
+				</div>
+			</li> -->
+		</ul>
+
+		<footer class="flex-bt" v-if="ffList.length>0">
+			<!-- <div class="left" tapmode onclick="selectAll();">
+				<span class="yuan"></span>
+				<span>全选</span>
+			</div> -->
+			<div class="right del" >
+				<button tapmode onclick="del();">删除</button>
+			</div>
+			<div class="right">
+				<span class="zong">合计： ￥<span class="price">{{total}}</span></span>
+				<button style="outline: none;" tapmode onclick="submit();">结算</button>
+			</div>
+
+		</footer>
+	</div>
+</body>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/api.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script>
+	var view = new Vue({
+		el: '#view',
+		data: {
+			imgurl: imgurl,
+			ffList: [],
+			ffInfo: {},
+			ios: 1, // 1上架 0非上架
+			uid: 0,
+			status: 0, // 正常模式
+			total: 0,
+		},
+		methods: {
+			addCart(index) {
+				var _this = this;
+				var data = _this.ffList[index];
+				if (data.is_hidden == 1 && view.status == 0) {
+					_msg('抱歉，该商品已下架');
+					return;
+				}
+				if (_this.ffInfo[data.id]) {
+					delete _this.ffInfo[data.id];
+				} else {
+					_this.ffInfo[data.id] = {
+						pirce: data.price,
+						num: data.num
+					};
+				}
+				var total = 0;
+				for (var k in _this.ffInfo) {
+					total = total + Number(_this.ffInfo[k].pirce) * _this.ffInfo[k].num;
+				}
+				_this.total = (total).toFixed(2);
+				_this.$forceUpdate();
+
+			},
+			_url(param, url) {
+				_url(param, url);
+			},
+			// 图片自适应
+			
+		}
+	})
+
+	apiready = function () {
+		view.uid = $api.getStorage('userid');
+		_listener('viewappear', function () {
+			view.uid = $api.getStorage('userid');
+			_lists('api/mall.member/cart', 1, 1, {
+				uid: view.uid
+			});
+
+		})
+
+		_shangla(function () {
+			_lists('api/mall.member/cart', 1, 1, {
+				uid: view.uid
+			});
+		})
+
+		_scrollToBottom(function () {
+			if (heigutgao == 1) {
+				pagenum += 1
+				_lists('api/mall.member/cart', pagenum, '', {
+					uid: view.uid
+				});
+			}
+		})
+	};
+
+	// 删除
+	function del() {
+		var arr = [];
+		var obj = view.ffInfo;
+		for (var k in obj) {
+			arr.push(k);
+		}
+		if (arr.length == 0) {
+			_msg('请选择商品');
+			return;
+		}
+		console.log(JSON.stringify(arr))
+		_ajax('api/mall.member/delCart', function (ret, err) {
+			console.log(JSON.stringify(ret))
+			console.log(JSON.stringify(err))
+			var msg = ret.ret ? ret.ret : ret.err;
+			_msg(msg);
+			if (ret.ret) {
+				view.ffInfo = {};
+
+				_lists('api/mall.member/cart', 1, 1, {
+					uid: view.uid
+				});
+				view.$forceUpdate();
+			}
+		}, {
+			list: JSON.stringify(arr),
+			uid: view.uid
+		})
+	}
+
+	// 结算预览
+	function submit() {
+		var arr = [];
+		var obj = view.ffInfo;
+		for (var k in obj) {
+			arr.push(k);
+		}
+		if (arr.length == 0) {
+			_msg('请选择商品');
+			return;
+		}
+		_url({url:'shop/cart_pay', title:'结算', arr:arr})
+	}
+</script>
+
+</html>

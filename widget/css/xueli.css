@@ -1,0 +1,96 @@
+.wrap {
+    padding: 20px;
+}
+
+.ul {
+    display: flex;
+    justify-content: space-between;
+    margin: 20px 0;
+}
+
+.ul .list {
+    /* width: 45%; */
+    background: #eee;
+    border-radius: 5px;
+    font-size: 14px;
+    color: #757575;
+}
+
+.ul .list img {
+    width: 100%;
+}
+
+.ul .up-img {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.ul .up-img img {
+    width: 30px;
+}
+
+/* 文章说明 */
+.title {
+    font-size: 16px;
+    margin: 10px 0;
+}
+
+.tip-wrap {
+    font-size: 14px;
+    background: #f3f3f3;
+    padding: 10px;
+    border-radius: 7px;
+}
+
+.tip-wrap .text {
+    font-size: 14px;
+    color: #555;
+    line-height: 1.5;
+}
+
+/* 配图 */
+.dy-wrap .list.tu {
+    align-items: flex-start;
+}
+
+.dy-wrap .list.tu .i-list {
+    position: relative;
+    margin-bottom: 15px;
+    margin-right: 15px;
+}
+
+.dy-wrap .list.tu .img {
+    height: 80px;
+    width: 80px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.dy-wrap .list.tu .img img {
+    height: 80px;
+    width: 80px;
+    object-fit: cover;
+}
+
+.dy-wrap .list.tu .aui-icon-close {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: #fff;
+    border: 1px dashed #aaa;
+    border-radius: 50%;
+    padding: 2px;
+}
+
+/* 输入框 */
+.des-wrap .input input {
+    width: 100%;
+    padding: 10px;
+    background: #eee;
+    border-radius: 5px;
+    box-sizing: border-box;
+}

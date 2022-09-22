@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>小火苗</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <!-- <div class="wrap">
+            <div class="flex-c">
+                <button class="new-submit" onclick="useRTC(1)">用户1</button>
+            </div>
+            <div class="flex-c">
+                <button class="new-submit" onclick="useRTC(2)">用户2</button>
+            </div>
+            <div class="flex-c">
+                <button class="new-submit" onclick="submit()">对方已进入房间</button>
+            </div>
+            <div class="flex-c">
+                <button class="new-btn" onclick="exitRoom()">离开房间</button>
+            </div>
+        </div> -->
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script>
+    apiready = function() {
+        _listener('keyback', function() {
+            api.execScript({
+                name: 'frame4/meiyan_win',
+                frameName: 'frame4/meiyan_frm',
+                script: 'exitRoom()'
+            })
+        })
+        _openFrame('frame4/meiyan_frm', 1, 1);
+    }
+</script>
+
+</html>

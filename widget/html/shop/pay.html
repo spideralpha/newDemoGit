@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html class="htmlWeiLei">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport"
+        content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>title</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/aui_font.css">
+    <link rel="stylesheet" href="../../css/dingdan.css">
+    <link rel="stylesheet" href="../../css/pay.css">
+    <style>
+        .no-result {
+            line-height: 80px;
+            text-align: center;
+            background: #fff;
+            color: #888;
+        }
+
+        h3 {
+            background: #eee;
+            font-size: 14px;
+            height: 30px;
+            line-height: 30px;
+            padding: 0 5px;
+        }
+
+        footer {
+            background: #fff;
+            width: 100%;
+
+        }
+
+        .bottom {
+            line-height: 25px;
+            padding: 5px 10px;
+            background: #fff;
+        }
+
+        ul.bottom li {
+            border: none;
+            display: flex;
+            justify-content: space-between;
+            font-size: 16px;
+            color: #d43d3d;
+        }
+
+        .del {
+            text-decoration: line-through;
+        }
+
+        ul.bottom li .left {
+            text-align: justify;
+        }
+
+        .info .jifen.active .check {
+            background: url('../../image/select3.png');
+            background-size: 20px;
+        }
+
+        .check {
+            width: 20px;
+            height: 20px;
+            /* border: 1px solid #eee; */
+            margin-right: 10px;
+        }
+
+        .info li {
+            display: flex;
+            line-height: 30px;
+            outline: none;
+            align-items: center;
+            padding: 3px 10px;
+            border-bottom: 1px solid #ddd;
+            font-size: 14px;
+        }
+
+        .info li .left {
+            width: 25%;
+        }
+
+        .info li .right {
+            text-align: right;
+        }
+
+        .info li input {
+            width: 100%;
+            outline: none;
+            text-align: right;
+
+        }
+
+        footer button {
+            outline: none;
+            margin: 20px 10%;
+            /* box-shadow: 0 10px 10px #fdf5d8; */
+            float: right;
+            line-height: 40px;
+            height: 40px;
+            width: 80%;
+            font-size: 12px;
+            border: 0;
+            border-radius: 20px;
+            background: #E01200;
+            color: #fff;
+        }
+
+        .beizhu {
+            border: 1px solid #eee;
+        }
+
+        .beizhu input {
+            width: 96%;
+            padding: 3px 2%;
+            line-height: 20px;
+            outline: none;
+        }
+
+        .total-info {
+            text-align: right;
+            color: #757575;
+            margin-top: 10px;
+        }
+
+        .total-info .t-money {
+            font-size: 13px;
+            margin-left: 10px;
+            color: #333;
+        }
+
+        .total-info .t-money .t-price {
+            color: #d43d3d;
+        }
+
+        #shou-view {
+            background: #fff;
+        }
+
+        /* 地址 */
+        .a-wrap .list {
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .a-wrap .a-top {
+            margin-bottom: 5px;
+        }
+
+        .a-wrap .address {
+            font-size: 14px;
+            color: #555;
+        }
+
+        .a-wrap .address .tab {
+            color: #fff;
+            background: orangered;
+            padding: 0 5px;
+            border-radius: 2px;
+        }
+
+        .a-wrap .name {
+            font-size: 16px;
+            margin-right: 10px;
+        }
+
+        .a-wrap .phone {
+            font-size: 13px;
+            color: #757575;
+        }
+
+        .a-wrap .edit {
+            color: #757575;
+            font-size: 13px;
+            text-align: right;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="orderList" id="view" v-cloak>
+        <h3>收货信息</h3>
+        <ul class="a-wrap new-padding-lr-10" id="shou-view">
+            <li v-if="area.id" class="list" onclick="_url({url: 'shop/area', title: '地址管理', moreTitle: '添加地址'})">
+                <div class="a-top">
+                    <span class="name">{{area.receiver}}</span>
+                    <span class="phone">{{area.mobile}}</span>
+                </div>
+                <div class="flex-bt">
+                    <div class="address">{{area.area}} {{area.address}}</div>
+                    <div class="edit"><i class="aui-iconfont aui-icon-pencil"></i></div>
+                </div>
+            </li>
+            <li v-else class="list" onclick="_url({url: 'shop/area', title: '地址管理', moreTitle: '添加地址'})">
+                <div class="a-top">请先添加地址</div>
+            </li>
+        </ul>
+        <h3>商品信息</h3>
+        <ul class="orderUl">
+            <li>
+                <div class="goodsList">
+                    <ul>
+                        <li class="clearfix">
+                            <div style="display: flex;width: 100%;">
+                                <div class="goodsPic">
+                                    <img :src="gList.image" alt="" />
+                                </div>
+                                <div class="goodsInfo">
+                                    <p class="goodsName">
+                                        <span>{{ gList.name }}</span>
+                                        <!-- <span class="goodsPrice">￥128</span> -->
+                                    </p>
+                                    <p class="goodsName oldPrice" style="color:#999999;">
+                                        <span>数量</span>
+                                        <span class="goodsPrice">x1</span>
+                                    </p>
+                                    <!-- <p class="goodsName oldPrice" style="color:#999999;">
+										<span>运费</span>
+										<span class="goodsPrice">￥20</span>
+									</p> -->
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="beizhu"><input type="text" placeholder="填写订单备注" v-model="beizhu">
+                </div>
+                <div class="total-info">
+                    <span class="t-num">共1件</span>
+                    <span class="t-money">小计：<span class="t-price">{{gList.price}}积分</span></span>
+                </div>
+            </li>
+        </ul>
+        <div>
+            <h3>结算信息</h3>
+            <ul class="bottom">
+                <li><span class="left">总计:</span><span class="right" style="font-size:20px;">{{gList.price}}积分</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <footer>
+        <button class="new-submit" onclick="submit()">立即支付</button>
+    </footer>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/jquery.js"></script>
+<script type="text/javascript" src="../../script/ffkj.js"></script>
+<script type="text/javascript" src="../../script/vue.js"></script>
+<script type="text/javascript">
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            gList: {},
+            id: 0, // 商品id
+            beizhu: '',
+            myuserid: 0,
+            area: {},
+            dikou: 1,
+            config: {}, // 配置信息
+            user: {}, // 用户信息
+        },
+        methods: {
+            _url(param, url) {
+                _url(param, url);
+            },
+            
+        }
+    })
+
+    apiready = function () {
+        view.id = api.pageParam['id'];
+        view.myuserid = $api.getStorage('userid');
+        getgoods();
+        _listener('viewappear', function () {
+            getAddress();
+            _loadingClose();
+        })
+        _listener('resume', function () {
+            _loadingClose();
+        })
+
+    }
+
+
+
+    // 获取商品详情
+    function getgoods() {
+        _ajax('api/mall.goods/goodsDetail', function (ret, err) {
+            if (ret && ret.ret) {
+                view.gList = ret.ret;
+            }
+        }, {
+            goods_id: view.id
+        })
+    }
+
+    // 获取地址
+    function getAddress() {
+        _ajax('api/mall.member/addressList', function (ret, err) {
+            console.log(JSON.stringify(ret))
+            console.log(JSON.stringify(err))
+            if (ret && ret.ret) {
+                ret = ret.ret;
+                if (ret.data.length > 0) {
+                    view.area = ret.data[0];
+                }
+            }
+        }, {
+            uid: view.myuserid
+        })
+    }
+
+    // 提交订单
+    function submit() {
+        if (!view.area.id) {
+            _msg('地址不能为空');
+            return;
+        }
+        // var gateway = $(".zhifu input[name='zf']:checked").val();
+        var obj = {
+            goods_id: view.id,
+            num: 1,
+            address_id: view.area.id,
+            remark: view.beizhu,
+            gateway: 1,
+            uid: view.myuserid,
+            dikou: 0
+        }
+        console.log(JSON.stringify(obj))
+        _loading();
+        _ajax('api/mall.goods/directCreateOrder', function (ret, err) {
+            console.log(JSON.stringify(ret))
+            console.log(JSON.stringify(err))
+            var msg = ret.ret ? '下单成功' : '操作失败';
+            _loadingClose();
+            _msg(msg);
+            if (ret && ret.ret) {
+                _url({winName: 'shop/shop'}, 'shop/order_win')
+            }
+        }, obj)
+    }
+</script>
+
+</html>

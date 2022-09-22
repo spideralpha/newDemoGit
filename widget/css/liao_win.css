@@ -1,0 +1,86 @@
+/* 聊天背景 */
+.ltbg {
+    z-index: 0;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+}
+
+.ltbg>img {
+    filter: blur(15px);
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;
+    transform: scale(1.2);
+}
+
+.title {
+    height: auto;
+}
+
+header {
+    z-index: 1;
+    background: transparent;
+    /* background: rgba(100, 100, 100, 0.37); */
+}
+
+/* 家族 右边显示 */
+.jiazu {
+    display: flex;
+    align-items: center;
+}
+
+.jiazu .avatar {
+    width: 24px;
+    height: 24px;
+    border-radius: 12px;
+    margin-right: 14px;
+}
+
+.jiazu .avatar img {
+    width: 24px;
+    height: 24px;
+    border-radius: 12px;
+}
+
+.jiazu .btn {
+    height: 30px;
+    border-radius: 30px;
+    align-items: center;
+    display: flex;
+    color: #fff;
+    font-size: 13px;
+}
+
+/* 群聊 */
+.jiazu .aui-icon-my {
+    font-weight: bold;
+    color: #fff;
+    font-size: 13px;
+}
+
+/* 亲密度 */
+.love-head {
+    width: 35px;
+    height: 35px;
+    border-radius: 5px;
+}
+
+.love-score {
+    line-height: 0;
+    margin: 0 10px;
+}
+
+.love-score img {
+    width: 60px;
+}
+
+.love-score p {
+    font-weight: normal;
+    text-align: center;
+    font-size: 10px;
+    color: #fff;
+    margin-top: -5px;
+}

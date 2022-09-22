@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>小火苗</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/ready_rz.css">
+    <style>
+
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <div class="wrap ">
+            <img class="bg" src="../../image/member/authentication_popup_education_bg.png" alt="">
+            <div class="content">
+                <div class="flex">
+                    <img class="icon" src="../../image/member/authentication_popup_education_bg_icon.png" alt="">
+                    <div class="info">
+                        <p class="text">毕业证编号:：<span class="num" style="color: #35AB64;">188****0000</span></p>
+                        <p class="text">认证日期：{{ffInfo.date}}</p>
+                    </div>
+                </div>
+                <p class="safe"><span class="safe-icon"></span>个人隐私信息安全保障中</p>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+        },
+        methods: {
+            // 跳转
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+        }
+    })
+    getRZInfo(function(data) {
+            view.ffInfo = data;
+        }, 3)
+</script>
+
+</html>

@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/news.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui_font.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/gonghui.css" />
+
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <div class="field">
+            <div class="label">申请人姓名:</div>
+            <div class="input">
+                <input type="text" placeholder="请输入公会申请者姓名" v-model="nickname">
+            </div>
+        </div>
+        <div class="field">
+            <div class="label">身份证号码:</div>
+            <div class="input">
+                <input type="text" placeholder="请输入身份证号码" v-model="idcard">
+            </div>
+        </div>
+        <div class="field">
+            <div class="label">联 系 方 式:</div>
+            <div class="input">
+                <input type="text" placeholder="请输入公会申请者联系电话" v-model="phone">
+            </div>
+        </div>
+        <div class="field">
+            <div class="label">公 会 名 称:</div>
+            <div class="input">
+                <input type="text" placeholder="请输入公会名称" v-model="name">
+            </div>
+        </div>
+        <div class="field">
+            <div class="label">主 播 人 数:</div>
+            <div class="input">
+                <input type="text" placeholder="请输入你的主播人数" v-model="count">
+                <span>注：主播人数是指公会旗下主播数量,请如实填写,以免造成不必要的损失。</span>
+            </div>
+        </div>
+        <div class="uppic" onclick="selectImg()">
+            <img v-if="image" src="../../image/member/upload_image.png" alt="">
+            <img v-else class="rz-img" :src="returnImg(image)" alt="">
+            <span v-if="image">点击上传照片</span>
+        </div>
+        <div class="tips">
+            <div class="tip">1.确保是本人真实照片,正面照片</div>
+            <div class="tip">2.图片清晰可见,色彩明亮</div>
+            <div class="tip">3.本图片仅作为认证使用,不会对外公开。</div>
+        </div>
+        <div class="xieyi flex-c" onclick="_url({url:'about', id:13 , title:'小火苗公会协议书'})"><img @click.stop="xieyi=!xieyi"
+                v-if="!xieyi" src="../../image/member/company_not_agree.png" alt=""><img @click.stop="xieyi=!xieyi"
+                v-else src="../../image/member/company_agree.png" alt="">我已阅读并同意《小火苗公会协议书》</div>
+        <div class="btn" onclick="submit()">确认申请</div>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/jquery.js"></script>
+<script type="text/javascript" src="../../script/vue.js"></script>
+<script type="text/javascript" src="../../script/ffkj.js"></script>
+<script type="text/javascript">
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+            xieyi: false,
+
+            nickname: '',
+            idcard: '',
+            phone: '',
+            name: '',
+            count: '',
+            image: '',
+        },
+        methods: {
+            // 跳转
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+        }
+    })
+
+    // 上传图片
+    function selectImg() {
+        openPic(function (result) {
+            view.image = result.data;
+        })
+    }
+
+    function submit() {
+        if (!$.trim(view.nickname)) {
+            _msg('请输入公会申请者姓名');
+            return;
+        }
+        if (!$.trim(view.idcard)) {
+            _msg('请输入身份证号码');
+            return;
+        }
+        if (!$.trim(view.phone)) {
+            _msg('请输入公会申请者联系电话');
+            return;
+        }
+        if (!$.trim(view.name)) {
+            _msg('请输入公会名称');
+            return;
+        }
+        if (!$.trim(view.count)) {
+            _msg('请输入你的主播人数');
+            return;
+        }
+        if (!$.trim(view.image)) {
+            _msg('请上传照片');
+            return;
+        }
+        _loading();
+        _upImg({
+            image: view.image
+        }, function (img) {
+            _ajax('api/proxy/join', function (ret, err) {
+                _loadingClose();
+                _msg(ret.msg);
+                if (ret && ret.code == 200) {
+                    timerWin();
+                }
+            }, {
+                user_id: $api.getStorage('userid'),
+                nickname: view.nickname,
+                idcard: view.idcard,
+                phone: view.phone,
+                name: view.name,
+                count: view.count,
+                image: img,
+            })
+        })
+    }
+</script>
+
+</html>

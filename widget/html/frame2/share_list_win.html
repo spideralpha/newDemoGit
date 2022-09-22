@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/aui_font.css">
+    <link rel="stylesheet" href="../../css/sh_win.css">
+
+</head>
+
+<body>
+    <header id="view" v-cloak>
+        <div class="header">
+            <i class="aui-iconfont aui-icon-left" onClick="_closeToWin()"></i>
+            <div class="tabs">
+                <div class="tab active" tapmode onclick="randomSwitchBtn(0)">最近</div>
+                <div class="tab" tapmode onclick="randomSwitchBtn(1)">好友</div>
+                <div class="tab" tapmode onclick="randomSwitchBtn(2)">关注</div>
+                <div class="tab" tapmode onclick="randomSwitchBtn(3)">粉丝</div>
+            </div>
+        </div>
+    </header>
+
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/vue.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/group.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            index: 0
+        },
+        methods: {}
+    })
+
+    apiready = function() {
+        $api.fixStatusBar($api.dom('header'))
+        _heibai(1);
+        var h = $api.offset($api.dom('header')).h;
+        var name = api.pageParam['name'];
+        var id = api.pageParam['id'];
+        var frmArr = [];
+        var pageParam = [{
+            type: 0
+        }, {
+            types: 3
+        }, {
+            types: 1
+        }, {
+            types: 2
+        }];
+        for (var i = 0; i < 4; i++) {
+            frmArr.push('frame2/share_list');
+            pageParam[i].id = id;
+        }
+        groupInit('share', frmArr, h, 0, 0, '.tab', pageParam, {
+            pre: 2
+        });
+
+        _listener('newmsg', function(ret) {
+            showMsgFrm(ret.value.data)
+        })
+    }
+
+    function randomSwitchBtn(index) {
+        active(index, '.tab')
+        api.setFrameGroupIndex({
+            name: 'share',
+            index: index,
+            scroll: true, //是否平滑滚动至目标窗口，即是否带有动画
+            reload: false, // 刷新
+        });
+    }
+</script>
+
+</html>

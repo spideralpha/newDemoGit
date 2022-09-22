@@ -1,0 +1,105 @@
+html,
+body {
+    margin: 0;
+}
+
+header {
+    display: flex;
+    align-items: center;
+    height: 50px;
+    padding: 0 14px;
+    position: sticky;
+    top: 0;
+    background: #fff;
+}
+
+header i.aui-icon-left {
+    font-weight: bold;
+    margin-right: 10px;
+    font-size: 16px;
+}
+
+header span {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.list {
+    padding: 10px 14px;
+}
+
+.list .item {
+    display: flex;
+    align-items: center;
+}
+
+.list .item .avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 6px;
+    margin-right: 12px;
+}
+
+.list .item .right {
+    height: 60px;
+    padding: 10px 0;
+    width: calc(100% - 72px);
+    border-bottom: 1px solid #f3f3f3;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.list .item .right .info {
+    height: 100%;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+}
+
+.list .item .right .info .username {
+    font-size: 18px;
+    display: flex;
+}
+
+.list .item .right .info .tag {
+    display: flex;
+}
+
+.list .item .right .info .tag .tagitem {
+    display: flex;
+    align-items: center;
+    font-size: 12px;
+}
+
+.list .item .right .info .tag .tagitem img {
+    width: 16px;
+    height: 16px;
+    margin-right: 4px;
+}
+
+.list .item .right .info .todayactive {
+    font-size: 12px;
+    color: #787878;
+}
+
+.list .item .right .juese {
+    font-size: 12px;
+}
+
+.list .item .right .juese span {
+    margin-right: 10px;
+    color: #999;
+}
+
+.btn {
+    font-size: 10px;
+    padding: 5px 10px;
+    background: #ff728e;
+    color: #fff;
+    border-radius: 15px;
+}
+
+.new-noble {
+    height: 20px;
+}

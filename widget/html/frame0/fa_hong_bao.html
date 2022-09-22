@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/fhb.css">
+</head>
+
+<body>
+    <header>
+        <div class="head new-padding-10 flex-bt">
+            <div class="back" style="color: #fff;" tapmode onclick="_closeToWin()">取消</div>
+            <div class="title">发红包</div>
+            <div class="more hide">占位</div>
+        </div>
+    </header>
+    <div class="wrap" id="view" v-cloak>
+        <div class="flex-bt w-bg new-margin-10 new-padding-10">
+            <span>金额</span>
+            <div class="input money">
+                <input type="number" style="text-align: right;" placeholder="0.00" onkeyup="limitMoney(this)">
+                <span>币</span>
+            </div>
+        </div>
+        <div class="content w-bg new-margin-10 new-padding-10">
+            <textarea name="" id="js-content" placeholder="恭喜发财，大吉大利"></textarea>
+        </div>
+        <h1 style="text-align: center;" id="js-money">0.00</h1>
+        <button class="new-submit" onclick="selectType()">塞钱进红包</button>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script src="../../script/fhb.js"></script>
+<script>
+    var touserid;
+    apiready = function() {
+        $api.fixStatusBar($api.dom('header'));
+        touserid = api.pageParam['touserid'];
+        view.payType = 0;
+
+        _getUser(function(ret) {
+            console.log(JSON.stringify(ret))
+            view.otherInfo = ret.result;
+        }, touserid, 1)
+
+        // 自己的用户信息
+        _getUser(function(ret) {
+            console.log(JSON.stringify(ret))
+            view.ffInfo = ret.result;
+        })
+        // 设置了支付密码
+        _listener('pay_refresh', function(ret) {
+            _getUser(function(ret) {
+                console.log(JSON.stringify(ret))
+                view.ffInfo = ret.result;
+            });
+        })
+        _listener('hongbao_pwd', function(ret) {
+            var pwd = ret.value.pwd;
+            var money = $.trim($('.input input').val());
+            submit(money, function() {
+                _loadingClose();
+                pushMsg(touserid);
+                timerWin()
+            }, pwd);
+        })
+    }
+</script>
+
+</html>

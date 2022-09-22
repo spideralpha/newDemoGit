@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/aui_font.css">
+    <style>
+        html,
+        body {
+            margin: 0;
+            background-color: rgb(232, 41, 126);
+        }
+
+        .bgimg {
+            position: absolute;
+            top: 60px;
+            left: 0;
+            width: 100vw;
+        }
+
+        .show {
+            position: absolute;
+            padding-top: 80px;
+            width: 80vw;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            left: 10vw;
+        }
+
+        .show .tab {
+            font-size: 14px;
+            position: relative;
+            color: rgb(83, 83, 83);
+        }
+
+        .tab::before {
+            content: '';
+            width: 60px;
+            height: 2px;
+            background: linear-gradient(to left, rgb(83, 83, 83), rgba(83, 83, 83, 0.123));
+            position: absolute;
+            top: calc(50% - 1px);
+            left: -70px;
+        }
+
+        .tab::after {
+            content: '';
+            width: 60px;
+            right: -70px;
+            height: 2px;
+            background: linear-gradient(to right, rgb(83, 83, 83), rgba(83, 83, 83, 0.123));
+            position: absolute;
+            top: calc(50% - 1px);
+        }
+
+        .show .price {
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            font-size: 12px;
+        }
+
+        .show .price .value {
+            font-size: 68px;
+            color: red;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+
+        .right .today {
+            background-color: rgb(232, 41, 126);
+            border-radius: 20px 20px 20px 0;
+            padding: 2px 4px;
+            color: #fff;
+            margin-bottom: 10px;
+        }
+
+        .label {
+            background-color: rgba(255, 128, 185, 0.205);
+            padding: 4px 10px;
+            color: rgb(179, 116, 0);
+            font-size: 10px;
+            border-radius: 20px;
+            margin-top: 20px;
+        }
+
+        .aui-icon-question {
+            font-size: 18px;
+            position: absolute;
+            right: 4px;
+            top: 80px;
+        }
+
+        .btn {
+            margin-top: 60px;
+            background-color: rgb(255, 208, 0);
+            border-radius: 30px;
+            padding: 8px 44px;
+            font-size: 14px;
+            color: rgb(199, 113, 0);
+            box-shadow: 0 0 6px #ccc;
+        }
+
+
+        .rulemomdal{
+            position: fixed;
+            top: 0;
+            right: 0;
+            left:0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, .3);
+        }
+        .rulemomdal .rulebox{
+            width: 80vw;
+            height: 100vw;
+            background-color: #fff;
+            border-radius: 12px;
+            margin: calc(50vh - 50vw) 10vw;
+            position: relative;
+        }
+        .rulemomdal .rulebox .head{
+            font-size: 14px;
+            padding: 12px 0;
+            text-align: center;
+        }
+        .rulemomdal .rulebox .content{
+            font-size: 12px;
+            padding: 6px 12px;
+            overflow: auto;
+            height: 80%;
+        }
+        .rulemomdal .rulebox .aui-icon-close{
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <img src="../../image/index/redpacket_bg.png" class="bgimg">
+        <div class="show">
+            <div class="tab">话费福利</div>
+            <div class="price">
+                <div class="value">50</div>
+                <div class="right">
+                    <div class="today">每日限量</div>
+                    <div class="danwei">元</div>
+                </div>
+            </div>
+            <div class="label">
+                「稳赚不赔」 充值49元得600金币，返50元话费
+            </div>
+            <span class="aui-iconfont aui-icon-question" @click="rulemodal = true"></span>
+            <div class="btn" @click="chongzhi">领取你的专属话费奖励</div>
+        </div>
+
+        <div class="rulemomdal" v-show="rulemodal">
+            <div class="rulebox">
+                <div class="head">活动规则</div>
+                <div class="content">
+                    <p>1、用户在活动中可以通过充值50元档位的金币套餐，免费领 取50元福利话费的权益。
+                    <p>2、50元福利话费的领取方式为：在充值的首日可领取第一 期，剩余的40元话费分4期返还，需要在固定页面打卡领取话费。 如逾期未打卡领取，该期的话费福利会失效。如漏打卡，可通过 邀请好友补签一次。
+                    <p>3、每个用户注册后仅有一次获得该福利的机会。
+                    <p>4、正常情况下用户完成打卡后，对应的话费会直接充值到用 户当前绑定的手机号上。
+                    <p>5、用户以任何不正当手段或舞弊方式参与本活动，一经发 现，我们有权对该用户的账户进行异常标记。对于异常标记的用 户的奖励发放，我们有权采取不予发放剩余话费的措施。亦有追 讨已发放话费的权利。
+                    <p>6、用户参与本次活动即表示同意接受相关规则的约束。我们有权根据实际运营情况提前终止本次活动。我们有权对规则进行 变更，用户继续参与活动视为对活动规则的接受。
+                </div>
+                <span class="aui-iconfont aui-icon-close" @click="rulemodal = false"></span>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="../../script/api.js"></script>
+    <script type="text/javascript" src="../../script/jquery.js"></script>
+    <script type="text/javascript" src="../../script/zhifu.js"></script>
+    <script type="text/javascript" src="../../script/jsencrypt.js"></script>
+    <script type="text/javascript" src="../../script/ffkj.js"></script>
+    <script type="text/javascript" src="../../script/vue.js"></script>
+    <script>
+        var view = new Vue({
+            el: '#view',
+            data: {
+                rulemodal: false
+            },
+            methods: {
+                chongzhi(){
+                    showPayWay(50, function(pIndex){
+                        
+                    })
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>

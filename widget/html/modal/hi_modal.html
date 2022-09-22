@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>小火苗</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/aui_font.css">
+    <link rel="stylesheet" href="../../css/modal.css">
+    <style>
+        .modal {
+            background: #fff;
+            border-radius: 15px;
+            width: 90vw;
+        }
+
+        .m-header .aui-iconfont {
+            padding: 10px;
+            font-size: 20px;
+        }
+
+        .modal .img-bg {
+            width: 60%;
+            margin-top: -8%;
+        }
+
+        .u-ul {
+            margin: 20px;
+            max-height: 50vh;
+            overflow-y: auto;
+        }
+
+        .u-ul .yuan {
+            width: 15px;
+            height: 15px;
+            border: 1px solid;
+            color: #999;
+            display: inline-block;
+            border-radius: 50%;
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: #fff;
+        }
+
+        .active .yuan {
+            background-image: url('../../image/modal/ms_round_xz_small.png');
+            background-size: 100%;
+            border: 0;
+        }
+
+        .list {
+            width: calc((90vw - 40px) / 3);
+            box-sizing: border-box;
+            padding: 5px 10px;
+        }
+
+        .h-tx {
+            position: relative;
+        }
+
+        .h-tx img {
+            width: calc((90vw - 40px) / 3 - 20px);
+            height: calc((90vw - 40px) / 3 - 20px);
+            border-radius: 7px;
+        }
+
+        .name {
+            font-size: 12px;
+            color: #999;
+            text-align: center;
+        }
+
+        /* 心动 */
+        .heart-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 20px;
+            background: linear-gradient(to right, #7338d8, #ff66c1);
+            color: #fff;
+            box-shadow: 0 2px 2px;
+            width: 80%;
+            line-height: 35px;
+            margin: 20px 0;
+        }
+
+        .heart-img {
+            width: 20px;
+            animation-name: heart;
+            animation-duration: 0.5s;
+            animation-iteration-count: infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes heart {
+            0% {
+                transform: scale(1);
+            }
+
+            100% {
+                transform: scale(1.1);
+            }
+        }
+
+        .area {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            background: rgba(0, 0, 0, 0.8);
+            font-size: 10px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            padding: 0 5px;
+        }
+
+        .area-icon {
+            background-image: url('../../image/modal/area.png');
+            background-size: 100%;
+            width: 10px;
+            height: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <div class="modal-bg" onclick="_close()">
+            <div class="modal" @click.stop>
+                <div class="m-header flex-bt">
+                    <i class="aui-iconfont aui-icon-gear" onclick="_url({url:'frame4/set_tong', title:'通用设置'})"></i>
+                    <img class="img-bg" src="../../image/modal/hello_top_img.png" alt="">
+                    <i class="aui-iconfont aui-icon-close" onclick="_close()"></i>
+                </div>
+                <ul class="u-ul flex-w">
+                    <li class="list" :class="{'active':m.hi}" @click.stop="m.hi=!m.hi" v-for="(m, index) in ffList">
+                        <div class="h-tx">
+                            <img :src="returnImg(m.user_head)" onerror="this.src='../../image/touxiang.png'" alt="">
+                            <span class="yuan"></span>
+                            <span class="area" v-if="m.city"><i class="area-icon"></i>{{m.city}}</span>
+                        </div>
+                        <p class="name">{{m.user_name}}</p>
+                    </li>
+                </ul>
+                <div class="flex-c">
+                    <button class="heart-btn" onclick="submit()"><img class="heart-img" src="../../image/modal/heart_animation.png" alt=""> 打招呼</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script src="../../json/hi.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+        },
+        methods: {
+            // 跳转
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+        }
+    })
+    apiready = function() {
+        getData()
+    }
+    // 获取打招呼的用户
+    function getData() {
+        _ajax('api/user/index', function(ret, err) {
+            if (ret && ret.code == 200) {
+                var data = ret.result;
+                for (var i = 0, len = data.length; i < len; i++) {
+                    data[i].hi = true;
+                }
+                view.ffList = data;
+            }
+        }, {
+            user_id: $api.getStorage('userid'),
+            longitude: $api.getStorage('lon'),
+            latitude: $api.getStorage('lat'),
+            fate: 1,
+        })
+    }
+    // 确定打招呼
+    function submit() {
+        var idstr = [];
+        for (var i = 0, len = view.ffList.length; i < len; i++) {
+            if (view.ffList[i].hi) {
+                idstr.push(view.ffList[i].user_id)
+            }
+        }
+        idstr = idstr.join(',');
+        // _ajax('api/privatechat/greet', function(ret, err) {
+        _ajax('api/privatechat/fate', function(ret, err) {
+            if (ret && ret.code == 400) {
+                _msg(ret.msg)
+            } else {
+                _msg('打招呼成功');
+                setTimeout(function() {
+                    api.closeFrame()
+                }, 500)
+            }
+        }, {
+            id: idstr,
+            user_id: $api.getStorage('userid')
+        })
+    }
+    // 
+    function _close() {
+        api.closeFrame();
+    }
+</script>
+
+</html>

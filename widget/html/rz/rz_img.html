@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/aui_font.css">
+    <style>
+        html,
+        body {
+            background: #EEEFF1;
+        }
+
+        header .li {
+            border: 3px solid;
+            border-radius: 15px;
+            width: 25vw;
+            text-align: center;
+            padding: 3px 0;
+            font-size: 13px;
+            font-weight: bold;
+            color: #ddd;
+        }
+
+        header .li.active {
+            color: #F46CEF;
+        }
+
+        header .line {
+            height: 3px;
+            width: calc((25vw - 20px) / 2);
+            background: #ddd;
+        }
+
+        header .line.active {
+            background: #F46CEF;
+        }
+
+
+        /* 上传照片 */
+        .your h3 {
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .your .img-wrap {
+            width: 70px;
+            height: 70px;
+            margin-top: 20px;
+            border: 1px dashed #aaa;
+            position: relative;
+        }
+
+        .your .img {
+            width: 70px;
+            height: 70px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .your .img img {
+            width: 70px;
+            height: 70px;
+        }
+
+        .your .img-wrap .aui-icon-close {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            border: 1px dashed;
+            color: #555;
+            border-radius: 50%;
+            padding: 2px;
+            background: #fff;
+        }
+
+        /* 面容识别 */
+        .face {
+            text-align: center;
+        }
+
+        .face img {
+            width: 100px;
+        }
+
+        .face h3 {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+
+        <header class="w-bg">
+            <ul class="ul flex new-padding-10">
+                <li class="li active">上传照片</li>
+                <div class="line" :class="{'active':nextType > 0}"></div>
+                <li class="li" :class="{'active':nextType > 0}">面容识别</li>
+                <div class="line" :class="{'active':nextType > 1}"></div>
+                <li class="li" :class="{'active':nextType > 1}">
+                    <span v-if="successType!=400">认证完成</span>
+                    <span v-if="successType==400">认证失败</span>
+                </li>
+            </ul>
+        </header>
+        <div class="wrap">
+            <!-- 上传照片 -->
+            <div class="your new-padding-10 w-bg new-margin-t-10" v-if="nextType == 0">
+                <h3>你的照片</h3>
+                <p class="font-s">1、请上传1张形象良好的正脸照片</p>
+                <p class="font-s">2、保证照片像素清晰、五官可见</p>
+                <p class="font-s">3、通过认证后，此照片将上传到你的相册</p>
+                <div class="img-wrap " v-if="img">
+                    <div class="img img-h">
+                        <img class="add" :src="img">
+                    </div>
+                    <i class="aui-iconfont aui-icon-close" onclick="deleteImg()"></i>
+                </div>
+                <div class="img-wrap flex-c" v-else>
+                    <img class="add" src="../../image/add.png" onclick="selectImg()">
+                </div>
+            </div>
+            <!-- 面容识别 -->
+            <div class="face w-bg new-padding-10 new-margin-t-10" v-if="nextType == 1">
+                <div class="img">
+                    <img src="../../image/icon/img_face_certification.png" alt="">
+                </div>
+                <h3>面容识别</h3>
+                <p class="font-s">将通过面容识别你的照片是否为本人，请在光线充足的位置进行认证。</p>
+            </div>
+            <!-- 认证成功 -->
+            <div class="face w-bg new-padding-10 new-margin-t-10" v-if="nextType == 2">
+                <div class="img">
+                    <img v-if="successType!=400" src="../../image/icon/img_face_certification_pass.png" alt="">
+                    <img v-if="successType==400" src="../../image/icon/img_face_certification_fail.png" alt="">
+                </div>
+                <h3 v-if="successType!=400">认证成功</h3>
+                <h3 v-if="successType==400">认证失败</h3>
+            </div>
+            <button class="new-submit" onclick="next();" v-if="nextType == 0">下一步</button>
+            <button class="new-submit" onclick="submitFace();" v-if="nextType == 1">开始识别</button>
+            <button class="new-submit" onclick="closeFace()" v-if="nextType == 2 && successType!=400">完成</button>
+            <button class="new-submit" onclick="resetFace();" v-if="nextType == 2 && successType==400">重新认证</button>
+        </div>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+
+<script src="../../script/rz.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            img: '',
+            biz_token: '',
+            nextType: 0,
+            successType: 200,
+        },
+        methods: {
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+            
+        }
+    })
+
+    apiready = function () {
+        _listener('rz_keyback', function () {
+            if (view.nextType != 0) {
+                view.nextType = view.nextType - 1;
+            } else {
+                timerWin(300, 'index_win');
+            }
+        })
+    }
+
+
+    // 选择照片
+    function selectImg() {
+        openPic(function (ret) {
+            view.img = ret.data;
+        })
+    }
+
+    // 删除图片
+    function deleteImg() {
+        view.img = '';
+        view.biz_token = '';
+    }
+
+    // 下一步
+    function next() {
+        if (!view.img) {
+            _msg('请先上传照片');
+            return;
+        }
+        if (!view.biz_token) {
+            _loading('请稍后');
+            dealImg(view.img, function (img) {
+                jiaoyan(img, function (biz_token) {
+                    view.biz_token = biz_token;
+                    view.nextType = 1;
+                });
+            })
+        } else {
+            view.nextType = 1;
+        }
+    }
+
+    // 打开faceid
+    function submitFace() {
+        showFace(view.biz_token, function (code) {
+            view.nextType = 2;
+            view.successType = code;
+        });
+    }
+
+
+    // 关闭
+    function closeFace() {
+        timerWin(300, 'index_win');
+    }
+
+    // 重新认证
+    function resetFace() {
+        view.img = '';
+        view.biz_token = '';
+        view.nextType = 0;
+    }
+</script>
+
+</html>

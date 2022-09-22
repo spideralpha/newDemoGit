@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/news.css">
+    <style>
+        .img {
+            width: 100vw;
+            height: 100vh;
+            overflow-y: auto;
+            background: #333333;
+        }
+
+        .img img {
+            width: 100vw;
+        }
+
+        .zan-icon {
+            width: 20px;
+            height: 20px;
+            display: inline-block;
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            background-image: url('../../image/icon/d0.png');
+        }
+
+        .zan-icons {
+            background-image: url('../../image/icon/d4.png');
+        }
+
+        footer {
+            position: fixed;
+            bottom: 10px;
+            width: 100%;
+        }
+
+        .zan-wrap {
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 50%;
+            text-align: center;
+
+            width: 50px;
+            height: 50px;
+        }
+
+        .zan-wrap .num {
+            color: #fff;
+            font-size: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="img flex-c" id="view" v-cloak>
+        <img id="scale-img" :src="img" onerror="this.src='../../image/error-img.png'" alt="">
+        <footer class="flex-c" v-if="showZan==1">
+            <div class="zan-wrap flex-c flex-col" onclick="zan()">
+                <i class="zan-icon" :class="{'zan-icons':ffInfo.is_zan==1}"></i>
+                <p class="num">{{ffInfo.zan}}</p>
+            </div>
+        </footer>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/scale.js"></script>
+<script src="../../script/vue.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+            img: '',
+            showZan: 0,
+        },
+        methods: {
+            // 跳转
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+        }
+    })
+    apiready = function() {
+        view.showZan = api.pageParam['showZan'];
+        // imgRotateType = api.pageParam['imgRotateType'] || 0;
+        view.ffInfo = api.pageParam;
+        var img = view.ffInfo.pic[0];
+        if (img.indexOf('_100') != -1) {
+            img = img.replace('_100', '');
+        }
+        if (img.indexOf('_300') != -1) {
+            img = img.replace('_300', '');
+        }
+        if (img.indexOf('_thumb') != -1) {
+            img = img.replace('_thumb', '');
+        }
+        console.log(img)
+        _loading();
+        api.imageCache({
+            url: returnImg(img),
+            thumbnail: false
+        }, function(ret, err) {
+            _loadingClose();
+            if (ret) {
+                view.img = ret.url;
+                // $('.img img').attr('src', ret.url);
+            }
+        });
+    }
+
+    // 点赞
+    function zan() {
+        _ajax('api/Userimg/like', function(ret, err) {
+            _msg(ret.msg);
+            if (ret && ret.code == 200) {
+                if (view.ffInfo.is_zan == 1) {
+                    view.ffInfo.is_zan = 0;
+                    view.ffInfo.zan--;
+                } else {
+                    view.ffInfo.is_zan = 1;
+                    view.ffInfo.zan++;
+                }
+            }
+        }, {
+            user_id: $api.getStorage('userid'),
+            id: view.ffInfo.id,
+        })
+    }
+</script>
+
+</html>

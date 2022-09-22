@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport"
+        content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>title</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui_font.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/news.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/frame3.css" />
+    <style>
+        .base-icon {
+            width: 42px;
+            height: 25px;
+            display: inline-block;
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+        }
+
+        /* 我的 消息开启 */
+        .base-icon.my-msg {
+            background-image: url('../../image/icon/c2.png');
+        }
+
+        /* 我的 消息关闭 */
+        .base-icon.my-msg-close {
+            background-image: url('../../image/icon/c1.png');
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <section class="m-frame">
+
+            <ul class="item">
+                <li class="item_li" onclick="_url({url:'frame4/bang_ding_shou_ji_frm', title:'修改手机'})">
+                    <div class="lt">手机号码</div>
+                    <div class="rt">
+                        <span class="f-size12 phone">{{ffInfo.phone}}(仅自己可见)</span>
+                        <span class="aui-iconfont aui-icon-right"></span>
+                    </div>
+                </li>
+                <li class="item_li" onclick="_url({url:'user/pwd', title:'修改密码'})">
+                    <span class="lt">修改登录密码</span>
+                    <span class="aui-iconfont aui-icon-right"></span>
+                </li>
+
+            </ul>
+            <ul class="item">
+                <li class="item_li" onclick="clear_huncun()">
+                    <div class="lt">清除图片缓存</div>
+                    <div class="rt">
+                        <span class="f-size12 clearCache"></span>
+                        <span class="aui-iconfont aui-icon-right"></span>
+                    </div>
+                </li>
+            </ul>
+            <ul class="item">
+                <li class="item_li" onclick="openPage(1)">
+                    <div class="lt">平台使用规范</div>
+                    <div class="rt">
+                        <span class="f-size12"></span>
+                        <span class="aui-iconfont aui-icon-right"></span>
+                    </div>
+                </li>
+                <li class="item_li" onclick="openPage(2)">
+                    <div class="lt">用户使用协议</div>
+                    <div class="rt">
+                        <span class="f-size12"></span>
+                        <span class="aui-iconfont aui-icon-right"></span>
+                    </div>
+                </li>
+                <li class="item_li" onclick="openPage(3)">
+                    <div class="lt">用户隐私政策</div>
+                    <div class="rt">
+                        <span class="f-size12"></span>
+                        <span class="aui-iconfont aui-icon-right"></span>
+                    </div>
+                </li>
+            </ul>
+            <ul class="item">
+                <li class="item_li" onclick="_url({url: 'frame4/yi_jian_fan_kui_frame', title: '意见反馈'})">
+                    <div class="lt">意见反馈</div>
+                    <div class="rt">
+                        <span class="f-size12"></span>
+                        <span class="aui-iconfont aui-icon-right"></span>
+                    </div>
+                </li>
+            </ul>
+            <ul class="item">
+                <li class="item_li" onclick="zhuxiao()">
+                    <div class="lt">注销账号</div>
+                    <div class="rt">
+                        <span class="f-size12"></span>
+                        <span class="aui-iconfont aui-icon-right"></span>
+                    </div>
+                </li>
+            </ul>
+        </section>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/jquery.js"></script>
+<script type="text/javascript" src="../../script/ffkj.js"></script>
+<script type="text/javascript" src="../../script/vue.js"></script>
+<script type="text/javascript">
+    var view = new Vue({
+        el: '#view',
+        data: {
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+        }
+    })
+    apiready = function () {
+        view.ios = $api.getStorage('shang');
+        //获取缓存大小
+        api.getCacheSize(function (ret) {
+            var clearCache = ret.size / 1024 / 1024;
+            $api.html($api.dom('.clearCache'), clearCache.toFixed(2) + "MB")
+        });
+
+        // 获取用户信息
+        _getUser(function (ret) {
+            view.ffInfo = ret.result;
+        })
+    }
+
+    //清除缓存
+    function clear_huncun() {
+        api.clearCache(function () {
+            _msg('清除完成');
+            //获取缓存大小
+            api.getCacheSize(function (ret) {
+                var clearCache = ret.size / 1024 / 1024;
+                $api.html($api.dom('.clearCache'), clearCache.toFixed(2) + "MB")
+            });
+        });
+    }
+
+    // 修改隐身信息是否显示
+    function changeSocial(ziduan) {
+        view.ffInfo[ziduan] = view.ffInfo[ziduan] == 1 ? 0 : 1;
+        _ajax('user_info_edit.php', function (ret, err) {
+            console.log(JSON.stringify(ret))
+            console.log(JSON.stringify(err))
+        }, {
+            user_id: $api.getStorage('userid'),
+            ziduan: ziduan,
+            value: view.ffInfo[ziduan]
+        })
+    }
+
+    // 注销账号
+    function zhuxiao() {
+        var obj = {
+            msg: '注销账号会清空您的所有的账信息，是否要继续注销？'
+        }
+        _confirm(obj, function (bIndex) {
+            if (bIndex == 1) {
+                _ajax('api/Member/deleteAccount', function (ret, err) {
+                    console.log(JSON.stringify(ret))
+                    console.log(JSON.stringify(err))
+                    _msg(ret.msg);
+                    if (ret && ret.code == 200) {
+                        setTimeout(function () {
+                            _login()
+                        }, 500)
+                    }
+                }, {
+                    user_id: $api.getStorage('userid')
+                })
+            }
+        })
+
+    }
+</script>
+
+</html>

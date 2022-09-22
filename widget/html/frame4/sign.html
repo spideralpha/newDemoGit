@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>小火苗</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/sign.css">
+    <style>
+        
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak class="new-sign">
+        <div class="s-top">
+            <img class="sign-bg" src="../../image/task/qd_top.jpg" alt="">
+            <h3>{{ffInfo.tianshu}}<span>天</span></h3>
+        </div>
+        <div class="s-wrap">
+            <img class="sign-bg" src="../../image/task/qd_img.png" alt="">
+            <ul class="s-ul">
+                <li class="list" :class="{'active':m.is_sign==1}" v-for="(m, index) in ffInfo.data">
+                    <span class="num">{{index+1}}</span>
+                    <img src="../../image/task/day_1_n.png" alt="">
+                    <!-- <span class="name">{{m.name}}</span> -->
+                    <span class="name">金币 X{{m.money}}</span>
+                </li>
+            </ul>
+        </div>
+        <div class="flex-c">
+            <button class="sign-btn" :class="{'success':ffInfo.is_sign==1}" onclick="submit()">{{ffInfo.is_sign?'今日已签到':'立即签到'}}</button>
+        </div>
+        <div class="flex-c" style="padding-bottom: 50px;">
+            <button class="sign-btn" v-if="ffInfo.is_sign==1" onclick="_url({url:'frame4/renwu',title:'每日任务'})">领取更多红包福利</button>
+        </div>
+        <div class="modal-bg" v-if="signModal" @click="signModal=false;">
+            <div class="modal">
+                <img class="m-bg" src="../../image/task/qd_tk_bg.png" alt="">
+                <div class="m-wrap">
+                    <div style="text-align: right;">
+                        <img class="m-close" src="../../image/task/tk_close.png" alt="">
+                    </div>
+                    <div class="m-content">
+                        <img class="rw-img" src="../../image/task/day_1_n.png" alt="">
+                        <p class="m-title">{{sMsg}}</p>
+                        <!-- <p class="m-txt">成功邀请好友后，<span>2金币</span>将翻<span>2</span>倍！（今天24点前有效）</p> -->
+                        <!-- <img class="rw-btn" src="../../image/task/tk_button.png1" alt=""> -->
+                        <span class="rw-btn1">我知道了</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script src="../../json/sign.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+            signModal: false,
+            sMsg: ''
+        },
+        methods: {
+            // 跳转
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+        }
+    })
+
+    apiready = function() {
+        getData()
+    }
+    // 获取签到记录
+    function getData() {
+        _ajax('api/task/qiandaorecords', function(ret, err) {
+            if (ret && ret.code == 200) {
+                view.ffInfo = ret.data;
+            }
+        }, {
+            user_id: $api.getStorage('userid')
+        })
+    }
+
+    // 签到
+    function submit() {
+        if (view.ffInfo.is_sign == 1) return;
+        _loading();
+        _ajax('api/task/qiandaoAjax', function(ret, err) {
+            _loadingClose();
+            if (ret.code == 200) {
+                view.ffInfo.is_sign = 1
+                view.signModal = true;
+                view.sMsg = ret.msg;
+                view.ffInfo.tianshu++;
+            } else {
+                _msg(ret.msg);
+            }
+        }, {
+            user_id: $api.getStorage('userid')
+        })
+    }
+</script>
+
+</html>

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/aui_font.css">
+    <style>
+        html,
+        body {
+            margin: 0;
+        }
+
+        header {
+            height: 50px;
+            line-height: 50px;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 14px;
+            font-size: 14px;
+        }
+
+        header .aui-iconfont {
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .tabs {
+            width: 160px;
+            display: flex;
+            align-items: flex-end;
+        }
+
+        .tab {
+            width: 50%;
+            text-align: center;
+            position: relative;
+            font-weight: bold;
+            color: #b3b3b3;
+        }
+
+        .tabs .tab.active {
+            color: #333;
+        }
+
+        .tabs .tab.active::after {
+            content: '';
+            width: 20px;
+            border-radius: 2px;
+            height: 4px;
+            background-color: #F46CEF;
+            position: absolute;
+            bottom: 4px;
+            left: calc(50% - 10px);
+        }
+    </style>
+</head>
+
+<body>
+    <header id="view" v-cloak>
+        <i class="aui-iconfont aui-icon-left" onClick="_closeToWin()"></i>
+        <div class="tabs">
+            <div class="tab" tapmode onclick="randomSwitchBtn(0)" :class="{active:index==0}">语音招呼</div>
+            <div class="tab" tapmode onclick="randomSwitchBtn(1)" :class="{active:index==1}">文字招呼</div>
+        </div>
+        <i class="aui-iconfont aui-icon-question" style="visibility: hidden;"
+            onClick="showDetail('frame4/shouhu_rule')"></i>
+    </header>
+    <script src="../../script/api.js"></script>
+    <script src="../../script/jquery.js"></script>
+    <script src="../../script/vue.js"></script>
+    <script src="../../script/ffkj.js"></script>
+    <script src="../../script/group.js"></script>
+    <script>
+        var view = new Vue({
+            el: '#view',
+            data: {
+                index: 0
+            },
+            methods: {}
+        })
+
+        apiready = function () {
+            $api.fixStatusBar($api.dom('header'))
+            _heibai(1);
+            var h = $api.offset($api.dom('header')).h;
+            groupInit('shouhu', ['frame3/modify_frame', 'frame3/modify_frame'], h, 0, 0, '.tab', [{
+                index: 0
+            }, {
+                index: 1
+            }], {
+                pre: 2
+            });
+
+
+
+            _listener('newmsg', function (ret) {
+                showMsgFrm(ret.value.data)
+            })
+        }
+
+        function randomSwitchBtn(index) {
+            view.index = index
+            api.setFrameGroupIndex({
+                name: 'shouhu',
+                index: index,
+                scroll: true, //是否平滑滚动至目标窗口，即是否带有动画
+                reload: false, // 刷新
+            });
+        }
+    </script>
+
+</html>

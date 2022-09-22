@@ -1,0 +1,170 @@
+html,
+body {
+    background-color: #eee;
+}
+
+.dy-wrap .list {
+    display: flex;
+    align-items: center;
+    background: #fff;
+    border-bottom: 1px solid #eee;
+    padding: 15px;
+    font-size: 14px;
+}
+
+.dy-wrap .list .title {
+    font-weight: bold;
+    margin-right: 10px;
+    /* color: #222; */
+    color: #333333;
+    word-break: keep-all;
+}
+
+.dy-wrap .list .content {
+    width: 100%;
+}
+
+.dy-wrap .list .content textarea {
+    width: 100%;
+    resize: none;
+    height: 120px;
+    line-height: 20px;
+}
+
+.dy-wrap .list .content input {
+    width: 100%;
+}
+
+.new-submit {
+    font-size: 14px;
+}
+
+/* 配图 */
+.dy-wrap .list.tu {
+    align-items: flex-start;
+    padding-bottom: 0;
+}
+
+.dy-wrap .list.tu .i-list {
+    position: relative;
+    margin-bottom: 15px;
+    margin-right: 15px;
+}
+
+.dy-wrap .list.tu .img {
+    height: 80px;
+    width: 80px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.dy-wrap .list.tu .img img {
+    width: 80px;
+    height: 80px;
+}
+
+.dy-wrap .list.tu .aui-icon-close {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: #fff;
+    border: 1px dashed #aaa;
+    border-radius: 50%;
+    padding: 2px;
+}
+
+.tip {
+    font-size: 10px;
+    color: #F46CEF;
+    padding: 10px;
+    text-align: center;
+}
+
+.audio {
+    text-align: center;
+    background: #fff;
+    padding: 10px 0;
+    margin: 10px 0;
+}
+
+.audio .title {
+    padding: 6px 0;
+    font-size: 12px;
+}
+
+.audio .luyining {
+    opacity: 0;
+    margin: 6px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.audio .luyining.ing {
+    opacity: 1;
+}
+
+.audio .luyining .left,
+.audio .luyining .right {
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    width: 20%;
+}
+
+.audio .luyining img {
+    min-width: 100%;
+    width: 100%;
+}
+
+.audio .luyining img {
+    animation: mymove 1.3s linear infinite;
+}
+
+@keyframes mymove {
+    0% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-25%);
+    }
+
+    50% {
+        transform: translateX(-50%);
+    }
+
+    75% {
+        transform: translateX(-75%);
+    }
+
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
+.audio .luyining img.reserve {
+    transform: rotateY(180deg);
+}
+
+.audio .luyining span {
+    font-size: 14px;
+    margin: 0 4px;
+}
+
+.audio img.luyin {
+    width: 64px;
+    margin: 16px 0;
+}
+
+.audio .tips {
+    font-size: 12px;
+    color: #666;
+    opacity: 1;
+}
+
+.audio .tips.ing {
+    opacity: 0;
+}

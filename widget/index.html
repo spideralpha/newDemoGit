@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Document</title>
+    <link rel="stylesheet" href="./css/api.css">
+    <style>
+
+    </style>
+</head>
+
+<body>
+</body>
+<script src="./script/api.js"></script>
+<script src="./script/jquery.js"></script>
+<script src="./script/ffkj.js"></script>
+<script src="./script/push.js"></script>
+<script src="./script/utilm.js"></script>
+<script>
+    var push;
+    var configNum = 0;
+    apiready = function() {
+        var utilmodule = new utilModule();
+        utilmodule.getAndroidID()
+        utilmodule.getChannel()
+
+        // $api.clearStorage();
+        // return;
+        loginToUpdate();
+        // 禁止安卓用户截屏
+        api.setScreenSecure({
+            secure: false
+        });
+        $api.setStorage('resume', 1)
+        if (!$api.getStorage('lon')) {
+            var lon = 113.320234;
+            $api.setStorage('lon', lon);
+        }
+        if (!$api.getStorage('lat')) {
+            var lat = 23.022241;
+            $api.setStorage('lat', lat);
+        }
+        if (!$api.getStorage('appCity') || typeof $api.getStorage('appCity') != 'Object') {
+            $api.setStorage('appCity', {
+                p: '广东',
+                c: '广州',
+                q: '天河'
+            });
+        }
+
+        initModal();
+        _listener('indexXY', function() {
+            initModal();
+        })
+
+        // 安卓监听 点击
+        _listener('appintent', function(ret, err) {
+            if (ret && ret.appParam.ajpush) {
+                var obj = ret.appParam.ajpush.extra;
+                if (obj.dy_id) {
+                    _url({
+                        id: obj.dy_id,
+                        url: 'frame1/dy_detail',
+                        title: '详情'
+                    })
+                } else {
+                    _index(2);
+                }
+            }
+        })
+
+        _heibai(1);
+        judgeNet();
+        getConfig();
+        // 监听截图
+        _listener('takescreenshot', function() {
+            // screenshotWarn()
+        })
+        // 监听退出
+        _listener('logout', function() {
+            if (push && push.setAlias) {
+                push.setAlias(0);
+            }
+        })
+
+        $api.setStorage('share', {
+            title: '小火苗交友',
+            content: '看电影，玩游戏，去旅游.....颜值最高的附近交友软件'
+        });
+        // 获取分享内容
+        getPageContent(17, function(data) {
+            var obj = {
+                title: '小火苗交友',
+                content: '看电影，玩游戏，去旅游.....颜值最高的附近交友软件'
+            }
+            if (clearHtml(data.title)) {
+                obj.title = clearHtml(data.title);
+            }
+            if (clearHtml(data.body)) {
+                obj.content = clearHtml(data.body);
+            }
+            $api.setStorage('share', obj);
+        })
+    }
+
+
+    // 判断设备号
+    function judgeDevice() {
+        if (!$api.getStorage('userid')) return;
+        _ajax('api/login/checkLogin', function(ret, err) {
+            if (ret && ret.code != 200) {
+                _send('logout');
+                _logout()
+                _alert(ret.msg, function() {
+                    _login();
+                })
+            }
+        }, {
+            user_id: $api.getStorage('userid'),
+            device_id: api.deviceId
+        })
+    }
+
+    function getConfig() {
+        configNum++;
+        _ajax('api/member/config', function(retg, errg) {
+            if (retg && retg.code == 200) {
+                var data = retg.data;
+                // oss
+                if (data.Bucket && data.Endpoint) {
+                    var url = data.request_scheme + data.Bucket + '.' + data.Endpoint;
+                    $api.setStorage('imgurl', url);
+                } else {
+                    $api.setStorage('imgurl', imgurl);
+                }
+                $api.setStorage('lianmai', data.lianmai);
+                $api.setStorage('rtcid', data.rtc_appid);
+                $api.setStorage('wsurl', data.socket_url);
+                if (data.socket_prefix) {
+                    $api.setStorage('pre', data.socket_prefix);
+                } else {
+                    $api.rmStorage('pre');
+                }
+                $api.setStorage('config', data);
+
+                $api.rmStorage('shang');
+                // 安卓上架
+                if (data.sshang == 1) {
+                    $api.setStorage('shang', 1);
+                    // 上架状态 允许截图
+                    api.setScreenSecure({
+                        secure: false
+                    });
+                }
+
+                // 语音视频是否隐藏
+                $api.setStorage('hide_video_voice', data.hide_video_voice);
+
+                // // ios上架
+                // if (data.pshang == 1) {
+                //     $api.setStorage('shang', 1);
+                // }
+                openSocketFrm();
+                if ($api.getStorage('userid')) {
+                    _home();
+                } else {
+                    _url({
+                        slidBackEnabled: 0,
+                    }, 'user/login_win');
+                }
+            } else {
+                if (configNum > 20) {
+                    _msg('网络连接失败，请稍后重试');
+                } else {
+                    getConfig();
+                }
+            }
+
+        }, {
+            init: 1
+        })
+    }
+
+    // 初始化模块
+    function initModal() {
+        var indexXY = $api.getStorage('indexXY');
+        if (indexXY != 1) return;
+        if (myuserid) {
+            push = new Push();
+            push.setAlias(myuserid);
+        }
+
+        // 通知极光推送SDK当前应用进入前台。
+        api.addEventListener({
+            name: 'resume'
+        }, function(ret) {
+            $api.setStorage('resume', 1)
+            setOnline(1);
+            judgeDevice()
+            openSocketFrm();
+            if (push && push.linstener) {
+                push.linstener(function(ret, err) {
+                    setWarnning()
+                })
+            }
+        })
+
+        // 通知极光推送SDK当前应用退入到后台。
+        api.addEventListener({
+            name: 'pause'
+        }, function(ret) {
+            $api.setStorage('resume', 0)
+            setOnline(0);
+            if (push && push.rm) {
+                push.rm();
+            }
+        })
+        if (push && push.linstener) {
+            push.linstener(function(ret, err) {
+                setWarnning()
+            })
+        }
+    }
+
+    // 截屏警告
+    function screenshotWarn() {
+        if (!$api.getStorage('userid')) return;
+        _ajax('home/user/screenshotRecord', function(ret, err) {
+            var msg = ret.code == 200 ? '该界面禁止截屏，否则冻结账号' : ret.msg;
+            _msg(msg, true);
+        }, {
+            user_id: $api.getStorage('userid')
+        })
+    }
+
+
+    function openSocketFrm() {
+        api.closeFrame({
+            name: 'socket'
+        })
+        var url = 'socket';
+        api.openFrame({
+            name: url,
+            url: html_win + url + '.html',
+            bounces: false,
+            reload: true,
+            rect: {
+                x: 0,
+                y: 0,
+                w: 1,
+                h: 1,
+            },
+            bgColor: 'rgba(0,0,0,0)',
+            useWKWebView: true,
+            scrollEnabled: true,
+        })
+    }
+</script>
+
+</html>

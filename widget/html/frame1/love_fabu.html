@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>小火苗</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <style>
+        .img-wrap {
+            width: 70%;
+            align-items: center;
+            position: relative;
+            margin-top: 20px;
+            margin-bottom: 50px;
+        }
+
+        .img-wrap .xinfeng {
+            width: 100%;
+            position: absolute;
+            bottom: 0;
+        }
+
+        .word {
+            text-align: center;
+            font-size: 12px;
+            width: 95%;
+            border: 30px solid transparent;
+            border-image-source: url(../../image/icon/love_paper_bg.9.png);
+            border-image-slice: 35% fill;
+            box-sizing: border-box;
+            height: 100%;
+            padding-bottom: 30vw;
+        }
+
+        .word p {
+            padding: 5px 0;
+            word-break: keep-all;
+        }
+
+        .top {
+            font-size: 14px;
+            border-bottom: 1px dashed #ddd;
+            margin: 0 15px;
+        }
+
+        .warn {
+            color: goldenrod;
+        }
+
+        .tip {
+            color: #aaa;
+            text-align: center;
+            font-size: 13px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <div class="wrap flex-c flex-col">
+            <div class="img-wrap flex-c flex-col">
+                <div class="word">
+                    <p class="top">亲爱的<span class="warn">{{ffInfo.name}}</span></p>
+                    <div class="content">
+                        <p><span class="warn">{{ffInfo.register_date}}</span>你来到了小火苗</p>
+                        <p>走过了<span class="warn">{{ffInfo.register_days}}</span>天</p>
+                        <p>终于有情人终成眷属</p>
+                        <p>恭喜你找到了属于自己的真爱</p>
+                        <p>请在这里记录下属于自己的故事吧</p>
+                    </div>
+                </div>
+                <img class="xinfeng" src="../../image/icon/love_xin_bg.png" alt="">
+            </div>
+            <button class="new-submit" onclick="_url({url:'frame1/love_type', title:'爱情故事投稿'})">下一步</button>
+            <p class="tip">投稿后即授权小火苗新媒体转载您的爱情故事</p>
+        </div>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+        },
+        methods: {
+            // 跳转
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+        }
+    })
+    apiready = function() {
+        _getUser(function(ret) {
+            view.ffInfo = ret.result;
+        })
+    }
+</script>
+
+</html>

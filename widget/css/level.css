@@ -1,0 +1,71 @@
+.modal-bg {
+    background: transparent;
+}
+
+.modal {
+    background: #fff;
+    border-radius: 10px;
+}
+
+.top {
+    background: linear-gradient(to bottom, #F8E375, #F3B43D);
+    position: relative;
+    border-radius: 10px 10px 0 0;
+    padding: 0 20px;
+}
+
+.top .head {
+    position: relative;
+    margin: -25px 0;
+}
+
+.top .tx {
+    border-radius: 50%;
+    position: absolute;
+    margin: 0;
+    margin-top: -10px;
+    width: 70px;
+    height: 70px;
+}
+
+.top .u-hat {
+    width: 130px;
+}
+
+.top .name p {
+    color: #fff;
+    text-shadow: 0 2px 2px orangered;
+}
+
+.top .name .num {
+    font-size: 25px;
+}
+
+.close-btn {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    width: 30px;
+}
+
+.level-ul {
+    padding: 30px 0;
+    font-size: 14px;
+}
+
+.level-ul .list {
+    width: 50%;
+    text-align: center;
+}
+
+.level-ul img {
+    width: 60px;
+}
+
+.level-ul .label {
+    margin: 7px 0;
+}
+
+.level-ul .num {
+    color: orange;
+}

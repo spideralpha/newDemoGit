@@ -1,0 +1,72 @@
+html,
+body {
+    background: transparent;
+}
+
+.modal-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: rgba(0, 0, 0, 0.3);
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal {
+    width: 83.4vw;
+    position: relative;
+}
+
+.modal .img-bg {
+    width: 100%;
+}
+
+.modal .container .content {
+    overflow-y: auto;
+    height: 30vw;
+    width: 75%;
+    margin: 0 auto;
+    margin-bottom: 10vw;
+    font-size: 13px;
+}
+
+.modal .container {
+    position: absolute;
+    width: 100%;
+    bottom: 20px;
+}
+
+.modal-btn {
+    background: linear-gradient(-8deg, #F97FF8, #FAB0CA);
+    border-radius: 20px;
+    width: 78%;
+    height: 40px;
+    color: #fff;
+    font-size: 13px;
+    box-sizing: border-box;
+}
+
+.modal-other-btn {
+    background: linear-gradient(-8deg, #FAAD75, #FDD172);
+    border-radius: 20px;
+    width: 78%;
+    height: 40px;
+    color: #fff;
+    font-size: 13px;
+    box-sizing: border-box;
+    margin-top: 10px;
+}
+
+.modal-cancel-btn {
+    border-radius: 20px;
+    width: 78%;
+    height: 40px;
+    color: #999999;
+    border: 1px solid #B3B3B3;
+    font-size: 13px;
+    margin-top: 10px;
+    box-sizing: border-box;
+}

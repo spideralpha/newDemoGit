@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>小火苗</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/gift.css">
+    <style>
+        html,
+        body {
+            background: #f2f2f2;
+        }
+
+        .giftmodal .mainbox .body .giftlist {
+            padding: 0;
+            padding-right: 5px;
+        }
+
+        .giftmodal .mainbox .body .giftlist .item {
+            background: #fff;
+            margin-top: 5px;
+            margin-left: 5px;
+            width: calc(25% - 5px);
+        }
+
+        .giftmodal .mainbox .body .giftlist .item>img {
+            width: 50%;
+        }
+
+        .giftmodal .mainbox .body .giftlist .item .name {
+            margin-top: 5px;
+        }
+
+        .price span {
+            color: #757575;
+            font-size: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 礼物 -->
+    <div class="giftmodal" id="view" v-cloak>
+        <div class="mainbox">
+            <div class="body">
+                <div class="giftlist">
+                    <div class="item" @click="showDetail('modal/send_gift', {data:item, touid :touserid})" v-for="(item, index) in ffList">
+                        <img class="gift-img" :src="returnImg(item.preview)" onerror="this.src='../../image/error-img.png'" alt="">
+                        <div class="name">{{item.name}}</div>
+                        <div class="price">
+                            <img src="../../image/icon/m6.png" alt="">
+                            <span>{{item.price}}</span>
+                        </div>
+
+                    </div>
+                </div>
+                <!-- <div class="giftlist">
+                    <div class="item" v-for="i in 100">
+                        <img src="../../image/icon/icon_cht_intimacy.png" alt="">
+                        <div class="name">爱心</div>
+                        <div class="price">
+                            <img src="../../image/icon/m6.png" alt="">
+                            <span>100</span>
+                        </div>
+
+                    </div>
+                </div> -->
+            </div>
+        </div>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+            types: 0,
+            touserid: '',
+        },
+        methods: {
+            showDetail(url, data, topH, footerH) {
+                showDetail(url, data, topH, footerH)
+            },
+            // 跳转
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+        }
+    })
+    apiready = function() {
+        view.touserid = api.pageParam['uid'];
+        view.types = api.pageParam['index'];
+        _shangla(function() {
+            _lists('api/Gift/lists', 1, 1, {
+                types: view.types
+            });
+        })
+
+        _scrollToBottom(function() {
+            if (heigutgao == 1) {
+                pagenum++;
+                _lists('api/Gift/lists', pagenum, '', {
+                    types: view.types
+                });
+            }
+        })
+    }
+</script>
+
+</html>

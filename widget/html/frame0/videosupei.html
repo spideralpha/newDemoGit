@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <style>
+        #view {
+            background-color: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            align-items: center;
+            width: 100vw;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+
+        .start,
+        .pipei {
+            padding: 10px 0;
+            width: 38%;
+            text-align: center;
+            border: 1px solid rgb(0, 137, 200);
+            border-radius: 10px;
+            color: rgb(0, 137, 200);
+        }
+
+        .start.active {
+            animation: huxi 2s infinite;
+        }
+
+        @keyframes huxi {
+            0% {
+                background-color: #fff;
+            }
+
+            50% {
+                background-color: rgb(0, 137, 200);
+                color: #fff;
+            }
+
+            100% {
+                background-color: #fff;
+            }
+        }
+
+        .talk {
+            position: absolute;
+            top: 90px;
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .tip {
+            font-size: 14px;
+            color: rgb(0, 137, 200);
+        }
+
+        .tx-img {
+            width: 45vw;
+            height: 45vw;
+            object-fit: cover;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <div class="flex-col flex-c" v-if="!ffInfo.user_id">
+            <canvas id="canvasOne" height="360"></canvas>
+            <div class="talk" v-if="pipei==0">
+                <div class="tip">点击下方按钮开始匹配你的TA~</div>
+            </div>
+        </div>
+        <div id="success" v-else>
+            <div class="flex-c">
+                <img class="tx-img" :src="returnImg(ffInfo.user_head)" onerror="this.src='../../image/touxiang.png'" alt="">
+            </div>
+            <p style="text-align: center;">{{ffInfo.user_name}}</p>
+        </div>
+        <!-- <div class="start" v-if="pipei==0" onclick="start()">开始匹配</div>
+        <div class="start active" v-else-if="pipei==1">匹配中...</div>
+        <div class="start" v-else @click="openLM()">立即通话</div> -->
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script src="../../script/modernizr.js"></script>
+<script src="../../script/supei.js"></script>
+<script src="../../script/limitchat.js"></script>
+<script type="text/javascript">
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+            pipei: 0, // 0未匹配 1匹配中 2匹配结束
+            type: 1, // 1语音 2视频 
+        },
+        methods: {
+            // 发起连麦
+            openLM() {
+                if (view.type == 1) {
+                    openLM(view.ffInfo.user_id)
+                } else {
+                    openVideoChat(view.ffInfo.user_id)
+                }
+            },
+            // 跳转
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+        }
+    })
+    apiready = function() {
+        view.type = api.pageParam['type'];
+        start();
+    }
+
+    // 开始
+    function start() {
+        _getUser(function(ret) {
+            if (view.type == 2) {
+                // 视频
+                if (ret.result.is_identity_authentication != 2 && $api.getStorage('sex') == '女') {
+                    var obj = {
+                        msg: '需真人认证后才能进入视频速配。聊得越久，赚的多多呦！',
+                        btn: ['放弃奖励', '立即认证'],
+                    }
+                    _confirm(obj, function(bIndex) {
+                        if (bIndex == 2) {
+                            _url({
+                                url: 'frame4/authentication_frame',
+                                title: '认证身份',
+                                winName: 'index_win'
+                            });
+                        } else {
+                            _closeToWin();
+                        }
+                    })
+                    return;
+                }
+            } else {
+                if (!ret.result.voice && $api.getStorage('sex') == '女') {
+                    var obj = {
+                        msg: '需先录制交友宣言后才能进入语音速配。聊得越久，赚的多多呦！',
+                        btn: ['放弃奖励', '立即录制'],
+                    }
+                    _confirm(obj, function(bIndex) {
+                        if (bIndex == 2) {
+                            _url({
+                                url: 'frame4/jiao_you_xuan_yan',
+                                title: '交友宣言',
+                                winName: 'index_win'
+                            })
+                        } else {
+                            _closeToWin();
+                        }
+                    })
+                    return;
+                }
+            }
+            if (isfinding) {
+                return false
+            }
+            view.pipei = 1;
+            // document.getElementById('js-start').innerHTML = '匹配中...'
+            // document.getElementsByClassName('start')[0].classList.add("active")
+            // document.getElementsByClassName('talk')[0].style.display = 'none'
+            isfinding = true;
+            canvasApp();
+
+            setTimeout(function() {
+                getData();
+                view.pipei = 2;
+            }, 10000)
+        })
+    }
+
+    // 获取匹配
+    function getData() {
+        var lon = $api.getStorage('lon');
+        var lat = $api.getStorage('lat');
+        var obj = {
+            user_id: $api.getStorage('userid'),
+            longitude: lon,
+            latitude: lat,
+        };
+        if (view.type == 2) {
+            obj.video_mate = 1;
+        } else {
+            obj.voice_mate = 1;
+        }
+        _ajax('api/user/index', function(ret, err) {
+            if (ret && ret.code == 200) {
+                view.ffInfo = ret.result[0];
+                view.openLM();
+            }
+        }, obj)
+    }
+</script>
+
+</html>

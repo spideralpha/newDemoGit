@@ -1,0 +1,30 @@
+html,
+body {
+    background: #efefef;
+}
+
+header {
+    background: #734d9a;
+    color: #fff;
+}
+
+.title {
+    font-size: 18px;
+    color: #fff;
+}
+
+.more.hide {
+    visibility: hidden;
+}
+
+.content textarea {
+    width: 100%;
+    resize: none;
+    height: 100px;
+    line-height: 20px;
+    font-size: 14px;
+}
+
+.new-submit {
+    background: #734d9a;
+}

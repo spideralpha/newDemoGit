@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <style>
+        html,
+        body {
+            background: none;
+        }
+
+        .bg {
+            /* background: rgba(0, 0, 0, 0.5); */
+
+            position: fixed;
+            top: 0;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        /* 第二个头部 */
+        .two {
+            /* color: #9763fc;
+            font-size: 16px; */
+            /* color: #222; */
+            color: #333333;
+            font-size: 14px;
+            font-weight: bold;
+            line-height: 52px;
+        }
+
+        .two span {
+            width: 20vw;
+            font-size: 14px;
+            color: #555555;
+            font-weight: normal;
+        }
+
+        /* 侧边 栏目 */
+        .nav {
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0px 1px 5px 1px #ddd;
+            position: absolute;
+            right: 20px;
+            max-height: 50vh;
+            overflow-y: auto;
+        }
+
+        .nav .list {
+            padding: 10px 35px;
+            font-size: 14px;
+            width: 15vw;
+            text-align: center;
+            ;
+        }
+
+        .nav .list img {
+            width: 30px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak class="bg" tapmode onclick="closeModal()">
+        <header class="new-invisible">
+            <ul class="h-wrap">
+                <!-- 第二个头部 -->
+                <li class="h-list">
+                    <div class="two flex-bt">
+                        <span class="flex-c new new-invisible">最新发布</span>
+                        <div class="title">电台</div>
+                        <span class="flex-c select-sex">发布</span>
+                    </div>
+                </li>
+            </ul>
+        </header>
+        <ul class="nav">
+            <li class="list" tapmode onclick="selectPost(0)">
+                <img src="../../image/icon/ic_announceevent.png" alt="">
+                <p>发节目</p>
+            </li>
+            <li class="list" style="border-top: 1px solid #eee;" tapmode onclick="selectPost(1)">
+                <img src="../../image/icon/ic_postactivity.png" alt="">
+                <p>发动态</p>
+            </li>
+            <!-- <li v-for="(m, index) in testList" class="list" style="border-top: 1px solid #eee;" @click="selectPost(m.type)">
+                <img src="../../image/icon/ic_postactivity.png" alt="">
+                <p>{{m.name}}</p>
+            </li> -->
+        </ul>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script>
+    // var view = new Vue({
+    //     el: '#view',
+    //     data: {
+    //         testList: retJson
+    //     },
+    //     methods: {
+    //         selectPost: function(index){
+    //             showDetail('frame1/theme_modal', { animation: index });
+    //         }
+    //     }
+    // })
+    apiready = function () {
+        $api.fixStatusBar($api.dom('header'));
+        $api.fixTabBar($api.dom('footer'));
+    }
+    // 关掉模态框
+    function closeModal() {
+        api.closeFrame({
+            name: 'frame1/add_modal'
+        });
+    }
+
+    // 选择发布的类型
+    function selectPost(index) {
+        // if (window.event) {
+        //     var e = window.event;
+        //     e.stopPropagation();
+        // }
+        if (index == 0) {
+            showDetail('frame1/theme_modal', { animation: 'movein' });
+        } else {
+            _url({ type: 0, url: 'frame1/fa_dong_tai', title: '发动态' });
+        }
+    }
+</script>
+
+</html>

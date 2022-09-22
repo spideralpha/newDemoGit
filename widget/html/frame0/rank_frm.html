@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>小火苗</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/rank.css">
+    <style>
+        html,
+        body {
+            background: transparent;
+        }
+
+        /* .bg-nvshen {
+            background: linear-gradient(-11deg, #C256E5, #F36BC9);
+        }
+
+        .bg-fuhao {
+            background: linear-gradient(-18deg, #E5AC7F, #F4C988);
+        }
+
+        .bg-nanshen {
+            background: linear-gradient(-18deg, #659EEB, #88D2F4);
+        }
+        .bg-jiazu {
+            background: linear-gradient(-18deg, #EB6565, #F4A188);
+        }
+
+        .bg-meili {
+            background: linear-gradient(-18deg, #7E79F4, #C86EF5, #F37FC0);
+        }
+
+        .bg-tianlai {
+            background: linear-gradient(-18deg, #8659EB, #68A3F4, #7FCBF3);
+        } */
+        .top {
+            padding: 50px 0 20px 0 !important;
+            align-items: flex-end;
+        }
+
+        .back .top .arrow.middle .head img {
+            position: absolute;
+            top: -14px;
+            width: 36px;
+            height: 28px;
+        }
+
+        .back .top .arrow .head img {
+            position: absolute;
+            top: -14px;
+            width: 36px;
+            height: 28px;
+        }
+
+        .back .top .arrow.middle .head img.avatar,
+        .back .top .arrow .head img.avatar {
+            width: 60px;
+            height: 60px;
+            border: 2px solid #FFE8FB;
+            border-radius: 32px;
+        }
+
+        .uname {
+            margin-top: 10px;
+            margin-bottom: 6px;
+        }
+
+        .label,
+        .value {
+            font-size: 10px !important;
+        }
+
+        .back .top .arrow .head img.avatar:first-child {
+            left: -2px !important;
+        }
+
+        .back .top .arrow.middle .head img.avatar:first-child {
+            left: 7.5px !important;
+        }
+
+        .tx,
+        .tx img {
+            min-width: 70px !important;
+            min-height: 70px !important;
+            width: 70px !important;
+            height: 70px !important;
+            border-radius: 50%;
+        }
+
+        .wrap {
+            background: #eee;
+            overflow: hidden;
+            border-radius: 10px 10px 0 0;
+            position: relative;
+            top: -10px;
+        }
+
+        .wrap .list {
+            margin: 12px 14px;
+            background: #fff;
+            padding: 12px 14px;
+            border-radius: 12px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="paihang" id="view" v-cloak>
+        <div class="pmainbox" @click.stop>
+            <!--财富榜、魅力榜-->
+            <div class="back">
+                <div class="top" v-if="ffList.length>0" :class="{'flex-c': ffList.length==1}">
+                    <div class="arrow " v-if="ffList[1]" @click="go_userInfo(ffList[1].user_id, ffList[1].name, ffList[1].user_sex)">
+                        <div class="head">
+                            <img class="avatar" :src="returnImg(ffList[1].avatar)" onerror="this.src='../../image/touxiang.png'">
+                            <img src="../../image/index/demic@3x.png">
+                        </div>
+                        <div class="uname">{{ffList[1].name}}</div>
+                        <div class="label">{{typeName}}</div>
+                        <div class="value">{{ffList[1].count}}</div>
+                    </div>
+                    <div class="arrow middle" v-if="ffList[0]" @click="go_userInfo(ffList[0].user_id, ffList[0].name, ffList[0].user_sex)">
+                        <div class="head">
+                            <img class="avatar" :src="returnImg(ffList[0].avatar)" onerror="this.src='../../image/touxiang.png'">
+                            <img src="../../image/index/dimic@3x.png">
+                        </div>
+                        <div class="uname">{{ffList[0].name}}</div>
+                        <div class="label">{{typeName}}</div>
+                        <div class="value">{{ffList[0].count}}</div>
+                    </div>
+                    <div class="arrow" v-if="ffList[2]" @click="go_userInfo(ffList[2].user_id, ffList[2].name, ffList[2].user_sex)">
+                        <div class="head">
+                            <img class="avatar" :src="returnImg(ffList[2].avatar)" onerror="this.src='../../image/touxiang.png'">
+                            <img src="../../image/index/dsmic@3x.png">
+                        </div>
+                        <div class="uname">{{ffList[2].name}}</div>
+                        <div class="label">{{typeName}}</div>
+                        <div class="value">{{ffList[2].count}}</div>
+                    </div>
+                </div>
+                <ul class="wrap" style="background: #fff;">
+                    <li class="list" v-for="(m, index) in ffList" v-if="index > 2" @click="go_userInfo(m.user_id, m.name, m.user_sex)">
+                        <div class="content-wrap flex-bt">
+                            <div class="flex-c">
+                                <div class="index">{{index + 1}}</div>
+                                <div class="tx">
+                                    <img :src='returnImg(m.avatar)' onerror="this.src='../../image/touxiang.png'" alt="">
+                                </div>
+                                <span class="name">{{m.name}}</span>
+                            </div>
+                            <span class="money" v-if="types!=8">{{m.count}} {{typeName}}</span>
+                            <span class="money" v-else>{{m.count}} 人</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script src="../../script/rank.js"></script>
+
+</html>

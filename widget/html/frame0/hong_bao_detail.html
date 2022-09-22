@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/aui_font.css">
+    <link rel="stylesheet" href="../../css/hb_detail.css">
+    <style>
+        .tuikuan-tip {
+            position: fixed;
+            bottom: 0;
+            padding: 10px;
+            box-sizing: border-box;
+            width: 100%;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <header id="fx-header">
+            <div class="head">
+                <i class="aui-iconfont aui-icon-left" onclick="_closeToWin();"></i>
+                <div class="title">红包详情</div>
+            </div>
+            <div class="bg">
+                <img src="../../image/icon/bg_headtongue_2.png" alt="">
+            </div>
+            <div class="flex-c tx-wrap">
+                <div class="new-tx img-h">
+                    <img :src="returnImg(ffInfo.head)"
+                        onerror="this.src='../../image/error-img.png'" alt="">
+                </div>
+            </div>
+            <p class="word">{{ffInfo.name}}的红包</p>
+            <p class="tip-word word">"{{ffInfo.content}}"</p>
+        </header>
+        <div class="flex-c flex-col">
+            <h1>￥{{ffInfo.money}}</h1>
+            <button class="btn" v-if="ffInfo.state == 0">等待对方领取</button>
+            <button class="btn" v-if="ffInfo.state == 1 && myuserid == ffInfo.userid">对方已领取</button>
+            <button class="btn" v-if="ffInfo.state == 1 && myuserid != ffInfo.userid">已领取</button>
+            <button class="btn" v-if="ffInfo.state == 2">该红包已过期</button>
+        </div>
+        <!-- <p class="font-s tuikuan-tip">未领取的红包，将于24小时后发起退款</p> -->
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+
+<script src="../../script/hb_detail.js"></script>
+
+</html>

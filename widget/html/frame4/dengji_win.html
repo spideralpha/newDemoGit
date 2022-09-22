@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .tabs {
+            display: flex;
+            padding: 10px 0;
+            font-size: 14px;
+            color: #878787;
+            width: 70%;
+            justify-content: space-around;
+            margin-left: 15%;
+        }
+
+        .tabs .tab {
+            width: 50%;
+            text-align: center;
+            position: relative;
+        }
+
+        .tabs .tab.active {
+            font-size: 16px;
+            color: #000;
+        }
+
+        .tabs .tab.active::after {
+            content: '';
+            width: 7px;
+            border-radius: 2px;
+            height: 4px;
+            background-color: slateblue;
+            position: absolute;
+            bottom: -10px;
+            left: calc(50% - 3.5px);
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <header class="tabs">
+            <div class="tab" tapmode onclick="randomSwitchBtn(0)" :class="{active:index==0}">魅力等级</div>
+            <div class="tab" tapmode onclick="randomSwitchBtn(1)" :class="{active:index==1}">财富等级</div>
+        </header>
+    </div>
+    <script src="../../script/api.js"></script>
+    <script src="../../script/jquery.js"></script>
+    <script src="../../script/vue.js"></script>
+    <script src="../../script/ffkj.js"></script>
+    <script src="../../script/group.js"></script>
+    <script>
+        var view = new Vue({
+            el: '#view',
+            data: {
+                index: 0
+            },
+            methods: {}
+        })
+
+        apiready = function () {
+            _heibai(1);
+            var h = $api.offset($api.dom('header')).h * 3;
+            groupInit('dj', ['frame4/dengji', 'frame4/dengji'], h, 0, 0, '.tab', [{
+                index: 1
+            }, {
+                index: 2
+            }], {
+                pre: 2
+            });
+
+
+            _listener('newmsg', function (ret) {
+                showMsgFrm(ret.value.data)
+            })
+        }
+
+        function randomSwitchBtn(index) {
+            view.index = index
+            api.setFrameGroupIndex({
+                name: 'dj',
+                index: index,
+                scroll: true, //是否平滑滚动至目标窗口，即是否带有动画
+                reload: false, // 刷新
+            });
+        }
+    </script>
+
+</html>

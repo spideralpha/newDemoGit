@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/aui_font.css">
+    <link rel="stylesheet" href="../../css/base_icon.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/frame0.css">
+    <style>
+        .more.active {
+            color: #F46CEF;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <!-- 用户列表 -->
+        <ul class="ulist-wrap">
+            <li class="list" v-for="(m, index) in ffList" @click="goUserInfo(m)">
+                <div class="content-wrap">
+                    <div class="tx img-h" :class="{'xinren':m.is_new==1, 'hat':m.is_daren==1}">
+                        <img :src="returnImg(m.user_head)" onerror="this.src='../../image/touxiang.png'" alt="">
+                    </div>
+                    <div class="content">
+                        <div class="flex-bt">
+                            <div class="name-wrap">
+                                <span class="name" :class="{'new-vip-name':m.noble_grade>3}">{{ m.user_name}}</span>
+                                <span class="new-tag man-ntag" :class="{'woman-ntag':m.user_sex=='女'}" v-if="m.realname_auth==2 && !ios"></span>
+                                <span class="new-tag rz-tag" v-if="m.is_identity_authentication==2 && !ios"></span>
+                                <img v-if="m.noble_icon && !ios" class="new-noble" :src="returnImg(m.noble_icon)" onerror="this.src='../../image/error-img.png'" alt="">
+                                <img v-else-if="m.car_cover && !ios" class="new-car" :src="returnImg(m.car_cover)" onerror="this.src='../../image/error-img.png'" alt="">
+                            </div>
+                        </div>
+                        <div class="tag-wrap">
+                            <span class="tag city-tag" v-if="m.city">{{ m.city}}</span>
+                            <span class="tag" v-if="m.user_age">{{m.user_age}}岁</span>
+                            <span class="tag" v-if="m.stature && m.user_sex=='女'">{{m.stature}}cm</span>
+                            <span class="tag" v-if="m.occupation">{{ m.occupation}}</span>
+                            <span class="tag" v-if="m.monthly_salary && m.user_sex=='男'">{{ m.monthly_salary}}</span>
+                        </div>
+                        <span class="new-index-voice" :class="{'active':index==playIndex}" v-if="m.voice" @click.stop="openVoice(index)">{{m.voice_time}}''</span>
+                        <p class="sign aui-ellipsis-1" v-else-if="m.self_slogan"> {{m.self_slogan}}</p>
+                    </div>
+                </div>
+                <div class="hi-tag" v-if="!ios" :class="{'hi-tags':m.dashan==1}" @click.stop @click="dashan(index, $event)">心动</div>
+            </li>
+        </ul>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+
+<script src="../../script/frame0.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ios: 1, // 1上架 0非上架
+            myuserid: '',
+            playIndex: -1,
+        },
+        methods: {
+            // 听音频
+            openVoice(index) {
+                openVoice(index);
+            },
+            // 跳转 查看用户详情
+            goUserInfo(data) {
+                go_userInfo(data.user_id, data.user_name, data.user_sex)
+            },
+            // 收藏
+            sc(uid, index) {
+                _sc(uid, index);
+            },
+            // 更多
+            _more(index) {
+                _scAndBlack(index);
+            },
+            // 心动
+            dashan(index, event) {
+                var e = event.currentTarget;
+                _dashan(index, e);
+
+            },
+            // 跳转
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+        }
+    })
+    apiready = function() {
+        view.ios = $api.getStorage('shang');
+        view.myuserid = $api.getStorage('userid');
+        var key = api.pageParam['key'];
+        var param = {
+            user_id: $api.getStorage('userid'),
+            name: key,
+            longitude: $api.getStorage('lon'),
+            latitude: $api.getStorage('lat')
+        };
+        if (api.pageParam['filter']) {
+            param = api.pageParam['filter'];
+            param.user_id = $api.getStorage('userid');
+            param.longitude = $api.getStorage('lon');
+            param.latitude = $api.getStorage('lat');
+        }
+        _shangla(function() {
+            _lists('api/user/index', 0, 1, param);
+        })
+
+        _scrollToBottom(function() {
+            if (heigutgao == 1) {
+                pagenum++;
+                _lists('api/user/index', pagenum, '', param);
+            }
+        })
+
+    }
+</script>
+
+</html>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui_font.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/news.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/frame3.css" />
+    <style>
+        html,
+        body {
+            background-color: #fff;
+        }
+
+        .logobox {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 60px 0;
+            font-size: 14px;
+        }
+
+        .logobox img {
+            width: 70px;
+            height: 70px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <div class="logobox">
+            <img src="../../image/logo.png" alt="">
+            <div>小火苗交友</div>
+        </div>
+        <section class="m-frame">
+
+            <ul class="item">
+                <li class="item_li" onclick="openPage(1)">
+                    <div class="lt">平台使用规范</div>
+                    <div class="rt">
+                        <span class="f-size12"></span>
+                        <span class="aui-iconfont aui-icon-right"></span>
+                    </div>
+                </li>
+                <li class="item_li" onclick="openPage(2)">
+                    <div class="lt">用户使用协议</div>
+                    <div class="rt">
+                        <span class="f-size12"></span>
+                        <span class="aui-iconfont aui-icon-right"></span>
+                    </div>
+                </li>
+                <li class="item_li" onclick="openPage(3)">
+                    <div class="lt">用户隐私政策</div>
+                    <div class="rt">
+                        <span class="f-size12"></span>
+                        <span class="aui-iconfont aui-icon-right"></span>
+                    </div>
+                </li>
+                <!-- <li class="item_li" onclick="callservice('13800138000')">
+                    <div class="lt">客服电话</div>
+                    <div class="rt">
+                        <span class="f-size12">13800138000</span>
+                        <span class="aui-iconfont aui-icon-right"></span>
+                    </div>
+                </li> -->
+                <li class="item_li" v-if="!ios" onclick="updateVision(1)">
+                    <div class="lt">软件升级</div>
+                    <div class="rt">
+                        <span class="f-size12 js-appVersion">{{version}}</span>
+                        <span class="aui-iconfont aui-icon-right"></span>
+                    </div>
+                </li>
+            </ul>
+        </section>
+    </div>
+    <script type="text/javascript" src="../../script/api.js"></script>
+    <script type="text/javascript" src="../../script/jquery.js"></script>
+    <script type="text/javascript" src="../../script/ffkj.js"></script>
+    <script type="text/javascript" src="../../script/vue.js"></script>
+    <script type="text/javascript" src="../../script/update.js"></script>
+    <script type="text/javascript">
+        var view = new Vue({
+            el: '#view',
+            data: {
+                ffInfo: {},
+                ios: 1, // 1上架 0非上架
+                version: '0.0.1'
+            },
+            methods: {
+                _url(param, url) {
+                    _url(param, url);
+                },
+                // 返回图片路径
+                returnImg(url) {
+                    return returnImg(url);
+                },
+            }
+        })
+        apiready = function() {
+            view.ios = $api.getStorage('shang');
+            //APP版本
+            view.version = api.appVersion
+        }
+
+        function callservice(v) {
+            api.call({
+                type: 'tel_prompt',
+                number: v
+            });
+        }
+    </script>
+</body>
+
+</html>

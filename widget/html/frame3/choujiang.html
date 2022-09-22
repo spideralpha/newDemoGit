@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<!-- saved from url=(0044)http://demo.demohuo.top/jquery/48/4852/demo/ -->
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+    <title>九宫格抽奖</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <style>
+        * {
+            margin: 0px;
+            padding: 0px;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: radial-gradient(49% 160%, #22b5ff 0, #3a72fa 100%);
+            font-size: 14px;
+        }
+
+        img {
+            border: 0px;
+        }
+
+        ul,
+        li {
+            list-style-type: none;
+        }
+
+        .lottery-box {
+            overflow: hidden;
+        }
+
+        .lottery-box .title {
+            text-align: center;
+            padding: 50px 0;
+            font-size: 40px;
+            text-shadow: 5px 5px 5px black, 0px 0px 2px black;
+            color: white;
+        }
+
+        .lottery-box .title p {
+            padding: 10px 0;
+            font-size: 14px;
+            color: #fff;
+        }
+
+        .lottery {
+            animation: changeBg .5s ease infinite;
+            overflow: hidden;
+            padding: 20px;
+            width: 90vw;
+            margin: 0 auto;
+            background-repeat: no-repeat;
+            background-size: 100% 100%;
+        }
+
+        @keyframes changeBg {
+            0% {
+                background-image: url(../../image/index/k1.png);
+            }
+
+            100% {
+                background-image: url(../../image/index/k2.png);
+            }
+        }
+
+        .lottery .lottery-item {
+            height: calc(90vw - 40px);
+            position: relative;
+            margin-top: 15px;
+            margin-left: 10px;
+        }
+
+        .lottery .lottery-item ul li {
+            height: calc(33.33333333% - 13.3333333333333px);
+            width: 33.33333333%;
+            position: absolute;
+            padding-right: 10px;
+        }
+
+        .lottery .lottery-item ul li:nth-child(2) {
+            left: 33.33333333%;
+        }
+
+        .lottery .lottery-item ul li:nth-child(3) {
+            left: 66.66666666%;
+        }
+
+        .lottery .lottery-item ul li:nth-child(4) {
+            left: 66.66666666%;
+            top: calc(35% - 10px);
+        }
+
+        .lottery .lottery-item ul li:nth-child(5) {
+            left: 66.66666666%;
+            top: calc(70% - 20px);
+        }
+
+        .lottery .lottery-item ul li:nth-child(6) {
+            left: 33.33333333%;
+            top: calc(70% - 20px);
+        }
+
+        .lottery .lottery-item ul li:nth-child(7) {
+            left: 0;
+            top: calc(70% - 20px);
+        }
+
+        .lottery .lottery-item ul li:nth-child(8) {
+            left: 0;
+            top: calc(35% - 10px);
+        }
+
+        .lottery .lottery-item ul li .box {
+            height: 100%;
+            position: relative;
+            text-align: center;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background: url(../../image/index/bg2.png) no-repeat center;
+            background-size: 100% 100%;
+        }
+
+        .lottery .lottery-item ul li .box img {
+            display: block;
+            height: 50px;
+            margin: 0 auto;
+        }
+
+        .lottery .lottery-item ul li .box p {
+            color: #708ABF;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-size: 14px;
+        }
+
+        .lottery .lottery-item ul li.on .box {
+            background: url(../../image/index/bg1.png) no-repeat center;
+            background-size: 100% 100%;
+        }
+
+        .lottery .lottery-item ul li.on .box p {
+            color: #fff;
+        }
+
+        .lottery .lottery-item .lottery-start {
+            height: calc(33.33333333% - 13.3333333333333px);
+            position: absolute;
+            left: 33.33333333%;
+            width: 33.33333333%;
+            top: calc(35% - 10px);
+            padding-right: 10px;
+        }
+
+        .lottery .lottery-item .lottery-start .box {
+            height: 100%;
+            font-size: 14px;
+            color: #fff;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            flex-direction: column;
+            text-align: center;
+            overflow: hidden;
+            background: url(../../image/index/bg1.png) no-repeat center;
+            background-size: 100% 100%;
+        }
+
+        /* 禁止抽奖 */
+        .lottery .lottery-item .lottery-start .box.ban-click {
+            background: #aaa;
+            border-radius: 10px;
+        }
+
+        .lottery .lottery-item .lottery-start .box p b {
+            font-size: 1.6rem;
+            display: block;
+            color: #fff;
+        }
+
+        .lottery .lottery-item .lottery-start .box:active {
+            opacity: 0.7;
+        }
+
+        .lottery .lottery-item .lottery-start .box.gray {
+            background: url(../../image/index/bg3.png) no-repeat center;
+            background-size: 100% 100%;
+        }
+
+        .lottery .lottery-item .lottery-start .box.gray p {
+            color: #708ABF;
+            font-weight: bold;
+        }
+
+        .mask {
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            position: fixed;
+            overflow: hidden;
+            z-index: 222;
+            top: 0;
+            left: 0;
+        }
+
+        .lottery-alert {
+            max-width: 300px;
+            text-align: center;
+            z-index: 10000;
+            border-radius: 10px;
+            background: #fff;
+            padding: 20px;
+            position: fixed;
+            left: 0;
+            right: 0;
+            margin: auto;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .lottery-alert h1 {
+            font-size: 18px;
+            font-weight: bold;
+            color: #D92B2F;
+        }
+
+        .lottery-alert img {
+            display: block;
+            height: 120px;
+            margin: 0 auto;
+        }
+
+        .lottery-alert h2 {
+            font-weight: normal;
+            color: #D92B2F;
+            font-size: 15px;
+            padding-top: 15px;
+        }
+
+        .lottery-alert p {
+            color: #666;
+            font-size: 16px;
+            padding-top: 5px;
+        }
+
+        .lottery-alert .btnsave {
+            border-radius: 3px;
+            box-shadow: none;
+            height: 40px;
+            cursor: pointer;
+            line-height: 40px;
+            color: #fff;
+            margin-top: 12px;
+            background: linear-gradient(180deg, rgba(213, 60, 63, 1) 0%, rgba(201, 20, 24, 1) 100%);
+            font-size: 16px;
+        }
+
+        .count {
+            padding: 6px 0;
+            text-align: center;
+            color: #fff;
+        }
+
+        .rule {
+            width: 90%;
+            background-color: #fff;
+            padding: 10px 14px 20px 14px;
+            margin: 30px auto;
+            border-radius: 10px;
+        }
+
+        .rule .head {
+            font-size: 18px;
+            font-weight: bold;
+            padding: 10px 0px;
+            text-align: center;
+            color: rgba(201, 20, 24, 1);
+        }
+
+        .rule .content {
+            font-size: 12px;
+            padding: 4px 0;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app" class="lottery-box" v-cloak>
+        <h1 class="title">充值抽大奖
+            <p>充值任意金额都可获得抽奖机会</p>
+        </h1>
+        <!-- <h1 class="title">首冲抽大奖
+            <p>前{{ffInfo.lottery_count}}次充值任意金额都可获得抽奖机会</p>
+        </h1> -->
+        <div class="lottery">
+            <div class="lottery-item">
+                <div class="lottery-start">
+                    <div class="box" :class="{'ban-click':ffInfo.had_count==0}" @click="startLottery">
+                        <p><b>开始</b></p>
+                        <p><b>抽奖</b></p>
+                    </div>
+                </div>
+                <ul>
+                    <li v-for="(item,indexs) in list" :class="{on:indexs==index}">
+                        <div class="box">
+                            <p><img :src="returnImg(item.icon)" onerror="this.src='../../image/error-img.png'" alt=""> </p>
+                            <p>{{item.title}}</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="mask" v-show="showToast"></div>
+        <div class="lottery-alert" v-if="list[index]" v-show="showToast">
+            <h1>恭喜您</h1>
+            <p><img :src="returnImg(list[index].icon)" onerror="this.src='../../image/error-img.png'" alt=""></p>
+            <h2>获得{{list[index].title}}</h2>
+            <div class="btnsave" @click="showToast = false">确定</div>
+        </div>
+        <div class="count">共有 {{ffInfo.had_count}} 次抽奖机会</div>
+        <div class="rule">
+            <div class="head">活动规则</div>
+            <div class="content">
+                1、充值任何金额，每次都可获得1次抽个奖机会；<p>
+                    2、抽到的奖品会实时到账。
+            </div>
+            <!-- <div class="content">
+                1、账号前{{ffInfo.lottery_count}}次充值任何金额，每次都可获得1次抽个奖机会；<p>
+                2、抽到的金币会实时到账。
+            </div> -->
+        </div>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/vue.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script>
+    var view = new Vue({
+        el: "#app",
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+
+            isStart: 1,
+            score: 10, //消耗积分
+            list: [{
+                    img: '../../image/index/j1.png',
+                    title: '谢谢参与'
+                },
+                {
+                    img: '../../image/index/j2.png',
+                    title: '美女一个'
+                },
+                {
+                    img: '../../image/index/j1.png',
+                    title: '宝马一辆'
+                },
+                {
+                    img: '../../image/index/j2.png',
+                    title: '单车一辆'
+                },
+                {
+                    img: '../../image/index/j1.png',
+                    title: '鸡蛋一蓝'
+                },
+                {
+                    img: '../../image/index/j2.png',
+                    title: '500红包'
+                },
+                {
+                    img: '../../image/index/j1.png',
+                    title: '靓号一个'
+                },
+                {
+                    img: '../../image/index/j2.png',
+                    title: '鲜花一蓝'
+                }
+            ], //奖品1-9     
+            index: -1, // 当前转动到哪个位置，起点位置
+            count: 8, // 总共有多少个位置
+            timer: 0, // 每次转动定时器
+            speed: 200, // 初始转动速度
+            times: 0, // 转动次数
+            cycle: 50, // 转动基本次数：即至少需要转动多少次再进入抽奖环节
+            prize: -1, // 中奖位置
+            click: true,
+            showToast: false, //显示中奖弹窗
+
+            rwId: 0,
+        },
+
+        mounted() {},
+
+        methods: {
+            // 跳转
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+            startLottery() {
+                var _this = this;
+                if (!this.click) {
+                    return
+                }
+                choujiang(function(sIndex) {
+                    _this.index = sIndex;
+                    _this.prize = sIndex;
+                    _this.startRoll();
+                    _this.click = false;
+                })
+            },
+            // 开始转动
+            startRoll() {
+                this.times += 1 // 转动次数
+                this.oneRoll() // 转动过程调用的每一次转动方法，这里是第一次调用初始化 
+                // 如果当前转动次数达到要求 && 目前转到的位置是中奖位置
+                if (this.times > this.cycle + 10 && this.prize === this.index) {
+                    clearTimeout(this.timer) // 清除转动定时器，停止转动
+                    this.prize = -1
+                    this.times = 0
+                    this.speed = 200
+                    this.showToast = true;
+                    this.click = true;
+                    setRWNotice();
+                } else {
+                    if (this.times < this.cycle) {
+                        this.speed -= 10 // 加快转动速度
+                    } else if (this.times === this.cycle) {
+                        // const index = parseInt(Math.random() * 10, 0) || 0; // 随机获得一个中奖位置
+                        // this.prize = index; //中奖位置,可由后台返回 
+                        // if (this.prize > 7) {
+                        // this.prize = sIndex;
+                        // console.log(this.prize);
+                        // }
+                    } else if (this.times > this.cycle + 10 && ((this.prize === 0 && this.index === 7) ||
+                            this.prize === this.index + 1)) {
+                        this.speed += 110
+                    } else {
+                        this.speed += 20
+                    }
+                    if (this.speed < 40) {
+                        this.speed = 40
+                    }
+                    this.timer = setTimeout(this.startRoll, this.speed)
+                }
+            },
+
+            // 每一次转动
+            oneRoll() {
+                let index = this.index // 当前转动到哪个位置
+                const count = this.count // 总共有多少个位置
+                index += 1
+                if (index > count - 1) {
+                    index = 0
+                }
+                this.index = index
+            },
+        }
+
+    })
+
+    apiready = function() {
+        getData();
+        getInfo();
+    }
+    // 抽奖列表
+    function getData() {
+        _ajax('api/Turntable/lists', function(ret, err) {
+            if (ret && ret.code == 200) {
+                view.list = ret.data;
+            }
+        })
+    }
+    // 抽奖信息
+    function getInfo() {
+        _ajax('api/Turntable/config', function(ret, err) {
+            if (ret && ret.code == 200) {
+                view.ffInfo = ret.data;
+            }
+        }, {
+            user_id: $api.getStorage('userid'),
+        })
+    }
+
+    // 抽奖
+    function choujiang(callback) {
+        _ajax('api/Turntable/lottery', function(ret, err) {
+            if (ret && ret.code == 200) {
+                view.ffInfo.had_count--;
+                var data = view.list;
+                var result = ret.data;
+                view.rwId = result.lottery_id;
+                for (var i = 0, len = data.length; i < len; i++) {
+                    if (data[i].id == result.id) {
+                        callback(i);
+                        return false;
+                    }
+                }
+            }
+        }, {
+            user_id: $api.getStorage('userid'),
+        })
+    }
+
+    // 抽奖通知
+    function setRWNotice() {
+        _ajax('api/Turntable/lotteryNotice', function(ret, err) {
+        }, {
+            lottery_id: view.rwId,
+            user_id: $api.getStorage('userid')
+        })
+    }
+</script>
+
+</html>

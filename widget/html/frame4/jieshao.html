@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>小火苗</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/beizhu.css">
+    <link rel="stylesheet" href="../../css/aui_font.css" />
+    <style>
+        /* 动态 */
+        .dt-wrap {
+            display: flex;
+            flex-wrap: wrap;
+            /* padding: 5px; */
+        }
+
+        .dt-wrap .list {
+            position: relative;
+            margin-right: 6px;
+            margin-top: 10px;
+        }
+
+        .dt-wrap img {
+            width: calc(25vw - 12px);
+            height: calc(25vw - 12px);
+            border-radius: 7px;
+        }
+
+        .dt-wrap .list:nth-child(4n) {
+            margin-right: 0;
+        }
+
+
+        .remove {
+            position: absolute;
+            right: 6px;
+            top: 6px;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background-color: rgba(0, 0, 0, 0.2);
+        }
+
+        .remove i {
+            font-weight: bold;
+            color: #fff;
+            font-size: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <div class="wrap">
+            <div class="container">
+                <textarea name="" id="" placeholder="设置自我介绍" v-model="self_slogan"></textarea>
+                <ul class="dt-wrap">
+                    <li class="list" v-for="(m, index) in imgList">
+                        <img @click.stop="_url({imgArr:imgList, iIndex:index}, 'frame1/dy_img_win')" :src="returnImg(m)" onerror="this.src='../../image/error-img.png'" alt="">
+                        <div class="remove" @click.stop="rmImg(index)">
+                            <i class="aui-iconfont aui-icon-close"></i>
+                        </div>
+                    </li>
+                    <li class="list" v-if="imgList.length<max">
+                        <img src="../../image/icon/btn_addphoto.png" onclick="showDetail('modal/img_modal', {event: 'slogan_img',max:view.max})" alt="">
+                    </li>
+                </ul>
+            </div>
+            <button class="new-submit" onclick="submit()">确定</button>
+        </div>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+            self_slogan: '',
+            imgList: [],
+            max: 3, // 限定上传数量
+        },
+        methods: {
+            // 跳转
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+            rmImg(index) {
+                view.imgList.splice(index, 1);
+            },
+        }
+    })
+    apiready = function() {
+        _getUser(function(ret) {
+            view.self_slogan = ret.result.self_slogan;
+            view.imgList = ret.result.self_images;
+        })
+        _listener('slogan_img', function(ret) {
+            var arr = ret.value.img;
+            var brr = [];
+            for (var i = 0, len = arr.length; i < len; i++) {
+                brr.push(arr[i].path);
+            }
+            view.imgList = view.imgList.concat(brr);
+        })
+    }
+    // 确定
+    function submit() {
+        if (!view.self_slogan) {
+            _msg('请输入自我介绍');
+            return;
+        }
+        _loading();
+        var obj = {
+            user_id: $api.getStorage('userid'),
+            self_slogan: view.self_slogan,
+            self_images: ''
+        }
+
+        var needUploadImgList = [];
+        var notUploadImgStr = '';
+
+        if (view.imgList.length != 0) {
+            view.imgList.forEach(function (value, index){
+                if (value.indexOf('disk/uploads/image') != -1) {
+                    if (notUploadImgStr == '') {
+                        notUploadImgStr = value;
+                    } else {
+                        notUploadImgStr = notUploadImgStr + ',' + value;
+                    }
+                } else {
+                    needUploadImgList.push(value);
+                }
+            })
+        }
+
+        if (view.imgList.length != 0) {
+            if (needUploadImgList.length != 0) {
+                _upImgs({
+                    image: view.imgList,
+                }, function(img) {
+                    if (img) {
+                        if (notUploadImgStr == '') {
+                            obj.self_images = img;
+                        } else {
+                            obj.self_images = notUploadImgStr + ',' + img;
+                        }
+
+                        submitSlogan(obj);
+                    }
+                })
+            }
+
+            // _upImgs({
+            //     image: view.imgList,
+            // }, function(img) {
+            //     if (img) {
+            //         obj.self_images = img;
+            //         submitSlogan(obj);
+            //     }
+            // })
+        } else {
+            submitSlogan(obj);
+        }
+    }
+
+    // 提交
+    function submitSlogan(obj) {
+        _ajax('api/user/editInfo', function(ret, err) {
+            _loadingClose();
+            _msg(ret.msg);
+            if (ret && ret.code == 200) {
+                timerWin();
+            }
+        }, obj)
+    }
+</script>
+
+</html>

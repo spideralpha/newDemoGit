@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>小火苗</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/tixian.css">
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <div class="money">积分余额：<span class="num">{{ffInfo.score}}</span></div>
+        <ul class="tixian-ul flex-w">
+            <li class="list" v-for="(m, index) in ffList" @click="select(m.id)">
+                <div class="img">
+                    <img src="../../image/member/money.png" alt="">
+                    <h3>{{m.money}} 元</h3>
+                </div>
+                <div class="content">
+                    <p class="name">{{m.title}}</p>
+                    <p class="num">{{m.price}} 积分</p>
+                </div>
+            </li>
+        </ul>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+        },
+        methods: {
+            returnTitle(t) {
+                var t1 = t.split('元');
+                return t1[0] + '元';
+            },
+            select(id) {
+                _loading();
+                _ajax('home/withdraw/tiXian?id=' + id + '&method=1&userid=' + $api.getStorage('userid'), function(ret, err) {
+                    _loadingClose();
+                    if (ret && ret.code == 200) {
+                        _msg('提现成功');
+                        timerWin();
+                    } else {
+                        _msg(ret.msg);
+                    }
+                })
+            },
+            // 跳转
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+        }
+    })
+
+    apiready = function() {
+        _getUser(function(ret) {
+            view.ffInfo = ret.result;
+        })
+        getData()
+    }
+
+    function getData() {
+        _ajax('api/Withdraw/lists', function(ret, err) {
+            if (ret && ret.code == 200) {
+                view.ffList = ret.data;
+            }
+        }, {
+            user_id: $api.getStorage('userid'),
+        })
+    }
+</script>
+
+</html>

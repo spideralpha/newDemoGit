@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>小火苗</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/modal.css">
+    <link rel="stylesheet" href="../../css/level.css">
+    <style>
+        .top {
+            background: linear-gradient(to bottom, #C790F7, #AE64FA);
+        }
+
+        .top .name p {
+            text-shadow: 0 2px 2px #650cc1;
+        }
+
+        .level-ul .num {
+            color: #7338d8;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <div class="modal-bg" onclick="_close()">
+            <div class="modal">
+                <div class="top flex">
+                    <div class="head flex-c">
+                        <img class="tx" :src="returnImg(data.head_portrait)" onerror="this.src='../../image/touxiang.png'" alt="">
+                        <img class="u-hat" src="../../image/man/img_meili_xunzhang.png" alt="">
+                    </div>
+                    <div class="name" style="margin-left: 10px;">
+                        <p>魅力等级</p>
+                        <p class="num">LV.{{data.charmGrade}}</p>
+                    </div>
+                    <img class="close-btn" src="../../image/man/ms_recording_voice_delete_pressed.png" alt="">
+                </div>
+                <ul class="level-ul flex">
+                    <li class="list" style="border-right: 1px solid #eee;">
+                        <img class="icon" src="../../image/man/icon_meili_mlz.png" alt="">
+                        <p class="label">魅力值</p>
+                        <p class="num">{{data.charm_value}}</p>
+                    </li>
+                    <li class="list">
+                        <img class="icon" src="../../image/man/icon_meili_mlch.png" alt="">
+                        <p class="label">魅力称号</p>
+                        <p class="num">{{data.charmName}}</p>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+            data: {}
+        },
+        methods: {
+            // 跳转
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+        }
+    })
+
+    apiready = function() {
+        view.data = api.pageParam['data'];
+    }
+    // 
+    function _close() {
+        api.closeFrame();
+    }
+</script>
+
+</html>

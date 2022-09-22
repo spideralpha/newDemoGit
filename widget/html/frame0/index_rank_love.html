@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>小火苗</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/rank.css">
+    <style>
+        html,
+        body {
+            background: transparent;
+        }
+
+        .middle {
+            padding-bottom: 30px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="paihang" id="view" v-cloak>
+        <div class="pmainbox" @click.stop>
+            <!--恩爱榜-->
+            <div class="back double">
+                <div class="top" :class="{'flex-c': !ffList[1]}">
+                    <div class="arrow" v-if="ffList[1]">
+                        <div class="head">
+                            <img class="avatar" @click="go_userInfo(ffList[1].user_id, ffList[1].name, ffList[1].user_sex)" :src="returnImg(ffList[1].avatar)" onerror="this.src='../../image/touxiang.png'">
+                            <img class="avatar" @click="go_userInfo(ffList[1].to_user, ffList[1].name_2, ffList[1].user_sex_2)" :src="returnImg(ffList[1].avatar_2)" onerror="this.src='../../image/touxiang.png'">
+                            <img src="../../image/index/family_love_list_two.png">
+                        </div>
+                        <div>{{ffList[1].name}}</div>
+                        <div>{{ffList[1].name_2}}</div>
+                        <div>{{ffList[1].count}}亲密度</div>
+                    </div>
+                    <div class="arrow middle" v-if="ffList[0]">
+                        <div class="head">
+                            <img class="avatar" @click="go_userInfo(ffList[0].user_id, ffList[0].name, ffList[0].user_sex)" :src="returnImg(ffList[0].avatar)" onerror="this.src='../../image/touxiang.png'">
+                            <img class="avatar" @click="go_userInfo(ffList[0].to_user, ffList[0].name_2, ffList[0].user_sex_2)" :src="returnImg(ffList[0].avatar_2)" onerror="this.src='../../image/touxiang.png'">
+                            <img src="../../image/index/family_love_list_one.png">
+                        </div>
+                        <div>{{ffList[0].name}}</div>
+                        <div>{{ffList[0].name_2}}</div>
+                        <div>{{ffList[0].count}}亲密度</div>
+                    </div>
+                    <div class="arrow" v-if="ffList[2]">
+                        <div class="head">
+                            <img class="avatar" @click="go_userInfo(ffList[2].user_id, ffList[2].name, ffList[2].user_sex)" :src="returnImg(ffList[2].avatar)" onerror="this.src='../../image/touxiang.png'">
+                            <img class="avatar" @click="go_userInfo(ffList[2].to_user, ffList[2].name_2, ffList[2].user_sex_2)" :src="returnImg(ffList[2].avatar_2)" onerror="this.src='../../image/touxiang.png'">
+                            <img src="../../image/index/family_love_list_three.png">
+                        </div>
+                        <div>{{ffList[2].name}}</div>
+                        <div>{{ffList[2].name_2}}</div>
+                        <div>{{ffList[2].count}}亲密度</div>
+                    </div>
+                </div>
+                <div class="list" style="background: #fff;">
+                    <div class="item" v-for="(m, index) in ffList" v-if="index>2">
+                        <div class="index">{{index+1}}</div>
+                        <div class="info">
+                            <div class="left">
+                                <img class="avatar" @click="go_userInfo(m.user_id, m.name, m.user_sex)" :src="returnImg(m.avatar)" onerror="this.src='../../image/touxiang.png'">
+                                <img class="avatar" @click="go_userInfo(m.to_user, m.name_2, m.user_sex_2)" :src="returnImg(m.avatar_2)" onerror="this.src='../../image/touxiang.png'">
+                                <div class="name">
+                                    <div>{{m.name}}</div>
+                                    <div>{{m.name_2}}</div>
+                                </div>
+                            </div>
+                            <div class="right">{{m.count}}亲密度</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script src="../../json/love.js"></script>
+<script src="../../script/rank.js"></script>
+
+</html>

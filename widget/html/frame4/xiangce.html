@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>title</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/news.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui_font.css" />
+    <style>
+        html,
+        body {
+            background: #fff;
+        }
+
+        /* 动态 */
+        .dt-wrap {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 5px;
+        }
+
+        .dt-wrap .list {
+            position: relative;
+            margin-right: 6px;
+            margin-top: 10px;
+        }
+
+        .dt-wrap img {
+            width: calc(25vw - 7px);
+            height: calc(25vw - 7px);
+            border-radius: 7px;
+        }
+
+        .dt-wrap .list:nth-child(4n) {
+            margin-right: 0;
+        }
+
+
+        .remove {
+            position: absolute;
+            right: 6px;
+            top: 6px;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background-color: rgba(0, 0, 0, 0.2);
+        }
+
+        .remove i {
+            font-weight: bold;
+            color: #fff;
+            font-size: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <ul class="dt-wrap">
+            <li class="list" v-for="(m, index) in imgList">
+                <img @click.stop="_url({showZan:1, iIndex:index}, 'frame0/img_win')" :src="returnImg(m.pic[0])" onerror="this.src='../../image/error-img.png'" alt="">
+                <div class="remove" @click.stop="rmImg(index)">
+                    <i class="aui-iconfont aui-icon-close"></i>
+                </div>
+            </li>
+            <li class="list">
+                <img src="../../image/icon/btn_addphoto.png" onclick="showDetail('modal/img_modal', {event: 'xc_img'})" alt="">
+            </li>
+        </ul>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/jquery.js"></script>
+<script type="text/javascript" src="../../script/vue.js"></script>
+<script type="text/javascript" src="../../script/ffkj.js"></script>
+<script type="text/javascript" src="../../script/uinfo.js"></script>
+<script type="text/javascript">
+    var view = new Vue({
+        el: '#view',
+        data: {
+            listData: {},
+            imgurl: imgurl,
+            upType: 0, // 0图片 1视频
+            ios: 1, // 1上架 0非上架
+            imgList: [], // 小图时显示图片&视频
+            imgArr: [], // 只显示图片
+        },
+        methods: {
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 图片
+            returnImg(url) {
+                return returnImg(url);
+            },
+            rmImg(index) {
+                var id = view.imgList[index].id;
+                _loading();
+                _ajax('api/Userimg/delImg', function(ret, err) {
+                    console.log(JSON.stringify(ret))
+                    console.log(JSON.stringify(err))
+                    _loadingClose();
+                    var msg = ret.code == 200 ? '删除成功' : ret.msg;
+                    _msg(msg);
+                    if (ret && ret.code == 200) {
+                        view.imgList.splice(index, 1);
+                    }
+                }, {
+                    img_id: id,
+                })
+            },
+            // 删除图片
+            delImg(id, auth) {
+                var msg = auth == 0 ? '是否确定删除该图？' : '删除后，将无法再次获得本人认证照片，是否继续？';
+                _confirm({
+                    msg: msg
+                }, function(bIndex) {
+                    if (bIndex == 1) {
+                        _loading();
+                        _ajax('api/Userimg/delImg', function(ret, err) {
+                            console.log(JSON.stringify(ret))
+                            console.log(JSON.stringify(err))
+                            _loadingClose();
+                            var msg = ret.code == 200 ? '删除成功' : ret.msg;
+                            _msg(msg);
+                            if (ret && ret.code == 200) {
+                                getUserPhoto(function(all, imgArr) {
+                                    view.imgList = all;
+                                    view.imgArr = imgArr;
+                                })
+                            }
+                        }, {
+                            img_id: id,
+                        })
+                    }
+                })
+
+            }
+
+        }
+    });
+
+    apiready = function() {
+        _listener('xc_img', function(ret) {
+            upXC(ret.value.img)
+        })
+        // 相册
+        getUserPhoto(function(all, imgArr) {
+            view.imgList = all;
+            view.imgArr = imgArr;
+
+        })
+    };
+
+    // 上传相册
+    function upXC(arr) {
+        var brr = [];
+        for (var i = 0, len = arr.length; i < len; i++) {
+            brr.push(arr[i].path);
+        }
+        _upImgs({
+            image: brr,
+        }, function(img) {
+            if (img) {
+                var imgarr = img.split(',');
+                submitPhoto(imgarr)
+            }
+        })
+    }
+
+    function submitPhoto(arr) {
+        _loading();
+        _a(0);
+
+        function _a(index) {
+            console.log(arr[index]);
+            var obj = {
+                user_id: $api.getStorage('userid'),
+                burn: 0,
+                packet: 0,
+                types: 1, // 1 图片 2视频
+                photo_album: arr[index]
+            }
+            _ajax('api/upload/upload', function(rets, errs) {
+                index++;
+                if (index < arr.length) {
+                    _a(index)
+                } else {
+                    getUserPhoto(function(all, imgArr) {
+                        _loadingClose();
+                        view.imgList = all;
+                        view.imgArr = imgArr;
+                    })
+                }
+            }, obj)
+        }
+    }
+</script>
+
+</html>

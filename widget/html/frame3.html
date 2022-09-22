@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>title</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/aui_font.css" />
+    <link rel="stylesheet" type="text/css" href="../css/news.css" />
+    <link rel="stylesheet" type="text/css" href="../css/base_icon.css" />
+    <link rel="stylesheet" type="text/css" href="../css/frame3.css" />
+    <link rel="stylesheet" type="text/css" href="../css/swiper.css" />
+    <style>
+        html,
+        body {
+            margin: 0;
+            /* background: rgb(250, 250, 250); */
+            background: #fff;
+        }
+
+        #view {
+            padding: 0 10px;
+        }
+
+        header .head {
+            padding: 30px 0;
+            display: flex;
+            align-items: center;
+            /* width: 80vw;
+            margin-left: 10vw; */
+            position: relative;
+        }
+
+        header .head .headimg {
+            width: 70px;
+            height: 70px;
+            border-radius: 7px;
+        }
+
+        header .head .info {
+            margin-left: 16px;
+        }
+
+        header .head .info .id {
+            margin: 4px 0;
+            font-size: 10px;
+            color: #999;
+        }
+
+        .new-fuhao img {
+            height: 12px;
+        }
+
+        header .head .info .smalldata {
+            display: flex;
+            align-items: center;
+        }
+
+        header .head .info .smalldata .sditem {
+            font-size: 10px;
+            color: #999999;
+        }
+
+        header .head .info .smalldata .sditem::after {
+            display: inline-block;
+            content: '';
+            height: 10px;
+            width: 1px;
+            background: #555;
+            margin: 0 7px;
+        }
+
+        header .head .info .smalldata .sditem:last-child::after {
+            display: none;
+        }
+
+        header .head .info .smalldata .sditem span {
+            margin-left: 3px;
+            color: #999999;
+        }
+
+        header .head .uinfo {
+            position: absolute;
+            display: flex;
+            align-items: center;
+            right: 0;
+            font-size: 13px;
+            color: #999;
+        }
+
+        .options {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            /* width: 80vw;
+            margin-left: 10vw; */
+            margin-bottom: 20px;
+        }
+
+        .options img {
+            height: 30px;
+        }
+
+        .options .option {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .options .option span {
+            font-size: 12px;
+            margin-top: 6px;
+        }
+
+        .score {
+            /* width: 90vw;
+            margin: 20px 5vw; */
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .score .sitem {
+            width: 48%;
+            position: relative;
+        }
+
+        .score .sitem img {
+            width: 100%;
+            object-fit: cover;
+        }
+
+        .score .sitem .box {
+            position: absolute;
+            z-index: 1;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            padding: 10px 18px;
+            box-sizing: border-box;
+        }
+
+        .score .sitem .box .title {
+            color: #fff;
+            font-size: 13px;
+        }
+
+        .score .sitem .box .num {
+            margin-top: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .score .sitem .box .num .value {
+            font-size: 15px;
+            color: #fff;
+        }
+
+        .score .sitem .box .num .op {
+            font-size: 13px;
+            color: #fff;
+            border: 1px solid #fff;
+            border-radius: 30px;
+            padding: 2px 10px;
+        }
+
+        .section {
+            /* margin: 20px 5vw 0 5vw; */
+            /* border-radius: 10px; */
+            background-color: #fff;
+            border-top: 1px solid #f5f5f5;
+        }
+
+        .section .cell {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 0px;
+        }
+
+        .section .cell .left {
+            display: flex;
+            align-items: center;
+            font-size: 16px;
+            color: #333333;
+        }
+
+        .section .cell .left img {
+            width: 23px;
+            height: 23px;
+            margin-right: 10px;
+        }
+
+        .top-tip {
+            position: fixed;
+            z-index: 2;
+            background: rgba(0, 0, 0, 0.5);
+            font-size: 12px;
+            width: 100%;
+            text-align: center;
+            color: #fff;
+            top: 0;
+            left: 0;
+            padding: 3px 0;
+        }
+
+        .viptag {
+            vertical-align: bottom;
+            height: 20px;
+        }
+
+        /*  */
+        .cell .right {
+            display: flex;
+            align-items: center;
+            text-align: right;
+            font-size: 12px;
+        }
+
+        .cell .right span {
+            color: #757575;
+        }
+
+        .cell .swiper-container {
+            height: 17px;
+            width: 30vw;
+        }
+
+        .cell .right img {
+            height: 10px;
+            margin: 0 3px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <header>
+            <div class="top-tip" v-if="showNoble">会员有效期至{{listData.noble_time}}</div>
+            <div class="head" onclick="_url({},'frame4/ucenter')">
+                <img class="headimg" :src="returnImg(listData.head_portrait)" onerror="this.src='../image/touxiang.png'">
+                <div class="info">
+                    <div class="name">
+                        <span>{{listData.name}}</span>
+                        <!-- <img class="viptag" :src="returnImg(listData.nobleIcon)" alt=""> -->
+                    </div>
+                    <span class="id flex" v-if="listData.charmIcon || listData.tycoonIcon || listData.is_noble">
+                        <span class="new-fuhao" v-if="listData.tycoonIcon && !ios"><img :src="returnImg(listData.tycoonIcon)" onerror="this.src='../image/error-img.png'" alt=""></span>
+                        <span class="new-fuhao" v-if="listData.charmIcon && !ios"><img :src="returnImg(listData.charmIcon)" onerror="this.src='../image/error-img.png'" alt=""></span>
+                        <img class="new-noble" v-if="listData.is_noble && listData.noble && !ios" :src="returnImg(listData.noble.icon)" onerror="this.src='../image/error-img.png'" alt="">
+                    </span>
+                    <span class="id" v-else>小火苗号：{{listData.id}}</span>
+                    <div class="smalldata">
+                        <div class="sditem" onclick="_url({url:'frame4/collect_frame', title:'好友', types: 3})">
+                            好友<span>{{listData.friend}}</span>
+                        </div>
+                        <div class="sditem" onclick="_url({url:'frame4/collect_frame', title:'关注', types: 1})">
+                            关注<span>{{listData.following}}</span>
+                        </div>
+                        <div class="sditem" onclick="_url({url:'frame4/collect_frame', title:'粉丝', types: 2})">
+                            粉丝<span>{{listData.attention}}</span>
+                        </div>
+                    </div>
+                    <!-- <div class="smalldata" v-if="(listData.free_chat || listData.free_voice || listData.free_video) && !ios">
+                        <div class="sditem">
+                            免费聊天<span>{{listData.free_chat}}次</span>
+                        </div>
+                        <div class="sditem">
+                            免费语音<span>{{listData.free_voice}}分钟</span>
+                        </div>
+                        <div class="sditem">
+                            免费视频<span>{{listData.free_video}}分钟</span>
+                        </div>
+                    </div> -->
+                </div>
+                <div class="uinfo" v-if="!ios">领红包<i class="base-icon index-hb-icon"></i><i style="margin-left: 5px;" class="aui-iconfont aui-icon-right"></i></div>
+            </div>
+            <div class="options" v-if="!ios">
+                <div class="option " onclick="_url({},'frame4/shouhu_win')">
+                    <img src="../image/member/m1.png" alt="">
+                    <span>守护</span>
+                </div>
+                <!-- <div class="option " onclick="_url({},'jiazu_win')">
+                    <img src="../image/member/m2.png" alt="">
+                    <span>家族</span>
+                </div> -->
+                <div class="option " onclick="_url({url: 'frame4/wo_de_yu_e_frame', title: '收益', moreTitle:'清单'})">
+                    <img src="../image/member/m3.png" alt="">
+                    <span>积分</span>
+                </div>
+                <div class="option " onclick="_url({url:'frame4/chongzhicenter',title:'充值中心', moreTitle: '账单'})">
+                    <img src="../image/member/m4.png" alt="">
+                    <span>充值</span>
+                </div>
+            </div>
+        </header>
+        <div class="section">
+            <div class="cell" v-if="!ios" onclick="_url({url:'frame4/yaoqing', title:'我的邀请'})">
+                <div class="left">
+                    <img src="../image/member/mm1.png" alt="">
+                    邀请赚钱
+                </div>
+                <div class="right">
+                    <div class="rw-s">
+                        <span class="label">收益三年</span><img src="../image/task/icon_hongbao.png" alt="">
+                    </div>
+                    <i class="aui-iconfont aui-icon-right"></i>
+                </div>
+            </div>
+            <div class="cell" v-if="!ios" onclick="_url({url:'frame4/renwu',title:'每日任务'})">
+                <div class="left">
+                    <img src="../image/member/mm2.png" alt="">
+                    每日任务
+                </div>
+                <div class="right">
+                    <div class="rw-s">
+                        <div class="swiper-container">
+                            <div class="swiper-wrapper">
+                                <div class="swiper-slide" v-for="(m, index) in rwList">
+                                    <span class="label">{{m.title}}</span><img src="../image/task/icon_hongbao.png" alt="">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <i class="aui-iconfont aui-icon-right"></i>
+                </div>
+            </div>
+        </div>
+        <div class="section">
+            <div class="cell" v-if="!ios" onclick="_url({url:'rz/rzcenter', title:'认证'})">
+                <div class="left">
+                    <img src="../image/member/mm3.png" alt="">
+                    我的认证
+                </div>
+                <i class="aui-iconfont aui-icon-right"></i>
+            </div>
+        </div>
+        <div class="section">
+            <div class="cell" v-if="!ios" onclick="openVIP()">
+                <div class="left">
+                    <img src="../image/member/mm4.png" alt="">
+                    贵族
+                </div>
+                <i class="aui-iconfont aui-icon-right"></i>
+            </div>
+            <div class="cell" v-if="!ios" onclick="_url({},'frame4/car')">
+                <div class="left">
+                    <img src="../image/member/mm5.png" alt="">
+                    座驾
+                </div>
+                <i class="aui-iconfont aui-icon-right"></i>
+            </div>
+            <!-- <div class="cell" v-if="!ios" onclick="_url({url:'frame4/my_gonghui', title:'我的公会'})">
+                <div class="left">
+                    <img src="../image/member/mm10.png" alt="">
+                    我的公会
+                </div>
+                <i class="aui-iconfont aui-icon-right"></i>
+            </div> -->
+            <!-- <div class="cell" v-if="!ios" onclick="_url({url:'frame4/dengji_win',title:'我的等级'})">
+                <div class="left">
+                    <img src="../image/icon/djicon@2x.png" alt="">
+                    等级
+                </div>
+                <i class="aui-iconfont aui-icon-right"></i>
+            </div>
+            <div class="cell" v-if="!ios" onclick="_url({slidBackEnabled:0}, 'frame4/meiyan_win')">
+                <div class="left">
+                    <img src="../image/icon/myicon@2x.png" alt="">
+                    美颜设置
+                </div>
+                <i class="aui-iconfont aui-icon-right"></i>
+            </div> -->
+
+            <!-- <div v-if="!ios" class="cell" onclick="_url({url:'frame3/modify_frame', title:'自定义打招呼', index:1})">
+                <div class="left">
+                    <img src="../image/icon/dzhicon@2x.png" alt="">
+                    自定义打招呼
+                </div>
+                <i class="aui-iconfont aui-icon-right"></i>
+            </div> -->
+        </div>
+        <div class="section">
+            <div class="cell" v-if="!ios" onclick="_url({}, 'frame4/visitor_win')">
+                <div class="left">
+                    <img src="../image/member/mm6.png" alt="">
+                    谁看过我
+                </div>
+                <i class="aui-iconfont aui-icon-right"></i>
+            </div>
+            <div class="cell" v-if="ios" onclick="_url({url:'frame4/history', title:'我的足迹'})">
+                <div class="left">
+                    <img src="../image/member/mm6.png" alt="">
+                    我的足迹
+                </div>
+                <i class="aui-iconfont aui-icon-right"></i>
+            </div>
+            <div class="cell" v-if="ios" onclick="_url({url: 'frame4/yi_jian_fan_kui_frame', title: '投诉与建议'})">
+                <div class="left">
+                    <img src="../image/member/mm9.png" alt="">
+                    投诉与建议
+                </div>
+                <i class="aui-iconfont aui-icon-right"></i>
+            </div>
+            <div class="cell" @click="_url({url:'frame3/zaixiankefu', title:'在线客服'})">
+                <div class="left">
+                    <img src="http://xhuomiao.oss-cn-hangzhou.aliyuncs.com/disk/uploads/image/20220921/kefu.png" alt="">
+                    在线客服
+                </div>
+                <i class="aui-iconfont aui-icon-right"></i>
+            </div>
+            <div class="cell" @click="_url({url:'frame3/sz', title:'设置', phone: listData.phone})">
+                <div class="left">
+                    <img src="../image/member/mm8.png" alt="">
+                    系统设置
+                </div>
+                <i class="aui-iconfont aui-icon-right"></i>
+            </div>
+<!--            <div class="cell" onclick="window.location.href='https://chaten.sobot.com/chat/h5/v2/index.html?sysnum=2dc365c4a115420fbb8eae514b1d936d&source=2'">-->
+<!--                <div class="left">-->
+<!--                    <img src="https://xhuomiao.oss-cn-hangzhou.aliyuncs.com/public/style/api/img/notice/kefu.png" alt="">-->
+<!--                    在线客服-->
+<!--                </div>-->
+<!--            </div>-->
+
+            <!-- <div class="cell" onclick="_url({url:'frame3/choujiang', title:'抽奖'})">
+                <div class="left">
+                    <img src="../image/member/mm8.png" alt="">
+                   抽奖
+                </div>
+                <i class="aui-iconfont aui-icon-right"></i>
+            </div> -->
+            <!-- <div class="cell" onclick="openService()">
+                <div class="left">
+                    <img src="https://xhuomiao.oss-cn-hangzhou.aliyuncs.com/public/style/api/img/notice/kf.png" alt="">
+                    小火苗小助手
+                </div>
+                <i class="aui-iconfont aui-icon-right"></i>
+            </div> -->
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/jquery.js"></script>
+<script type="text/javascript" src="../script/vue.js"></script>
+<script type="text/javascript" src="../script/ffkj.js"></script>
+<script type="text/javascript" src="../script/update.js"></script>
+<script type="text/javascript" src="../script/swiper.js"></script>
+
+<script type="text/javascript" src="../json/imglist.js"></script>
+<script type="text/javascript" src="../json/user.js"></script>
+<script type="text/javascript" src="../json/rw.js"></script>
+<script type="text/javascript">
+    var userid;
+    var closeid;
+    var imgurls = [];
+    var view = new Vue({
+        el: '#view',
+        data: {
+            listData: {},
+            imgUrl: imgurl,
+            imgList: [],
+            bigImgList: [],
+            upType: 0, // 0图片 1视频
+            ios: 1, // 1上架 0非上架
+            vipdate: [],
+            rwList: rwJson.data[0],
+
+            showNoble: 0,
+        },
+        methods: {
+            copyTxt(text) {
+                copyTxt(text);
+            },
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+        }
+    });
+    var swiper = new Swiper('.swiper-container', {
+        direction: 'vertical', // 垂直切换选项
+        loop: true, // 循环模式选项
+        autoplay: {
+            delay: 3000,
+        },
+        allowTouchMove: false,
+    })
+    apiready = function() {
+        view.ios = $api.getStorage('shang');
+        userid = $api.getStorage('userid');
+        $api.fixStatusBar($api.dom('header'));
+        //监听登录
+        // _listener('fresh', function () {
+        //     userid = $api.getStorage('userid');
+        //     getUserInfo();
+        // })
+        if (api.systemType == 'ios') {
+            userid = $api.getStorage('userid');
+            getUserInfo();
+            _heibai(1);
+        }
+        _listener('viewappear', function() {
+            userid = $api.getStorage('userid');
+            getUserInfo();
+            _heibai(1);
+        })
+
+        _shangla(function() {
+            userid = $api.getStorage('userid');
+            getUserInfo();
+            _heibai(1);
+        }, 1)
+
+        setTimeout(function() {
+            getSign()
+        }, 2000)
+    };
+
+
+    // 获取用户信息
+    function getUserInfo() {
+        _getUser(function(ret) {
+            view.listData = ret.result;
+            var nd = new Date().getDate();
+            if ($api.getStorage('showNoble') != nd) {
+                $api.setStorage('showNoble', nd);
+                view.showNoble = ret.result.noble_grade;
+                setTimeout(function() {
+                    view.showNoble = 0;
+                }, 3000)
+            }
+        })
+    }
+
+    // 联系客服
+    function openService() {
+        _ajax('api/Member/kefu', function(ret, err) {
+            if (ret && ret.data && ret.data.id) {
+                _url({
+                    touserid: ret.data.id,
+                    title: '与客服的聊天',
+                    moreType: 1,
+                }, 'frame0/liaotian_win')
+            } else {
+                _msg('暂无法联系客服');
+            }
+        })
+    }
+
+
+    // 获取签到状态
+    function getSign() {
+        if ($api.getStorage('shang') == 1) return;
+        _ajax('api/task/checkSignIn', function(ret, err) {
+            if (ret && ret.data && !ret.data.signIn) {
+                showDetail('modal/sign_modal')
+            }
+        }, {
+            user_id: $api.getStorage('userid')
+        })
+    }
+</script>
+
+</html>

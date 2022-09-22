@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>小火苗</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/modal.css">
+    <style>
+        .modal .container .content {
+            margin: 0 24px;
+            margin-bottom: 4vw;
+            width: calc(100% - 48px);
+            padding: 10px;
+            box-sizing: border-box;
+            border: 1px solid #F5F5F5;
+            border-radius: 10px;
+            background-color: #fff;
+        }
+
+        .modal .container .content textarea {
+            width: 100%;
+            height: 100%;
+            resize: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <div class="modal-bg" onclick="_close()">
+            <div class="modal" @click.stop>
+                <img class="img-bg" src="../../image/modal/sqtc@3x.png" alt="">
+                <div class="container">
+                    <div class="content">
+                        <textarea name="" id="" placeholder="请输入申请理由" v-model="reason"></textarea>
+                    </div>
+                    <div class="flex-c">
+                        <button class="modal-btn" onclick="submit()">立即申请</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+            reason: '',
+            identity: 0
+        },
+        methods: {
+            // 跳转
+            _url: function(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg: function(url) {
+                return returnImg(url);
+            },
+        }
+    })
+    apiready = function() {
+        view.id = api.pageParam['id'];
+        view.identity = api.pageParam['identity'];
+    }
+    // 
+    function _close() {
+        api.closeFrame();
+    }
+
+    // 
+    function submit() {
+        if (!view.reason) {
+            _msg('请填写申请理由');
+            return;
+        }
+        var obj = {
+            id: view.id,
+            user_id: $api.getStorage('userid'),
+            reason: view.reason
+        }
+        var url = 'api/family/apply';
+        if (view.identity) {
+            obj.identity = view.identity;
+            url = 'api/Family/applyIdentity'
+        }
+        _ajax(url, function(ret, err) {
+            _msg(ret.msg);
+            if (ret && ret.code == 200) {
+                pushMsg($api.getStorage('userid'));
+                _close();
+            }
+        }, obj)
+    }
+</script>
+
+</html>

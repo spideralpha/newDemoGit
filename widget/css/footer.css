@@ -1,0 +1,228 @@
+/* 第一个头部 */
+.one {
+    /* color: #222; */
+    color: #333333;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+/* 首页导航 */
+.h-list .one2 {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-around;
+}
+
+.wrap {
+    background: #fff;
+    color: #333333;
+    width: 84%;
+    min-width: 84%;
+    max-width: 84%;
+    overflow: auto;
+    /* border-bottom: 1px solid #eee; */
+}
+
+.wrap .list.active .l-title {
+    color: #F46CEF;
+}
+
+/* 第二个头部 */
+.two {
+    padding: 5px 10px;
+}
+
+.two span {
+    width: 20vw;
+    font-size: 14px;
+    color: #555555;
+    font-weight: normal;
+}
+
+/* 第三个头部 */
+.com .title,
+.tri .title,
+.for .title {
+    /* color: #9763fc;
+    font-size: 16px; */
+    /* color: #222; */
+    color: #333333;
+    font-size: 14px;
+    font-weight: bold;
+    line-height: 52px;
+}
+
+.tri .num {
+    position: absolute;
+    top: calc(50% - 13px);
+    /* left: 60%; */
+    left: calc(50% + 20px);
+    border-radius: 10px;
+    width: 35px;
+    padding: 1.5px 0;
+    background: #F46CEF;
+    color: #fff;
+    font-size: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 第四个头部 */
+.for {
+    line-height: 52px;
+    color: #F46CEF;
+}
+
+.for .edit {
+    font-size: 14px;
+    width: 20vw;
+    text-align: center;
+}
+
+.h-list.hide {
+    display: none;
+}
+
+
+/* 脚部 */
+footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    border-top: 1px solid #eee;
+    width: 100%;
+}
+
+footer .f-wrap {
+    width: 100%;
+    justify-content: center;
+}
+
+.f-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 50vw;
+    font-size: 10px;
+    color: #757575;
+    position: relative;
+    padding-bottom: 7px;
+}
+
+.f-list img {
+    width: 30px;
+    height: 30px;
+    object-fit: contain;
+}
+
+.f-list span {
+    color: #999;
+}
+
+.f-list.active span {
+    color: #CD7DFE;
+    display: inline-block;
+}
+
+.f-list span.num {
+    position: absolute;
+    top: 5px;
+    left: 65%;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    background: #CD7DFE;
+    color: #fff;
+    font-size: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+/* 首页 头部速配 */
+.z-list {
+    margin-bottom: 14px;
+    width: 100vw;
+    overflow-x: auto;
+    display: -webkit-box;
+}
+
+.z-list .item {
+    width: 22vw;
+    /* height: calc(25vw * 1.4); */
+    border-radius: 10px;
+    font-size: 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    box-sizing: border-box;
+
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+    align-items: center;
+}
+
+.z-list .item .label {
+    font-size: 10px;
+    margin-top: 5px;
+}
+
+.z-list .item.blue {
+    background: rgba(192, 235, 255, 0.215);
+}
+
+.z-list .item.green {
+    background: rgba(215, 255, 192, 0.215);
+}
+
+.z-list .item.red {
+    background: rgba(255, 192, 192, 0.215);
+}
+
+.z-list .item.yellow {
+    background: rgba(255, 249, 192, 0.215);
+}
+
+/* 
+.z-list .item.video-item {
+    background-image: url('../image/icon/index_video_bg.png');
+}
+
+.z-list .item.voice-item {
+    background-image: url('../image/icon/index_voice_bg.png');
+}
+
+.z-list .item.area-item {
+    background-image: url('../image/icon/index_area_bg.png');
+}
+
+.z-list .item.chat-item {
+    background-image: url('../image/icon/index_chat_bg.png');
+} */
+
+.z-list .item img {
+    width: 80%;
+    /* height: 50%; */
+    object-fit: contain;
+}
+
+/* .z-list .item img.lw {
+    width: 60%;
+    height: 50%;
+} */
+
+.swiper-container {
+    width: 94%;
+    margin-left: 3%;
+    height: 100px;
+}
+
+.swiper-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}

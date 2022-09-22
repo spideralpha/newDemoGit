@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .giftmodal{
+            width: 100vw;
+            height: 100vh;
+            background: rgb(0,0,0,0.3);
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 999;
+        }
+        .giftmodal .mainbox{
+            width: 100%;
+            height: 320px;
+            background: #fff;
+            position: absolute;
+            bottom: 0;
+            box-sizing: border-box;
+        }
+        .giftmodal .mainbox .head{
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0;
+        }
+        .giftmodal .mainbox .head .item.active{
+            color: #f92;
+            position: relative;
+        }
+        .giftmodal .mainbox .head .item.active::after{
+            content: '';
+            width: 14px;
+            height: 2px;
+            background: #f92;
+            position:absolute;
+            bottom: -5px;
+            left: calc(50% - 7px);
+        }
+        .giftmodal .mainbox .body {
+            width: 100vw;
+            height: 75%;
+        }
+        .giftmodal .mainbox .body .giftlist{
+            width: 100vw;
+            height: 100%;
+            display: flex;
+            justify-content: flex-start;
+            flex-wrap: wrap;
+            overflow-y:auto;
+            box-sizing: border-box;
+            padding: 10px;
+        }
+        .giftmodal .mainbox .body .giftlist .item{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 25%;
+            border-radius: 10px;
+            padding: 16px 0;
+            height: 80px;
+        }
+        .giftmodal .mainbox .body .giftlist .item.active{
+            background: #f2f2f2;
+        }
+        .giftmodal .mainbox .body .giftlist .item>img{
+            width: 50px;
+            height: 50px;
+        }
+        .giftmodal .mainbox .body .giftlist .item .price{
+            display: flex;
+            font-size: 12px;
+            align-items: center;
+            padding: 3px 0 1px 0;
+        }
+        .giftmodal .mainbox .body .giftlist .item .price img{
+            width: 12px;
+            height: 12px;
+        }
+        .giftmodal .mainbox .body .giftlist .item .name{
+            font-size: 12px;
+        }
+        .giftmodal .mainbox .bottom{
+            display: flex;
+            justify-content: space-between;
+            padding: 0 15px;
+            align-items: center;
+            font-size: 12px;
+            box-sizing: border-box;
+            height: 13%;
+        }
+        .giftmodal .mainbox .bottom .left{
+            display: flex;
+            align-items: center;
+        }
+        .giftmodal .mainbox .bottom .left img{
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+        }
+        .giftmodal .mainbox .bottom .right{
+            background: #f92;
+            color:#fff;
+            padding: 3px 12px;
+            border-radius: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div id="view" v-cloak>
+        <div class="giftmodal" @click="close">
+            <div class="mainbox" @click.stop="">
+                <div class="head">
+                    <div class="item" :class="[0 == giftbox?'active':'']" @click="giftbox=0">普通</div>
+                    <div class="item" :class="[1 == giftbox?'active':'']" @click="giftbox=1">贵族</div>
+                </div>
+                <div class="body">
+                    <div class="giftlist" v-show="giftbox==0">
+                        <div class="item" :class="[item == giftindex?'active':'']" @click="giftindex=item" v-for="item in 20">
+                            <img src="../../image/gift.png" alt="">
+                            <div class="price">
+                                <img src="../../image/icon/m6.png" alt="">
+                                <span>5</span>
+                            </div>
+                            <div class="name">深情玫瑰</div>
+                        </div>
+                    </div>
+                    <div class="giftlist" v-show="giftbox==1">
+                        <div class="item" :class="[item == giftindex?'active':'']" @click="giftindex=item" v-for="item in 2">
+                            <img src="../../image/gift.png" alt="">
+                            <div class="price">
+                                <img src="../../image/icon/m6.png" alt="">
+                                <span>5</span>
+                            </div>
+                            <div class="name">深情玫瑰</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bottom">
+                    <div class="left">
+                        <img src="../../image/icon/m6.png" alt=""><span>可用余额：0</span>
+                    </div>
+                    <div class="right">赠送</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="../../script/api.js"></script>
+    <script src="../../script/vue.js"></script>
+    <script>
+        var view = new Vue({
+            el:'#view',
+            data:{
+                giftbox: 0,
+                giftindex:0
+            },
+            methods:{
+                close(){
+                    api.closeFrame()
+                }
+            }
+        })
+    </script>
+</body>
+</html>

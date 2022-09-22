@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/aui_font.css">
+    <link rel="stylesheet" href="../../css/user.css">
+    <style>
+        .title {
+            color: #000 !important;
+        }
+        .wrap{
+            margin-top: 40px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap" id="view" v-cloak>
+        <ul class="ul w-bg no-go">
+            <li class="li">
+                <div class="content" style="width: 100%;text-align: right;">
+                    <div class="title" style="word-break: keep-all;width: auto;;">语音免打扰</div>
+                    <i class="base-icon my-msg" :class="{'my-msg-close':ffInfo.voice_switch ==1}" onclick="changeSocial('voice_switch')"></i>
+                </div>
+            </li>
+            <li class="li">
+                <div class="content" style="width: 100%;text-align: right;">
+                    <div class="title" style="word-break: keep-all;width: auto;;">视频免打扰</div>
+                    <i class="base-icon my-msg" :class="{'my-msg-close':ffInfo.video_switch ==1}" onclick="changeSocial('video_switch')"></i>
+                </div>
+            </li>
+        </ul>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script src="../../script/yinsi.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+        },
+        methods: {
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+
+        }
+    })
+    apiready = function () {
+        getMyConfig()
+    }
+</script>
+
+</html>

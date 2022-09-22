@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/aui_font.css">
+    <link rel="stylesheet" href="../../css/base_icon.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/frame0.css">
+    <style>
+        .novip {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 50vh;
+            justify-content: space-between;
+        }
+
+        .novip .bigimg {
+            width: 120px;
+            margin: 20px 0;
+        }
+
+        .novip .list {
+            display: flex;
+            align-items: center;
+        }
+
+        .novip .list .blurbox {
+            width: 50px;
+            height: 50px;
+            border-radius: 25px;
+            overflow: hidden;
+        }
+
+        .novip .list .blurbox:nth-child(n+2) {
+            margin-left: 8px;
+        }
+
+        .novip .list .blurbox img {
+            width: 50px;
+            height: 50px;
+            filter: blur(3px);
+        }
+
+        .tips {
+            font-size: 12px;
+            margin-top: 10px;
+            color: #787878;
+        }
+
+        .btips {
+            font-size: 14px;
+            margin-top: 50px;
+        }
+
+        .new-submit {
+            margin: 10px;
+        }
+
+        /* #no_more {
+            display: none;
+        } */
+
+        .morenum {
+            border-radius: 22px;
+            width: 44px;
+            background-color: rgb(75, 187, 231);
+            text-align: center;
+            color: #fff;
+            height: 44px;
+            line-height: 44px;
+            margin-left: 8px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <div class="novip" v-if="ffInfo.code == 400 && ffInfo.data && !ios">
+            <img class="bigimg" src="../../image/index/visitor_lock_icon.png" alt="">
+            <div class="list">
+                <!-- <div class="blurbox" v-for="i in 2">
+                    <img :src="returnImg(x.user_head)" alt="">
+                </div> -->
+                <div class="blurbox" v-for="item in ffInfo.data.avatars">
+                    <img :src="returnImg(item)" onerror="this.src='../../image/touxiang.png'" alt="">
+                </div>
+                <div class="morenum" v-if="ffInfo.data.count">+{{ffInfo.data.count}}</div>
+            </div>
+            <div class="tips" v-if="ffInfo.data.count">哇，有<span>{{ffInfo.data.count}}</span>人默默关注我，对我感兴趣！</div>
+            <div class="btips">{{ffInfo.msg}}所有访客信息</div>
+            <div class="new-submit" onclick="openVIP();">立即开通</div>
+        </div>
+        <ul class="ulist-wrap" v-else>
+            <li class="list" v-for="(m, index) in ffList" @click="goUserInfo(m)">
+                <div class="content-wrap">
+                    <div class="tx img-h" :class="{'xinren':m.is_new==1, 'hat':m.is_daren==1}">
+                        <img :src="returnImg(m.user_head)" onerror="this.src='../../image/touxiang.png'" alt="">
+                    </div>
+                    <div class="content">
+                        <div class="flex-bt">
+                            <div class="name-wrap">
+                                <span class="name" :class="{'new-vip-name':m.noble_grade>3}">{{ m.user_name}}</span>
+                                <span class="new-tag man-ntag" :class="{'woman-ntag':m.user_sex=='女'}" v-if="m.realname_auth==2 && !ios"></span>
+                                <span class="new-tag rz-tag" v-if="m.is_identity_authentication==2 && !ios"></span>
+                                <img v-if="m.noble_icon && !ios" class="new-noble" :src="returnImg(m.noble_icon)" onerror="this.src='../../image/error-img.png'" alt="">
+                                <img v-else-if="m.car_cover && !ios" class="new-car" :src="returnImg(m.car_cover)" onerror="this.src='../../image/error-img.png'" alt="">
+                            </div>
+                        </div>
+                        <div class="tag-wrap">
+                            <span class="tag city-tag" v-if="m.city">{{ m.city}}</span>
+                            <span class="tag" v-if="m.user_age">{{m.user_age}}岁</span>
+                            <span class="tag" v-if="m.stature && m.user_sex=='女'">{{m.stature}}cm</span>
+                            <span class="tag" v-if="m.occupation">{{ m.occupation}}</span>
+                            <span class="tag" v-if="m.monthly_salary && m.user_sex=='男'">{{ m.monthly_salary}}</span>
+                        </div>
+                        <span class="new-index-voice" :class="{'active':index==playIndex}" v-if="m.voice" @click.stop="openVoice(index)">{{m.voice_time}}''</span>
+                        <p class="sign aui-ellipsis-1" v-else-if="m.self_slogan"> {{m.self_slogan}}</p>
+                    </div>
+                </div>
+                <div class="hi-tag" v-if="!ios" :class="{'hi-tags':m.dashan==1}" @click.stop @click="dashan(index, $event)">心动</div>
+            </li>
+        </ul>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script src="../../script/frame0.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+            playIndex: -1,
+        },
+        methods: {
+            // 跳转 查看用户详情
+            goUserInfo(data) {
+                go_userInfo(data.user_id, data.user_name, data.user_sex)
+            },
+            // 听音频
+            openVoice(index) {
+                openVoice(index);
+            },
+            // 收藏
+            sc(uid, index) {
+                _sc(uid, index);
+            },
+            // 更多
+            _more(index) {
+                _scAndBlack(index)
+            },
+            // 心动
+            dashan(index, event) {
+                var e = event.currentTarget;
+                _dashan(index, e);
+
+            },
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+
+        }
+    })
+    apiready = function() {
+        view.ios = $api.getStorage('shang');
+        judgeQX();
+    }
+
+    // 判断权限
+    function judgeQX() {
+        var param = {
+            user_id: $api.getStorage('userid'),
+            types: 1
+        };
+        // {"code":400,"msg":"升级会员查看","data":{"count":"5"}}
+        _ajax('home/Dymanic/visit', function(ret, err) {
+            if (ret && ret.code != 200) {
+                view.ffInfo = ret;
+            } else {
+                _shangla(function() {
+                    _lists('home/Dymanic/visit', 1, 1, param);
+                })
+
+                _scrollToBottom(function() {
+                    if (heigutgao == 1) {
+                        pagenum++;
+                        _lists('home/Dymanic/visit', pagenum, '', param);
+                    }
+                })
+            }
+        }, param)
+    }
+</script>
+
+</html>

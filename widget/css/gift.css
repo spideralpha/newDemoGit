@@ -1,0 +1,204 @@
+/* 礼物 */
+.gift {
+    padding: 10px 10px;
+    background: #fff;
+    margin-bottom: 10px;
+}
+
+.gift .head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.gift .head .left {
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.gift .head .left span:last-child {
+    margin-left: 12px;
+    color: rgb(0, 132, 255);
+}
+
+.gift .list {
+    display: flex;
+    padding: 18px 0 0 0;
+    width: calc(100vw - 20px);
+}
+
+.gift .list .item {
+    width: 25%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.gift .list .item img {
+    width: 50px;
+    height: 50px;
+}
+
+
+.gift .list .item .name {
+    font-size: 12px;
+}
+
+.gift .list .item .num {
+    font-size: 12px;
+}
+
+.gift .empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 0 10px 0;
+}
+
+.gift .empty img {
+    width: 60%;
+    height: auto;
+}
+
+.gift .empty .tips {
+    color: #999;
+    font-size: 12px;
+}
+
+.gift .empty .song {
+    margin-top: 6px;
+    font-size: 14px;
+    color: rgb(0, 132, 255);
+}
+
+/* 
+.giftmodal {
+    width: 100vw;
+    height: 100vh;
+    background: rgb(0, 0, 0, 0.5);
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 999;
+}
+
+.giftmodal .mainbox {
+    width: 100%;
+    height: 320px;
+    background: #fff;
+    position: absolute;
+    bottom: 0;
+    box-sizing: border-box;
+} */
+
+.giftmodal .mainbox .head {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    font-size: 14px;
+}
+
+.giftmodal .mainbox .head>.left {
+    display: flex;
+    padding-left: 10px;
+}
+
+.giftmodal .mainbox .head .item.active {
+    color: #f92;
+    position: relative;
+}
+
+.giftmodal .mainbox .head .item {
+    padding: 0 4px;
+}
+
+.giftmodal .mainbox .head .item.active::after {
+    content: '';
+    width: 14px;
+    height: 2px;
+    background: #f92;
+    position: absolute;
+    bottom: -5px;
+    left: calc(50% - 7px);
+}
+
+/* .giftmodal .mainbox .body {
+    width: 100vw;
+    height: 88%;
+} */
+
+.giftmodal .mainbox .body .giftlist {
+    width: 100vw;
+    height: 100%;
+    display: flex;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    overflow-y: auto;
+    box-sizing: border-box;
+    padding: 10px;
+}
+
+.giftmodal .mainbox .body .giftlist .item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 25%;
+    border-radius: 10px;
+    padding: 10px 0;
+    /* height: 120px; */
+}
+
+.giftmodal .mainbox .body .giftlist .item.active {
+    background: #f2f2f2;
+}
+
+.giftmodal .mainbox .body .giftlist .item>img {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+}
+
+.giftmodal .mainbox .body .giftlist .item .price {
+    display: flex;
+    font-size: 12px;
+    align-items: center;
+    padding: 3px 0 1px 0;
+}
+
+.giftmodal .mainbox .body .giftlist .item .price img {
+    width: 12px;
+    height: 12px;
+}
+
+.giftmodal .mainbox .body .giftlist .item .name {
+    font-size: 12px;
+}
+
+.giftmodal .mainbox .head>.right {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 6px;
+    align-items: center;
+    font-size: 12px;
+    box-sizing: border-box;
+}
+
+.giftmodal .mainbox .head .right .left {
+    display: flex;
+    align-items: center;
+}
+
+.giftmodal .mainbox .head .right .left img {
+    width: 20px;
+    height: 20px;
+    margin-right: 4px;
+}
+
+.giftmodal .mainbox .head .right .right {
+    margin-left: 10px;
+    background: #f92;
+    color: #fff;
+    padding: 3px 12px;
+    border-radius: 30px;
+}

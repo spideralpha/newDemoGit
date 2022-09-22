@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport"
+        content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>title</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui_font.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/news.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/base_icon.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/frame3.css" />
+    <style>
+        html,
+        body {
+            background: #fff;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <section class="m-frame">
+            <div class="pushImg">
+                <div class="pushImg1" v-if="imgList.length == 0">
+                    <img src="../../image/add.png" style="padding: 20px;border: 1px dashed #ccc;border-radius: 5px;"
+                        onclick="selectPic()">
+                    <p style="font-size: 15px;padding: 10px 0;">上传我的第一张照片</p>
+                    <p style="font-size: 12px;color: #ccc;padding-bottom: 20px;" v-if="listData.sex == '女'">
+                        照片可以让男士对约会更有安全感 </p>
+                    <p style="font-size: 12px;color: #ccc;padding-bottom: 20px;" v-if="listData.sex == '男'">
+                        照片可以让女士对约会更有安全感 </p>
+                </div>
+                <div class="pushImg2" v-if="imgList.length > 0">
+                    <div class="li" v-for="(i, sindex) in imgList">
+                        <div class="img img-h" v-if="i.types == 1"
+                            @click="_url({imgArr:imgArr, iIndex:i.number}, 'frame1/dy_img_win')">
+                            <img :src="returnImg(i.pic[0])" onerror="this.src='../../image/error-img.png'">
+                        </div>
+                        <div class="img img-h" v-if="i.types == 2"
+                            @click="_url({video:i.pic[0], cover:i.cover, type:1, packet:0, burn:0, id:i.id,}, 'frame0/video')">
+                            <img :src="returnImg(i.cover)">
+                        </div>
+                        <i v-if="i.types == 2" class="base-icon my-play-icon"
+                            @click="_url({video:i.pic[0], cover:i.cover, type:1, packet:0, burn:0, id:i.id,}, 'frame0/video')"></i>
+                        <p class="showImg_permission" v-if="i.burn == '1' && i.packet > 0">阅后即焚的<br>红包<span
+                                v-if="i.types == 1">照片</span><span v-if="i.types == 2">视频</span></p>
+                        <p class="showImg_permission" v-if="i.burn == '1' && i.packet == 0">阅后即焚</p>
+                        <p class="showImg_permission" v-if="i.burn == '0' && i.packet > 0">红包<span
+                                v-if="i.types == 1">照片</span><span v-if="i.types == 2">视频</span></p>
+                        <i class="aui-iconfont aui-icon-close" @click.stop @click="delImg(i.id, i.is_auth)"></i>
+                    </div>
+                    <div class="li">
+                        <div class="add">
+                            <img src="../../image/add.png" onclick="selectPic()">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/jquery.js"></script>
+<script type="text/javascript" src="../../script/vue.js"></script>
+<script type="text/javascript" src="../../script/ffkj.js"></script>
+<script type="text/javascript" src="../../script/uinfo.js"></script>
+<script type="text/javascript">
+    var view = new Vue({
+        el: '#view',
+        data: {
+            listData: {},
+            imgurl: imgurl,
+            upType: 0, // 0图片 1视频
+            ios: 1, // 1上架 0非上架
+
+            imgList: [], // 小图时显示图片&视频
+            imgArr: [], // 只显示图片
+        },
+        methods: {
+            copyTxt(text) {
+                copyTxt(text);
+            },
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 图片
+            returnImg(url) {
+                return returnImg(url);
+            },
+            
+            // 删除图片
+            delImg(id, auth) {
+                var msg = auth == 0 ? '是否确定删除该图？' : '删除后，将无法再次获得本人认证照片，是否继续？';
+                _confirm({
+                    msg: msg
+                }, function (bIndex) {
+                    if (bIndex == 1) {
+                        _loading();
+                        _ajax('api/Userimg/delImg', function (ret, err) {
+                            console.log(JSON.stringify(ret))
+                            console.log(JSON.stringify(err))
+                            _loadingClose();
+                            var msg = ret.code == 200 ? '删除成功' : ret.msg;
+                            _msg(msg);
+                            if (ret && ret.code == 200) {
+                                getUserPhoto(function (all, imgArr) {
+                                    view.imgList = all;
+                                    view.imgArr = imgArr;
+                                })
+                            }
+                        }, {
+                            img_id: id,
+                        })
+                    }
+                })
+
+            }
+
+        }
+    });
+
+    apiready = function () {
+        // 相册
+        getUserPhoto(function (all, imgArr) {
+            view.imgList = all;
+            view.imgArr = imgArr;
+        })
+
+    };
+</script>
+
+</html>

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <style>
+        .list {
+            padding: 10px;
+        }
+
+        .item {
+            width: calc(50% - 5px);
+            box-sizing: border-box;
+            box-shadow: 0 1px 3px #aaa;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .item:nth-child(odd) {
+            margin-right: 10px;
+        }
+
+        .item img {
+            width: 100%;
+            height: calc(50vw - 10px);
+        }
+
+        .item .container {
+            padding: 7px;
+        }
+
+        .item .container .num {
+            background-image: url('../../image/icon/qun.png');
+            background-size: 15px;
+            background-repeat: no-repeat;
+            background-position: 0 center;
+            font-size: 12px;
+            padding-left: 20px;
+            color: #52AAFB;
+            margin-top: 7px;
+        }
+
+        .item .join-btn {
+            border: 1px solid;
+            color: #CD7DFE;
+            border-radius: 3px;
+            font-size: 12px;
+            padding: 3px 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="list flex-w" id="view" v-cloak>
+        <div class="item" v-for="(m, index) in ffList" @click="openQun(m.id, m.name, 2)">
+            <img :src="returnImg(m.logo)" onerror="this.src='../../image/touxiang.png'" alt="">
+            <div class="flex-bt container">
+                <div class="left">
+                    <div class="name">{{m.name}}</div>
+                    <div class="num">{{m.count}}</div>
+                </div>
+                <button class="join-btn">加入</button>
+            </div>
+
+        </div>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+        },
+        methods: {
+            openQun(id, name, type) {
+                openQun(id, name, type)
+            },
+            // 跳转
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+        }
+    })
+
+    apiready = function() {
+        _shangla(function() {
+            _lists('api/cluster/lists', 1, 1)
+        })
+
+        _scrollToBottom(function() {
+            if (heigutgao == 1) {
+                pagenum++;
+                _lists('api/cluster/lists', pagenum, 0)
+            }
+        })
+    }
+</script>
+
+</html>

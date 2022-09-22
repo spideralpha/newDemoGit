@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Document</title>
+    <link rel="stylesheet" href="../css/api.css">
+    <link rel="stylesheet" href="../css/news.css">
+    <link rel="stylesheet" href="../css/aui_font.css">
+    <link rel="stylesheet" href="../css/base_icon.css">
+    <link rel="stylesheet" href="../css/footer.css">
+    <style>
+        html,
+        body {
+            background-color: rgb(250, 248, 251);
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+
+        <header>
+            <!-- <ul class="h-wrap">
+                <li class="h-list">
+                    <div class="for flex-bt">
+                        <div class="edit" style="visibility: hidden;">占位占位</div>
+                        <div class="title flex-c"></div>
+                        <span v-if="!ios" class="edit" onclick="showDetail('frame0/pj_modal')">我的评价</span>
+                        <span v-else class="edit new-invisible">我的评价</span>
+                    </div>
+                </li>
+            </ul> -->
+        </header>
+        <!-- 脚部 -->
+        <footer>
+            <ul class="f-wrap flex-c">
+                <li class="f-list" onclick="_index(0)">
+                    <img src="../image/index_images/button1.png" alt="">
+                    <span>缘分</span>
+                </li>
+                <li class="f-list" onclick="_index(1)">
+                    <img src="../image/index_images/button2.png" alt="">
+                    <span>动态</span>
+                </li>
+                <li class="f-list" onclick="_index(2)">
+                    <img src="../image/index_images/button3.png" alt="">
+                    <span>聊天</span>
+                    <span class="num new-hide"></span>
+                </li>
+                <li class="f-list active">
+                    <img src="../image/index_images/button05.png" alt="">
+                    <span>我的</span>
+                </li>
+            </ul>
+        </footer>
+    </div>
+</body>
+<script src="../script/jquery.js"></script>
+<script src="../script/api.js"></script>
+<script src="../script/ffkj.js"></script>
+<script src="../script/vue.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            ios: 1, // 1上架 0非上架
+        }
+    })
+    apiready = function() {
+        view.ios = $api.getStorage('shang');
+        $api.fixStatusBar($api.dom('header'));
+        $api.fixTabBar($api.dom('footer'));
+        _heibai(1)
+        keyback();
+        _openFrame('frame3');
+
+        // 监听名字更新
+        // _listener('my_name', function (ret) {
+        //     if (ret && ret.value.name) {
+        //         $('.for .title').text(ret.value.name)
+        //     }
+        // })
+
+        // 监听消息数量
+        _listener('msgNum', function(ret) {
+            if (ret && ret.value) {
+                var result = ret.value;
+                changeMsgNum(result)
+            }
+        })
+
+        changeMsgNum()
+        _listener('newmsg', function(ret) {
+            showMsgFrm(ret.value.data)
+        })
+    }
+</script>
+
+</html>

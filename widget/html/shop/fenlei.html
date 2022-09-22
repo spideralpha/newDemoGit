@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html class="htmlWeiLei">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/aui_font.css">
+    <link rel="stylesheet" href="../../css/base_icon.css">
+    <style>
+        /* 商品列表 */
+        .shop-ul {
+            margin: 0 5px;
+        }
+
+        .shop-ul .list {
+            width: calc((100% - 10px)/2);
+            margin-right: 10px;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .shop-ul .list img {
+            width: 100%;
+            height: 150px;
+        }
+
+        .shop-ul .list .tag {
+            font-size: 10px;
+            color: #fff;
+            background: #4caf50;
+            border-radius: 3px;
+            padding: 0 5px;
+            font-weight: normal;
+        }
+
+        .shop-ul .list:nth-child(2n) {
+            margin-right: 0;
+        }
+
+        .shop-ul .list .price {
+            color: orangered;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <div class="shop-wrap">
+            <ul class="shop-ul flex-w">
+
+                <li class="list" v-for="(g, index) in ffList" @click="_url({url:'shop/shop_detail', title:'商品详情', id:g.id})">
+                    <div class="img">
+                        <img :src="g.image" alt="">
+                    </div>
+                    <div class="aui-ellipsis-2">
+                        <!--<span class="tag">{{ g.name }}</span>-->
+                        {{ g.description }}
+                    </div>
+                    <div class="price">￥{{ g.price }}</div>
+                </li>
+
+                <!--   <li class="list" v-for="i in 20" onclick="_url({url:'shop/shop_detail', title:'商品详情'})">
+                    <div class="img">
+                        <img src="../../image/test/01.png" alt="">
+                    </div>
+                    <div class="aui-ellipsis-2">
+                        <span class="tag">特产</span>
+                        这是商品名称这是商品名称这是商品名称这是商品名称这是商品名称这是商品名称这是商品名称这是商品名称这是商品名称这是商品名称这是商品名称
+                    </div>
+                    <div class="price">￥138.00</div>
+                </li>-->
+            </ul>
+        </div>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            myuserid: $api.getStorage('userid'),
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            lbList: [], // 轮播列表
+            themeList: [], // 主题列表
+            gList: [], //商品列表
+        },
+        methods: {
+
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 清除html
+            clearHtml(s) {
+                return clearHtml(s);
+            }
+
+        }
+    })
+
+    apiready = function () {
+        var param = {cate_id: api.pageParam['id']};
+        _shangla(function () {
+            _lists('api/mall.goods/goodsList', 1, 1, param);
+        })
+        _scrollToBottom(function () {
+            if (heigutgao == 1) {
+                pagenum++;
+                _lists('api/mall.goods/goodsList', pagenum, '', param);
+            }
+        })
+    }
+</script>
+</html>

@@ -1,0 +1,1225 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/aui_font.css">
+    <link rel="stylesheet" href="../../css/base_icon.css">
+    <link rel="stylesheet" href="../../css/swiper.css">
+    <link rel="stylesheet" href="../../css/uinfo0.css">
+    <link rel="stylesheet" href="../../css/shouhu.css">
+    <link rel="stylesheet" href="../../css/frame1.css">
+    <script src="../../script/swiper.js"></script>
+    <style>
+        header {
+            width: 100vw;
+            display: flex;
+            justify-content: space-between;
+            line-height: 50px;
+            position: fixed;
+            top: 0;
+            z-index: 9;
+            box-sizing: border-box;
+            padding: 0 10px;
+        }
+
+        .car {
+            position: fixed;
+            width: 80px;
+            bottom: 100px;
+            right: 10px;
+        }
+
+        header .aui-iconfont {
+            color: #fff;
+            font-size: 14px;
+        }
+
+        header .middle {
+            color: #fff;
+            display: flex;
+            width: 60%;
+            justify-content: center;
+        }
+
+        header .item {
+            text-align: center;
+            color: #CCCCCC;
+            font-size: 12px;
+            padding: 2px 0;
+            transition: all 0.3s;
+            font-size: 14px;
+            line-height: 1;
+
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            justify-content: center;
+            letter-spacing: 4px;
+            padding: 0 14px;
+        }
+
+        header .item.active {
+            color: #fff;
+            font-size: 15px;
+            font-weight: bold;
+            text-shadow: 0 1px 0 rgba(0, 0, 0, .5);
+
+
+        }
+
+        header .item.active::after {
+            display: inline-block;
+            content: '';
+            width: 13px;
+            height: 2px;
+            background: #FFFFFF;
+            border-radius: 1px;
+            margin-top: 3px;
+        }
+
+        .back {
+            position: fixed;
+            width: 100%;
+            height: 100vh;
+            white-space: nowrap;
+            font-size: 0;
+            transition: transform 0.3s;
+        }
+
+        .back-l {
+            position: relative;
+            vertical-align: top;
+            display: inline-block;
+            width: 100%;
+            height: 100%;
+            overflow-y: scroll;
+        }
+
+        .back-l.l {
+            background-color: #000;
+            position: relative;
+        }
+
+        .back-l.r::after {
+            content: '';
+            height: 83px;
+            display: block;
+        }
+
+        video {
+            width: 100vw;
+            height: 100vh;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .l .bottom {
+            position: absolute;
+            bottom: 63px;
+            width: 100vw;
+            font-size: 12px;
+            box-sizing: border-box;
+            padding: 20px 14px;
+        }
+
+        .bottom .name {
+            display: flex;
+            align-items: center;
+            color: #fff;
+            font-size: 16px;
+        }
+
+        .bottom .name .online {
+            display: flex;
+            align-items: center;
+            padding: 2px 6px;
+            font-size: 10px;
+            background-color: rgba(0, 0, 0, 0.3);
+            justify-content: center;
+            border-radius: 16px;
+            margin-left: 10px;
+            color: #fff;
+        }
+
+        .bottom .name .online img {
+            width: 10px;
+            margin-right: 4px;
+        }
+
+        .bottom .signtext {
+            padding: 8px 0;
+            font-size: 10px;
+            color: #fff;
+        }
+
+        .bottom .add {
+            display: flex;
+            align-items: center;
+        }
+
+        .bottom .add img {
+            height: 12px;
+            font-size: 10px;
+        }
+
+        .bottom .add span {
+            color: #fff;
+            margin: 0 6px;
+        }
+
+        footer {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            z-index: 9;
+            padding-bottom: 20px;
+        }
+
+        footer.grey {
+            background: #F9F9F9;
+        }
+
+        footer .btns {
+            padding-top: 20px;
+            font-size: 14px;
+            display: flex;
+            justify-content: space-around;
+        }
+
+        footer .btns .bitem {
+            background-color: #fff;
+            /* color: rgb(86, 197, 241); */
+            padding: 10px;
+            /* width: 22%; */
+            text-align: center;
+            border-radius: 30px;
+            /* box-shadow: 0 4px 6px #bbb; */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        footer.grey .btns .bitem {
+            display: flex;
+            flex-direction: column;
+            font-size: 12px;
+            padding: 0 10px;
+        }
+
+        footer .btns .bitem:last-child {
+            flex-direction: row;
+        }
+
+        footer .btns .bitem img {
+            height: 14px;
+            margin-right: 6px;
+        }
+
+        footer.grey .btns .bitem:nth-child(-n+3) img {
+            margin-right: 0px;
+        }
+
+        footer .btns .bitem.pink {
+            background: linear-gradient(to bottom, #FF82CC, #E63BE4);
+            color: #fff;
+            padding: 10px 25px;
+        }
+
+        footer .btns .bitem i {
+            font-size: 14px;
+            color: rgb(86, 197, 241);
+        }
+
+        footer .btns .bitem.pink i {
+            color: #fff;
+        }
+
+
+
+
+        .shouhumodal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, .2);
+            z-index: 12;
+        }
+
+        .shouhubox {
+            width: 60vw;
+            height: 70vw;
+            background-color: #fff;
+            border-radius: 10px;
+            position: absolute;
+            left: 20vw;
+            top: calc(50vh - 35vw);
+            display: flex;
+            flex-direction: column;
+            padding: 10px 0;
+            box-sizing: border-box;
+            align-items: center;
+            justify-content: space-around;
+        }
+
+        .shouhubox img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+        }
+
+        .shouhubox .name {
+            font-size: 11px;
+            color: #666;
+        }
+
+        .shouhubox .text {
+            font-size: 12px;
+            color: #444;
+            padding: 0 10px;
+        }
+
+        .shouhubox .btn {
+            width: 90%;
+            font-size: 12px;
+            padding: 4px 0;
+            text-align: center;
+            border-radius: 4px;
+        }
+
+        .shouhubox .btn.shouhu {
+            background-color: rgb(210, 89, 243);
+            color: #fff;
+        }
+
+        .shouhubox .btn.cancel {
+            color: #999;
+        }
+
+        /* 红包 */
+        .hb-wrap {
+            position: fixed;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, .2);
+            top: 0;
+            left: 0;
+            z-index: 10;
+        }
+
+        /* vx解锁 */
+        .wx-wrap {
+            background: #FF82CC;
+            color: #fff;
+            border-radius: 7px;
+            margin: 10px 0;
+            padding: 15px 10px;
+            font-size: 14px;
+        }
+
+        .wx-wrap .left img {
+            height: 30px;
+            margin-right: 5px;
+        }
+
+        .wx-wrap .left span {
+            color: #fff;
+        }
+
+        .wx-wrap .btn {
+            background: #fff;
+            color: #E63BE4;
+            border-radius: 5px;
+            padding: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <header id="fx-header">
+            <span class="new-back" onClick="_closeToWin()"></span>
+            <div class="middle" v-if="data.video">
+                <div class="item" v-for="(item,$index) in arrs" @click="toggle($index)" :class="{active:$index==active}">{{item}} </div>
+            </div>
+            <div class="middle" v-else>
+                <div class="item active">资料</div>
+            </div>
+            <span class="new-more" onclick="_more()"></span>
+        </header>
+        <footer :class="{'grey':active==1 }">
+            <div class="btns">
+                <div class="bitem" v-if="!ios" onclick="openChat()"><img src="../../image/icon/chat.png" alt="">私信</div>
+                <!-- <div class="bitem" v-if="!ios" @click="showDetail('modal/gift_modal', {uid: touserid})"><img src="../../image/icon/wzilwic@3x.png" alt="">礼物</div> -->
+                <div class="bitem" v-if="!ios" @click="_url({url:'shop/shop', title:'送Ta礼物', id: touserid})"><img src="../../image/icon/wzilwic@3x.png" alt="">礼物</div>
+                <!-- <div class="bitem" @click="openLM()">
+                    <i class="aui-iconfont aui-icon-phone"></i>
+                    语聊
+                </div> -->
+                <!-- <div class="bitem " @click="openVideoChat()"><img src="../../image/icon/video.png" alt="">视频</div> -->
+                <div class="bitem " onclick="guanzhu()" v-if="data.love!=1"><img src="../../image/icon/gz.png" alt="">关注 </div>
+                <div class="bitem " onclick="guanzhu()" v-else><img src="../../image/icon/gzs.png" alt="">已关注</div>
+                <div class="bitem pink" v-if="!ios" onclick="dashan()"><img src="../../image/icon/dashan_bai.png" alt="">心动</div>
+            </div>
+        </footer>
+        <!-- 守护 -->
+        <div class="shouhumodal" v-show="showshouhu">
+            <div class="shouhubox">
+                <div class="tx-wrap">
+                    <img :src="returnImg(data.head_portrait)" onerror="this.src='../../image/touxiang.png'" alt="">
+                    <img v-if="data.angel" class="sh-tx" :src="returnImg(data.angel_avatar)" onerror="this.src='../../image/touxiang.png'" alt="">
+                </div>
+                <div class="name">{{data.name}}</div>
+                <div class="text">赠送{{data.angel_min}}金币以上的礼物，就能成为TA的守护天使</div>
+                <div class="btn shouhu" @click="showDetail('modal/gift_modal', {uid: touserid})">立即守护TA</div>
+                <div class="btn cancel" @click="showshouhu = false">默默离开</div>
+            </div>
+        </div>
+        <div class="back" @touchstart="touchStart" @touchmove="touchMove" @touchend="touchEnd" ref="back">
+            <!-- 首页视频 -->
+            <div class="back-l l" v-show="data.video" ref="left" onclick="playVideo()">
+                <video id="js-video" preload :poster="returnImg(data.cover)" autoplay loop :muted="active" :src="returnImg(data.video)"> </video>
+                <!-- <div class="bottom">
+                    <div class="name">{{data.name}} <div class="online" v-if="data.is_online!=0 && data.last_login_datetime!='保密'"> <img src="../../image/icon/icon_status_online.png" alt="">在线</div>
+                    </div>
+                    <div class="signtext">{{data.self_slogan}}</div>
+                    <div class="add">
+                        <img src="../../image/icon/juli.png" alt="">
+                        <span v-if="data.city">{{data.city}}</span>
+                        <span v-if="data.user_distance">{{data.user_distance}}</span>
+                    </div>
+                </div> -->
+            </div>
+            <!-- 个人详情 -->
+            <div class="back-l r" ref="middle">
+                <div class="header">
+                    <div class="swiper-container">
+                        <div class="swiper-wrapper">
+                            <div class="swiper-slide" v-for="(m ,sindex) in txImgArr">
+                                <img v-if="m.id" @click="_url({imgArr:txImgArr, iIndex:sindex, showZan:1}, 'frame0/img_win')" :src="returnImg(m.picthumb[0])" onerror="this.src='../../image/touxiang.png'" alt="">
+                                <img v-else :src="returnImg(m.picthumb[0])" onerror="this.src='../../image/touxiang.png'" alt="">
+                            </div>
+                            <!-- <div class="swiper-slide"><img src="../../image/test/03.jpg" alt=""></div> -->
+                            <!-- <div class="swiper-slide"><img src="../../image/touxiang.png" alt=""></div> -->
+                        </div>
+                    </div>
+                    <!-- <div class="rightbottom">
+                        <img @click="showshouhu = true" src="../../image/icon/icon_guard_ta.png" alt="">
+                    </div> -->
+                    <div class="voice-wrap" v-show="data.voice">
+                        <i class="voice-play-icon" :class="{'voice-icon':vplay==1}" onclick="playVoice()"></i>
+                        <div class="voice-content">
+                            <p class="voice-time">9''</p>
+                            <p class="voice-zan flex" onclick="dianzan()">
+                                <i class="voice-zan-icon" :class="{'voice-zans-icon':data.had_voice_zan==1}"></i>
+                                <span>({{data.voice_zan}})</span>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="shouhu-wrap" v-if="configInfo.hide_defend_angel==0 && !ios" @click="showshouhu = true">
+                        <div class="sh-bg">
+                            <div class="tx">
+                                <img v-if="data.angel" :src="returnImg(data.angel_avatar)" onerror="this.src='../../image/touxiang.png'" alt="">
+                                <img v-else src="../../image/icon/ms_details_angel_bj.png" alt="">
+                            </div>
+                            <!-- <span v-if="data.angel">Lv{{data.angel_grade}} {{data.angel_name}}</span>
+                            <span v-else>守护TA</span> -->
+                        </div>
+                    </div>
+                </div>
+                <div class="container">
+                    <div class="user-wrap">
+                        <div class="username">{{data.name}}
+                            <div class="account">(ID:{{data.id}}<span @click="copyTxt(data.id)">复制</span>)</div><img v-if="data.is_noble" class="vip-img" :src="returnImg(data.noble.icon)" onerror="this.src='../../image/error-img.png'" alt="">
+                        </div>
+                        <div class="flex">
+                            <span v-if="data.is_identity_authentication==2 && !ios" class="new-tag rz-tag">已认证</span>
+                            <span v-if="data.realname_auth==2 && !ios" class="new-tag rz-tag">已实名</span>
+                            <span class="online-tag">在线</span>
+                            <span class="boy-tag" :class="{'girl-tag':data.sex == '女'}">{{data.age}}岁</span>
+                        </div>
+                    </div>
+                    <!-- <div class="infos">
+                        <div class="sex"><img src="../../image/icon/ic_male_date.png" alt="">{{ data.age }}</div>
+                        <div class="add"><img src="../../image/icon/i3.png" alt="">{{ data.city }} · {{data.user_distance}}
+                        </div>
+                    </div> -->
+                    <div class="dj flex-a" v-if="configInfo.hide_charm != 1 && !ios">
+                        <div class="dj-tag">
+                            <div class="tuhao-tag">
+                                <img src="../../image/icon/tuhao.png" alt="">
+                                <span class="num">{{data.tycoonGrade}}</span>
+                                <span class="text">土豪值</span>
+                            </div>
+                            <span class="dj-val">{{data.tycoon}}</span>
+                        </div>
+                        <div class="dj-tag">
+                            <div class="tuhao-tag">
+                                <img src="../../image/icon/meili.png" alt="">
+                                <span class="num">{{data.charmGrade}}</span>
+                                <span class="text">魅力值</span>
+                            </div>
+                            <span class="dj-val">{{data.charm_value}}</span>
+                        </div>
+                        <!-- <div class="ditem">财富 <span>Lv.{{data.tycoonGrade}}</span></div>
+                        <div class="ditem">魅力 <span>Lv.{{data.charmGrade}}</span></div> -->
+                        <!-- <div class="ditem">获赞 <span>{{data.zan}}</span></div> -->
+                    </div>
+                    <div v-if="!ios && data.wxcount">
+                        <!-- <div class="wx-wrap flex-bt" v-if="!data.link" onclick="showLink()">
+                            <div class="left flex">
+                                <img src="../../image/icon/wx.png" alt="">
+                                <span>成为贵族免费解锁</span>
+                            </div>
+                            <button class="btn">解锁</button>
+                        </div>
+                        <div class="wx-wrap flex-bt" v-else>
+                            <div class="left flex">
+                                <img src="../../image/icon/wx.png" alt="">
+                                <span>{{data.wxcount}}</span>
+                            </div>
+                            <button class="btn" @click="copyTxt(data.wxcount)">复制</button>
+                        </div> -->
+                    </div>
+                    <!-- <div class="real" v-if="data.is_identity_authentication!=2">
+                        <div class="l"> <img src="../../image/icon/icon_userdetail_no_auth.png" alt=""> 真人认证 </div>
+                        <div class="r">未认证</div>
+                    </div>
+                    <div class="real" v-else>
+                        <div class="l"> <img src="../../image/icon/icon_userdetail_auth_kiwi.png" alt=""> 真人认证 </div>
+                        <div class="r">已认证·头像与真人一致</div>
+                    </div> -->
+                    <div class="tabs new-nav">
+                        <div class="tab n-list" @click="tabindex=0" :class="{active:tabindex==0}">资料</div>
+                        <div class="tab n-list" @click="tabindex=1" :class="{active:tabindex==1}">动态</div>
+                    </div>
+                    <div class="tab" v-show="tabindex==0">
+                        <div class="titem " v-if="data.cluster && data.cluster.id">
+                            <div class="left flex-bt">
+                                <div class="label">家族</div>
+                                <span class="aui-iconfont aui-icon-right"></span>
+                            </div>
+                            <!-- <div class="jzinfo flex">
+                                <img src="../../image/test/03.jpg" alt="">
+                                <div class="info">
+                                    <div class="names">张三</div>
+                                    <div class="count">人数<span>1111</span> <a>|</a> 总排名<span>11</span></div>
+                                </div>
+                            </div> -->
+                            <div class="jzinfo flex" @click="_url({id: data.cluster.id},'frame0/jiazupage')">
+                                <img :src="returnImg(data.cluster.logo)" onerror="this.src='../../image/touxiang.png'" alt="">
+                                <div class="info">
+                                    <div class="names">{{data.cluster.name}}</div>
+                                    <div class="count">人数<span>{{data.cluster.count}}</span> <a>|</a> 总排名<span>{{data.cluster.ranking}}</span></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="xiangce w-bg titem" v-if="imgList && imgList.length>0 && !ios">
+                            <div class="left flex-bt">
+                                <div class="label">相册</div>
+                                <span class="aui-iconfont aui-icon-right" @click="_url({url:'frame4/album', title:data.name+'的相册',user_id:touserid,name:data.name})"></span>
+                            </div>
+                            <div class="xc-wrap new-padding-tb-10 flex-w">
+                                <div v-for="(item, index) in imgList" v-if="index<6">
+                                    <div class="img img-h" :class="{'no-look':(item.burn == 1 || Number(item.packet) >0), 'hb':Number(item.packet) >0, 'yifen':item.type == 0}">
+                                        <img v-if="item.types==1" @click="_url({index: item.number, imgArr:imgArr, name: data.name, touserid: data.id, slidBackEnabled:0}, 'frame0/img_filter_win')" :src="returnImg(item.picthumb[0])" onerror="this.src='../../image/touxiang.png'" alt="">
+                                        <span class="tag" v-if="item.is_auth ==1">本人</span>
+                                        <div class="img-icon"></div>
+                                        <img v-if="item.types==2" @click="_url({id:item.id, video:item.pic[0], cover: item.cover, burn:item.burn, packet:item.packet, type:item.type, see:item.see, uid: data.id}, 'frame0/video')" :src="returnImg(item.cover)" onerror="this.src='../../image/touxiang.png'" alt="">
+                                        <i v-if="item.types==2" class="base-icon my-play-icon" @click="_url({id:item.id, video:item.pic[0], cover: item.cover, burn:item.burn, packet:item.packet, type:item.type, see:item.see, uid: data.id}, 'frame0/video')"></i>
+                                        <p class="img-tip" v-if="item.type == 1 && item.burn == 1 && Number(item.packet) > 0"> 阅后即焚红包<span v-if="item.types == 1">照片</span><span v-if="item.types == 2">视频</span></p>
+                                        <p class="img-tip" v-if="item.type == 1 && item.burn == 1 && Number(item.packet) == 0"> 阅后即焚 </p>
+                                        <p class="img-tip" v-if="item.burn == 0 && Number(item.packet) > 0">红包<span v-if="item.types == 1">照片</span><span v-if="item.types == 2">视频</span> </p>
+                                        <p class="img-tip" v-if="item.type == 0">已焚毁</p>
+                                    </div>
+                                </div>
+
+                                <!-- <div class="img no-look yifen">
+                                    <img src="../../image/touxiang.png" alt="">
+                                    <span class="tag">本人</span>
+                                    <div class="img-icon"></div>
+                                    <p class="img-tip">已焚毁</p>
+                                </div>
+                                <div class="img no-look">
+                                    <img src="../../image/touxiang.png" alt="">
+                                    <span class="tag">本人</span>
+                                    <div class="img-icon"></div>
+                                    <p class="img-tip">阅后即焚照片</p>
+                                </div>
+                                <div class="img img-h">
+                                    <img src="../../image/touxiang.png" alt="">
+                                    <span class="tag">本人</span>
+                                </div> -->
+                            </div>
+                        </div>
+                        <div class="titem">
+                            <div class="left flex-bt">
+                                <div class="label">基本信息</div>
+                                <!-- <span class="aui-iconfont aui-icon-right"></span> -->
+                            </div>
+                            <div class="flex-w">
+                                <div class="jbitem" v-if="data.age"><span class="text">{{ data.age }}岁</span><span class="text-name">年龄</span></div>
+                                <div class="jbitem" v-if="data.city"><span class="text">{{ data.city }}</span><span class="text-name">所在地</span></div>
+                                <!-- <div class="jbitem" v-if="data.constellation"><span class="text">{{ data.constellation }}</span><span class="text-name">星座</span> </div> -->
+                                <div class="jbitem" v-if="data.occupation"><span class="text">{{ data.occupation }}</span><span class="text-name">职业</span></div>
+                                <div class="jbitem" v-if="data.stature"><span class="text">{{ data.stature }}cm</span><span class="text-name">身高</span></div>
+                                <div class="jbitem" v-if="data.emotion"><span class="text">{{ data.emotion }}</span><span class="text-name">情感状态</span></div>
+                                <div class="jbitem" v-if="data.education_background"><span class="text">{{ data.education_background }}</span><span class="text-name">学历</span></div>
+                                <div class="jbitem" v-if="data.monthly_salary"><span class="text">{{ data.monthly_salary }}</span><span class="text-name">年收入</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="titem " v-if="data.self_slogan">
+                            <div class="left flex-bt">
+                                <div class="label">交友宣言</div>
+                                <span class="aui-iconfont aui-icon-right"></span>
+                            </div>
+                        </div>
+                        <p v-if="data.self_slogan && !ios" style="padding: 10px;padding-top: 0; font-size: 14px;overflow: hidden;text-overflow: ellipsis;">
+                            {{data.self_slogan}}</p>
+                        <div v-if="data.defends_count>0 && configInfo.hide_defends!=1  && !ios" class="titem" @click="_url({url:'frame4/shouhu', uid:touserid, title:'守护者' ,moreType:'ques', types:2});">
+                            <div class="left flex-bt">
+                                <div class="label">守护者({{data.defends_count}})</div>
+                                <span class="aui-iconfont aui-icon-right"></span>
+                            </div>
+                        </div>
+                        <ul class="sh-ul" v-if="data.defends_count>0 && configInfo.hide_defends!=1 && !ios">
+                            <li class="list flex-bt" v-for="(m, index) in data.defends">
+                                <div class="user">
+                                    <div class="tx">
+                                        <img :src="returnImg(m.head_100)" onerror="this.src='../../image/touxiang.png'" alt="">
+                                    </div>
+                                    <div class="detail">
+                                        <p class="name" style="margin-bottom:7px;">{{m.name}}</p>
+                                        <div class="time"><span>亲密度：{{m.intimate}}°C</span><span v-if="m.days">已守护：{{m.days}}天</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <i class="angel-icon" v-if="index==0 && m.angel ==1"></i>
+                                <i class="angel-icon angel-orange-icon" v-if="index==0 && m.angel ==0"></i>
+                            </li>
+                        </ul>
+
+                        <!-- <div class="titem flex-bt">
+                            <div class="flex-c">
+                                <div class="label">贵族</div>
+                                 <!-- <i class="news-vip news-vip1-icon"></i> -->
+                        <!--     <img v-if="data.is_noble" style="width: 35px;" :src="returnImg(data.noble.icon)" onerror="this.src='../../image/error-img.png'" alt="">
+                            </div>
+                            <span class="aui-iconfont aui-icon-right"></span>
+                        </div>-->
+                        <div class="titem" v-if="data.gift && data.gift.length>0 && configInfo.hide_gift!=1 && !ios">
+                            <div class="left flex-bt">
+                                <div class="label">收到的礼物</div>
+                                <span class="aui-iconfont aui-icon-right"></span>
+                            </div>
+                        </div>
+                        <div class="glist" v-if="data.gift && data.gift.length>0 && configInfo.hide_gift!=1 && !ios">
+                            <div class="gitem" v-for="(item, index) in data.gift" @click="showDetail('modal/send_gift', {data:item, touid :touserid})">
+                                <img :src="returnImg(item.cover)" onerror="this.src='../../image/error-img.png'">
+                                <div class="gname">{{item.name}}</div>
+                                <div class="gnum">X{{item.num}}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 动态 -->
+                <div class="dylist-wrap" v-show="tabindex==1">
+                    <div class="list" v-for="(m, index) in ffList" @click="_url({id:m.dy_id, url:'frame1/dy_detail', title:'详情'})">
+                        <div class="list-container">
+                            <div class="tx img-h" :class="{'xinren':m.is_new==1}" @click.stop @click="go_userInfo(m.id, m.name, m.sex)">
+                                <img :src="returnImg(m.head_100)" onerror="this.src='../../image/touxiang.png'" alt="">
+                            </div>
+                            <div class="left">
+                                <div class="name-wrap">
+                                    <span class="name" :class="{'vip-name':m.noble_grade>0}">{{m.name}}</span>
+                                    <span class="boy-tag" :class="{'girl-tag':m.sex == '女'}">{{m.age}}</span>
+                                    <span class="new-tag man-ntag" :class="{'woman-ntag':m.sex=='女'}" v-if="m.realname_auth==2"></span>
+                                    <span class="new-tag rz-tag" v-if="m.is_identity_authentication==2"></span>
+                                </div>
+                                <div class="dy-content-wrap">
+                                    <div class="dy-content">{{m.content}}</div>
+                                    <div class="img-wrap" :class="{moreimg: m.sumbImage.length>1}" v-if="m.sumbImage && m.sumbImage.length > 0 && m.sumbImage[0]">
+                                        <div class="img img-h" v-for="(s, sindex) in m.sumbImage" @click.stop="_url({imgArr:m.masterimg, iIndex:sindex}, 'frame1/dy_img_win')">
+                                            <img :src="returnImg(s)" onerror="this.src='../../image/error-img.png'" alt="">
+                                        </div>
+                                    </div>
+                                </div>
+                                <p class="time-wrap">
+                                    <span class="time">{{m.addtime}}</span>
+                                    <span class="time">浏览{{m.visit}}次</span>
+                                    <span class="area" v-if="m.citys">{{m.citys}}</span>
+                                </p>
+                                <div class="footer" v-if="!ios">
+                                    <div class="ul flex-bt">
+                                        <div class="left flex">
+                                            <div class="li" @click.stop @click="zan(m.dy_id, index)">
+                                                <i class="base-icon dy-nozan-icon" :class="{'dy-zan-icon':m.isthumbsup == 1}"></i>
+                                                <span>{{m.num}}</span>
+                                            </div>
+                                            <div class="li">
+                                                <i class="base-icon dy-comment-icon"></i>
+                                                <span>{{m.comments ? m.comments : '评论'}}</span>
+                                            </div>
+                                            <div class="li" v-if="m.id != myuserid && !ios" @click.stop="shareDY(index)">
+                                                <i class="base-icon dy-share-icon"></i>
+                                                <span>转发</span>
+                                            </div>
+                                        </div>
+                                        <div class="hi-tag" :class="{'hi-tags':m.dashan==1}" v-if="m.id != myuserid && !ios" @click.stop="dashan(index, $event)">心动</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <img class="car" :src="returnImg(car)" alt="">
+        <div class="loading-bg"></div>
+
+        <div class="hb-wrap flex-c" v-if="hbShow" @click="hbShow=0">
+            <img v-if="hb" src="../../image/chat_hongbao_icon.png" alt="" @click.stop="hb=0">
+            <img v-else src="../../image/chat_hongbao_open_icon.png" alt="">
+        </div>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/limitchat.js"></script>
+<script src="../../script/vue.js"></script>
+<script src="../../script/swiper.js"></script>
+
+<script src="../../script/uinfo.js"></script>
+<script src="../../script/frame1.js"></script>
+<script src="../../script/audio.js"></script>
+<script src="../../json/user.js"></script>
+<script src="../../json/frame1.js"></script>
+<script>
+    var myuserid = $api.getStorage('userid');
+    var touserid;
+    var audio;
+    var lon = $api.getStorage('lon');
+    var lat = $api.setStorage('lat');
+    var feeObj = {}; // 联系方式费用
+    var view = new Vue({
+        el: '#view',
+        data: {
+            showshouhu: false,
+            active: 0,
+            currentPlay: "red",
+            arrs: ['视频', '资料'],
+            percent: 0,
+            touch: {},
+            tabindex: 0,
+            ffList: [],
+            imgurl: imgurl,
+            data: {},
+            touserid: '',
+            myuserid: $api.getStorage('userid'),
+            isVip: $api.getStorage('isVip'),
+            imgList: [], // 相册
+            imgArr: [], // 相册中的图片 非视频
+            txImgArr: [], // 头像相册
+            car: '',
+            ios: 1, // 1上架 0非上架
+            myInfo: {}, // 获取自己用户资料
+
+            vplay: 0, // 0 未播放 1播放中
+
+            configInfo: {},
+
+            hbShow: 0,
+            hb: 1
+        },
+        methods: {
+            // 举报
+            more(index) {
+                more(index)
+            },
+            // 约会报名
+            joinEnroll(id, index) {
+                joinEnroll(id, index)
+            },
+            // 点赞
+            zan(id, index, type) {
+                zan(id, index, type)
+            },
+            // 评论
+            addComment(dy_id, uid) {
+                addComment(dy_id, uid)
+            },
+            // 发布评论
+            send() {
+                send()
+            },
+            openLM() {
+                openLM(touserid);
+            },
+            openVideoChat() {
+                openVideoChat(touserid);
+            },
+            copyTxt(text) {
+                copyTxt(text)
+            },
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+
+            showDetail(url, data, topH, footerH) {
+                showDetail(url, data, topH, footerH)
+            },
+            touchStart(e) {
+                if (!view.data.video) return;
+                const touch = e.touches[0];
+                this.touch.startX = touch.pageX;
+                this.touch.startY = touch.pageY;
+            },
+            touchMove(e) {
+                if (!view.data.video) return;
+                const touch = e.touches[0];
+                //横向和纵向偏离位置
+                const deltaX = touch.pageX - this.touch.startX;
+                const deltaY = touch.pageY - this.touch.startY;
+                if (Math.abs(deltaY) > Math.abs(deltaX)) {
+                    return;
+                }
+                if (this.currentPlay == 'red') {
+                    var left = 0;
+                    var offsetWidth = Math.min(
+                        0,
+                        Math.max(-window.innerWidth, left + deltaX)
+                    );
+                } else if (this.currentPlay == 'blue') {
+                    var left = -window.innerWidth;
+                    if (deltaX > 0) { //判断动作 是左滑还是右滑
+                        var offsetWidth = Math.min(
+                            0,
+                            Math.max(-window.innerWidth, left + deltaX)
+                        );
+                    }
+                } else {
+                    var left = -window.innerWidth * 2;
+                    var offsetWidth = Math.min(
+                        -window.innerWidth,
+                        Math.max(-window.innerWidth * 2, left + deltaX)
+                    );
+                }
+                //记录滑动的距离占屏幕宽度的百分比，如果滑动太少则不切换
+                this.percent = deltaX / window.innerWidth;
+                //动画中滑块的移动
+                this.$refs.back.style["transform"] = `translate3d(${offsetWidth}px,0,0)`;
+                //设置动画时间
+                this.$refs.back.style["transitionDuration"] = 10;
+            },
+            touchEnd() {
+                if (!view.data.video) return;
+                let offsetWidth;
+                let percent;
+                //当前为红色，滑动占比小于-0.1则切换，否则回到原位置
+                if (this.currentPlay === "red") {
+                    if (this.percent < -0.1) {
+                        this.currentPlay = "blue";
+                        this.active = 1;
+                        offsetWidth = -window.innerWidth;
+                    } else {
+                        offsetWidth = 0;
+                    }
+                } else if (this.currentPlay === "blue") {
+                    if (this.percent > 0.1) {
+                        this.active = 0;
+                        this.currentPlay = "red";
+                        offsetWidth = 0;
+                    } else {
+                        offsetWidth = -window.innerWidth;
+                    }
+                } else {
+                    //当前为黄色，滑动占比大于0.9则切换，否则回到原位置
+                    if (this.percent > 0.1) {
+                        this.currentPlay = "blue";
+                        this.active = 1;
+                        offsetWidth = -window.innerWidth;
+                    } else {
+                        offsetWidth = -window.innerWidth * 2;
+                    }
+                }
+                //这里的transform是针对最开始的位置而言，而不是移动过程中的位置
+                this.$refs.back.style["transform"] = `translate3d(${offsetWidth}px,0,0)`;
+                this.$refs.back.style["transitionDuration"] = 10;
+            },
+            toggle(index) {
+                this.active = index;
+                if (index == 0) {
+                    var offsetWidth = 0;
+                    this.currentPlay = "red";
+                } else if (index == 1) {
+                    var offsetWidth = -window.innerWidth;
+                    this.currentPlay = "blue";
+                }
+                //这里的transform是针对最开始的位置而言，而不是移动过程中的位置
+                this.$refs.back.style["transform"] = `translate3d(${offsetWidth}px,0,0)`;
+            },
+        }
+    })
+    apiready = function() {
+        audio = new Audio();
+        $api.fixStatusBar($api.dom('header'));
+        view.ios = $api.getStorage('shang');
+
+
+        touserid = api.pageParam['user_id'];
+        view.touserid = api.pageParam['user_id'];
+
+        getHeadSlid();
+
+        // ios第一次打开无法触发viewappear
+        if (api.systemType == 'ios') {
+            getPhone()
+            _heibai(1);
+        }
+
+        getMyCar();
+
+        _listener('viewappear', function() {
+            getPhone()
+            _heibai(1);
+        })
+
+        // 更新头像相册
+        _listener('updateHeadSlid', function() {
+            getHeadSlid();
+        })
+        // 礼物赠送 更新用户资料
+        _listener('updateGift', function() {
+            getInfo()
+        })
+
+        _listener('update_vip', function() {
+            view.isVip = $api.getStorage('isVip')
+        })
+        _listener('img_filter', function() {
+            view.isVip = $api.getStorage('isVip')
+        })
+
+
+        var $video = document.querySelector('#js-video');
+        $video.addEventListener('play', function() { //播放开始执行的函数
+            vplay = 1;
+            console.log('监听播放')
+            // $('.loading-bg').remove();
+        });
+        $video.addEventListener('pause', function() { //暂停开始执行的函数
+            vplay = 0;
+        });
+        // app退入后台 暂停视频
+        _listener('pause', function() {
+            $video.pause();
+        })
+        getData(0);
+        scrollToBottom();
+
+        _listener('newmsg', function(ret) {
+            showMsgFrm(ret.value.data)
+        })
+    }
+
+    // 获取头像相册
+    function getHeadSlid() {
+        // 用户头像轮播
+        getUserPhoto(function(all, imgArr) {
+            // console.log(JSON.stringify(all))
+            view.txImgArr = all;
+            setTimeout(function() {
+                var mySwiper = new Swiper('.swiper-container', {
+                    loop: true,
+                    autoplay: {
+                        delay: 5000,
+                        stopOnLastSlide: false,
+                        disableOnInteraction: false,
+                    },
+                });
+            }, 500)
+        }, {
+            uid: touserid,
+            slide: 1
+        });
+    }
+
+    // 滚动到底部 加载动态下一页
+    function scrollToBottom() {
+        var dom = '.back-l.r';
+        $(dom).on('scroll', function(e) {
+            var st = $(dom).scrollTop();
+            var h = $(dom).height();
+            var sh = $(dom)[0].scrollHeight;
+            if (st >= (sh - h - 10) && view.tabindex == 1 && heigutgao == 1) {
+                pagenum++;
+                getData(pagenum)
+            }
+        })
+    }
+    // 动态列表
+    function getData(page) {
+        var param = {
+            userid: $api.getStorage('userid'),
+            to_user: touserid,
+            type: 0
+        }
+        var loading = page == 0 ? 1 : 0;
+        _lists('home/Dymanic/otherlist', page, loading, param);
+    }
+
+
+    // 获取用户信息
+    function getInfo() {
+        _getUser(function(ret) {
+            if (ret.result.pull_black == 1) {
+                $('.loading-bg').remove();
+                _alert('对方已拉黑您', function() {
+                    api.closeWin();
+                })
+                return;
+            }
+            if (!ret.result.video) {
+                view.active = 1;
+                // view.toggle(1);
+            }
+            view.data = ret.result;
+
+        }, touserid, 1)
+        _getUser(function(ret) {
+            console.log(JSON.stringify(ret))
+            view.myInfo = ret.result;
+        })
+        // 获取隐私设置
+        getYSConfig();
+
+        // setTimeout(function () {
+        //     view.hbShow = 1;
+        // }, 2000)
+    }
+
+    function getYSConfig() {
+        _ajax('api/personal/config', function(ret, err) {
+            if (ret && ret.code == 200 && ret.data) {
+                view.configInfo = ret.data;
+            }
+        }, {
+            user_id: touserid
+        })
+
+    }
+
+    // 获取ta的座驾
+    function getMyCar() {
+        _ajax('api/car/myCar', function(ret, err) {
+            if (ret && ret.code == 200) {
+                if (ret.data && ret.data[0]) {
+                    view.car = ret.data[0]['cover'];
+                }
+            }
+        }, {
+            user_id: touserid
+        })
+    }
+
+    // 判断是否能查看用户资料
+    function getPhone() { // 会员 & 认证不限次数
+        $('.loading-bg').remove();
+        getInfo();
+        // 获取相册
+        getUserPhoto(function(all, imgArr) {
+            view.imgList = all;
+            view.imgArr = imgArr;
+        }, {
+            uid: touserid
+        })
+        return;
+        // _ajax('home/user/vipinfo', function (ret, err) {
+        //     console.log(JSON.stringify(ret))
+        //     console.log(JSON.stringify(err))
+        //     $('.loading-bg').remove();
+        //     if (ret && ret.code == 200) {
+        //         // 会员 & 认证不限次数
+        //         getInfo();
+        //         // 获取相册
+        //         getUserPhoto( function (all, imgArr) {
+        //             view.imgList = all;
+        //             view.imgArr = imgArr;
+        //         },{
+        //             uid: touserid
+        //         })
+        //     } else if (ret && ret.code == 201) {
+        //         // 非认证
+        //         _alert(ret.msg, function () {
+        //             _url({
+        //                 url: 'frame4/authentication_frame',
+        //                 title: '认证身份',
+        //                 winName: 'index_win'
+        //             })
+        //         })
+        //     } else if (ret && ret.code == 202) {
+        //         // 非会员
+        //         _alert(ret.msg, function () {
+        //             openVIP();
+        //         })
+        //     } else {
+        //         // 会员 | 认证 超过次数 、其他情况
+        //         _alert(ret.msg, function () {
+        //             api.closeWin();
+        //         })
+        //     }
+        // }, {
+        //     user_id: myuserid,
+        //     touserid: touserid
+        // })
+    }
+
+
+    // 关注
+    function guanzhu() {
+        var msg = view.data.love == 0 ? '关注成功' : '取消关注';
+        _ajax('api/user/attention', function(ret, err) {
+            console.log(JSON.stringify(ret));
+            if (ret && ret.code == 200) {
+                _msg(msg);
+                view.data.love = view.data.love == 0 ? 1 : 0;
+                pushMsg(touserid);
+            }
+        }, {
+            user_id: myuserid,
+            to_user: touserid,
+        })
+    }
+
+    // 更多
+    function _more() {
+        // if (view.data.love) {
+        //     var buttons = ['取消关注', '拉黑', '举报'];
+        // } else {
+        //     var buttons = ['关注', '拉黑', '举报'];
+        // }
+        // var buttons = ['推荐给朋友', '举报', '拉黑'];
+        var lhTxt = view.data.pull_black == 1 ? '移出黑名单' : '拉黑';
+        var buttons = ['举报', lhTxt];
+        var keyArr = [2, 3];
+        _action('', buttons, function(bindex) {
+            if (bindex != (buttons.length + 1)) {
+                var index = keyArr[bindex - 1];
+                if (index == 1) {
+                    // guanzhu()
+                } else if (index == 2) {
+                    // 举报
+                    _url({
+                        url: 'frame0/ju_bao_frame',
+                        title: '匿名举报',
+                        uid: touserid
+                    })
+                } else if (index == 3) {
+                    _addBlack(touserid, function(type) {
+                        if (type == 1) {
+                            timerWin();
+                        }
+                    })
+                }
+            }
+        })
+    }
+
+    // 私聊
+    function openChat() {
+        checkChat(touserid, function() {
+            view.data.link = 1;
+            _url({
+                touserid: view.data.id,
+                title: '与' + view.data.name + '的聊天',
+                moreType: 1
+            }, 'frame0/liaotian_win')
+        })
+    }
+
+    // 社交账号
+    function showLink() {
+        judgeLinkQx(touserid, function() {
+            view.data.link = 1;
+            // if (!view.data.qq && !view.data.wxcount) {
+            //     var obj = {
+            //         msg: '对方未填写vx或qq，但你可在平台联系对方',
+            //         btn: ['私聊下']
+            //     }
+            //     _confirm(obj, function (bIndex) {
+            //         if (bIndex == 1) {
+            //             _url({
+            //                 touserid: view.data.id,
+            //                 title: '与' + view.data.name + '的聊天',
+            //                 moreType: 1
+            //             }, 'frame0/liaotian_win')
+            //         }
+            //     });
+            // } else {
+            //     _msg('已获取联系方式');
+            // }
+        })
+    }
+
+
+
+
+    var vplay = 1; // 1播放 
+    // 视频 播放与暂停
+    function playVideo() {
+        console.log(vplay);
+        var $video = document.querySelector('#js-video');
+        if (vplay == 1) {
+            $video.pause();
+            vplay == 0;
+        } else {
+            $video.play();
+            vplay == 1;
+        }
+    }
+
+    var dashanIndex = 0;
+    // 心动
+    function dashan() {
+        if (dashanIndex == 1) return;
+        dashanIndex = 1;
+        _ajax('api/privatechat/greet', function(ret, err) {
+            _msg(ret.msg);
+        }, {
+            user_id: $api.getStorage('userid'),
+            id: touserid,
+        })
+    }
+
+    // 语音点赞
+    function dianzan() {
+        _ajax('api/user/voiceLike', function(ret, err) {
+            _msg(ret.msg);
+            if (ret && ret.code == 200) {
+                view.data.had_voice_zan = 1;
+                view.data.voice_zan++;
+            }
+        }, {
+            user_id: $api.getStorage('userid'),
+            to_user: touserid
+        })
+    }
+</script>
+
+</html>

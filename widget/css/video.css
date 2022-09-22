@@ -1,0 +1,122 @@
+html,
+body {
+    background: transparent;
+}
+
+#fx-footer .btn-wrap button {
+    color: #000;
+}
+
+.base-icon {
+    width: 15px;
+    height: 15px;
+    display: inline-block;
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+}
+
+/* 磨皮 */
+.base-icon.video-mopi-icon {
+    background-image: url('../../image/video/pi.png');
+}
+
+/* 美白 */
+.base-icon.video-meibai-icon {
+    background-image: url('../../image/video/bai.png');
+}
+
+/* 红润 */
+.base-icon.video-hong-icon {
+    background-image: url('../../image/video/hong.png');
+}
+
+/* 滤镜 */
+.base-icon.video-lvjing-icon {
+    background-image: url('../../image/video/jing.png');
+}
+
+/* 翻转 */
+.base-icon.video-zuan-icon {
+    background-image: url('../../image/video/zuan.png');
+}
+
+/* 美颜选项类型 */
+.footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+
+.tool-wrap .list {
+    color: #fff;
+    font-size: 12px;
+    margin: 15px;
+    display: flex;
+    align-items: center;
+    word-break: keep-all;
+}
+
+.tool-wrap .list input {
+    margin-left: 15px;
+    width: 100%;
+}
+
+.tool-wrap .list .base-icon {
+    width: 35px;
+    height: 35px;
+    margin-bottom: 5px;
+}
+
+/* 弹出设置美颜等级窗口 */
+.tool-footer {
+    background: rgba(0, 0, 0, 0.8);
+    /* background: #000; */
+    border-radius: 10px 10px 0 0;
+    padding: 20px 10px;
+    box-sizing: border-box;
+}
+
+/* 等级滑块 */
+.tool-footer .t-wrap input {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+/* 美颜 例子 */
+.tool-footer .t-ul {
+    display: -webkit-box;
+    overflow-x: auto;
+}
+
+.tool-footer .list {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    color: #fff;
+    font-size: 12px;
+    padding: 7px;
+    border-radius: 5px;
+}
+
+.tool-footer .list.active {
+    background: #222;
+}
+
+.tool-footer .list span {
+    color: #fff;
+}
+
+.tool-footer .t-ul img {
+    width: 50px;
+    height: 50px;
+    border-radius: 7px;
+    margin-bottom: 5px;
+
+}
+
+.tool-footer .tool-btn {
+    margin-top: 15px;
+    color: #fff;
+    line-height: 40px;
+}

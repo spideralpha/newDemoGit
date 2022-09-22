@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>小火苗</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <style>
+        html,
+        body {
+            background: #5f1ee2;
+        }
+
+        .top {
+            width: 100vw;
+            min-height: 108vw;
+            text-align: center;
+            font-size: 12px;
+            border-image-width: 50vw;
+            border-image-source: url(../../image/member/icon_invitbg5.jpg);
+            border-image-slice: 55% 374 40% fill;
+            box-sizing: border-box;
+        }
+
+        .top .t-content {
+            padding-top: 50vw;
+            padding-bottom: 10vw;
+        }
+
+        .top .code {
+            font-size: 16px;
+            color: #757575;
+            margin: 10px 0;
+        }
+
+        .top .code span {
+            color: #52AAFB;
+        }
+
+        .top .code .btn {
+            border-radius: 15px;
+            padding: 5px 10px;
+            border: 1px solid #ddd;
+            color: #757575;
+        }
+
+        /* 邀请 */
+        .list-wrap {
+            padding: 10px;
+        }
+
+        .nav-ul {
+            padding: 0 15px;
+        }
+
+        .nav-ul .list {
+            border-radius: 10px 10px 0 0;
+            background: #fc44b7;
+            color: #fff;
+            text-align: center;
+            padding: 5px 0;
+            box-sizing: border-box;
+            width: 30%;
+            word-break: break-all;
+        }
+
+        .nav-ul .list.active {
+            color: #fc44b7;
+            background: #fff;
+        }
+
+        .ul-wrap {
+            background: #fff;
+            border-radius: 10px;
+            padding: 10px;
+        }
+
+        /* 收益 */
+        .ul-wrap .list {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #eee;
+            padding: 10px 0;
+        }
+
+        .ul-wrap .list:last-child {
+            border: none;
+        }
+
+        .sy-wrap .time {
+            color: #757575;
+            font-size: 12px;
+        }
+
+        .sy-wrap .price {
+            color: orange;
+            font-size: 18px;
+        }
+
+        .sy-wrap .tip {
+            text-align: center;
+            padding: 30px 0;
+        }
+
+        .warn {
+            color: #fc44b7;
+        }
+
+        /*  */
+        .yao-wrap .title {
+            border-bottom: 1px solid #fc44b7;
+            padding-bottom: 10px;
+        }
+
+        .yao-wrap .title h3 {
+            font-weight: normal;
+            color: #fc44b7;
+        }
+
+
+        .yao-wrap .list .left {
+            display: flex;
+            align-items: center;
+        }
+
+
+        .yao-wrap .time {
+            font-size: 14px;
+            color: #757575;
+        }
+
+        .tx {
+            border-radius: 50%;
+        }
+
+        .rw-wrap .price {
+            font-size: 14px;
+            color: #757575
+        }
+
+        .rw-ul .l {
+            display: flex;
+            align-items: center;
+            width: 10vw;
+            justify-content: center;
+        }
+
+        .base-icon {
+            width: 25px;
+            height: 22px;
+            display: inline-block;
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            margin-right: 7px;
+        }
+
+        .icon1 {
+            background-image: url('../../image/member/firstIcon.png');
+        }
+
+        .icon2 {
+            background-image: url('../../image/member/secondIcon.png');
+        }
+
+        .icon3 {
+            background-image: url('../../image/member/thirdIcon.png');
+        }
+
+        .more {
+            text-align: center;
+            color: orange;
+            padding: 50px 0;
+        }
+
+        .num {
+            width: 15px;
+            height: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: red;
+            color: #fff;
+            font-size: 10px;
+            border-radius: 50%;
+            margin-right: 7px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <div class="wrap">
+            <div class="top">
+                <!-- <img src="../../image/member/icon_invitbg5.jpg" alt=""> -->
+                <div class="t-content">
+                    <div class="word" style="padding: 0 15vw;" v-html="shareTxt">
+                        <!-- <p>好友注册好友注册好友注册好友注册好友注册好友注册好友注册好友注册好友注册好友注册好友注册好友注册好友注册好友注册好友注册好友注册好友注册好友注册好友注册好友注册好友注册好友注册好友注册好友注册</p> -->
+                        <!--  <p>好友注册</p>
+                        <p>好友注册好友注册好友注册好友注册</p>
+                        <p>好友注册</p>
+                        <p>好友注册好友注册好友注册好友注册</p>
+                        <p>好友注册</p>
+                        <p>好友注册好友注册好友注册好友注册</p>
+                        <p>好友注册</p>
+                        <p>好友注册好友注册好友注册好友注册</p>
+                        <p>好友注册</p>
+                        <p>好友注册好友注册好友注册好友注册</p>
+                        <p>好友注册</p>
+                        <p>好友注册好友注册好友注册好友注册</p>
+                        <p>好友注册</p> -->
+                    </div>
+                    <p class="code">我的邀请码：<span>{{ffInfo.send_code}}</span> <button class="btn" onclick="copyTxt(view.ffInfo.send_code)">复制</button></p>
+                    <img class="share-btn" onclick="openShare()" src="../../image/member/icon_button_invit.gif" alt="">
+                </div>
+            </div>
+            <div class="list-wrap">
+                <ul class="nav-ul flex-a">
+                    <li class="list" :class="{'active':aIndex==0}" @click="aIndex=0">收益明细</li>
+                    <li class="list" :class="{'active':aIndex==1}" @click="aIndex=1">邀请人数</li>
+                    <li class="list" :class="{'active':aIndex==2}" @click="aIndex=2">奖励排行</li>
+                </ul>
+                <div class="ul-wrap">
+                    <div class="sy-wrap" v-if="aIndex==0">
+                        <ul class="sy-ul" v-if="syList.length>0">
+                            <li class="list" v-for="(m, index) in syList">
+                                <div class="left">
+                                    <p class="name">{{m.content}}</p>
+                                    <p class="time">{{m.time}}</p>
+                                </div>
+                                <span class="price">+{{m.money}}</span>
+                            </li>
+                        </ul>
+                        <p class="tip" v-else>快去<span class="warn" onclick="openShare()">邀请好友</span>赚收益 </p>
+                    </div>
+                    <div class="yao-wrap" v-if="aIndex==1">
+                        <!-- <div class="title flex">今日邀请人数<h3>0人</h3>&nbsp;&nbsp;&nbsp;总邀请人数<h3>0人</h3> </div> -->
+                        <div class="title flex">总邀请人数<h3>{{ffInfo.invite_count}}人</h3>
+                        </div>
+                        <ul class="yao-ul">
+                            <li class="list" v-for="(m, index) in yaoList">
+                                <div class="left">
+                                    <img class="tx" :src="returnImg(m.avatar)" onerror="this.src='../../image/touxiang.png'" alt="">
+                                    <p class="name">{{m.name}}</p>
+                                </div>
+                                <p class="time">{{m.register_datetime}}</p>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="rw-wrap" v-if="aIndex==2">
+                        <ul class="rw-ul">
+                            <li class="list" v-for="(m, index) in rwList">
+                                <div class="left flex">
+                                    <div class="l">
+                                        <i v-if="index<3" class="base-icon " :class="'icon'+(index+1)"></i>
+                                        <span class="num" v-else>{{index+1}}</span>
+                                    </div>
+                                    <img :src="returnImg(m.avatar)" onerror="this.src='../../image/touxiang.png'" class="tx" alt="">
+                                </div>
+                                <span class="price">共奖励{{m.money}}</span>
+                            </li>
+                            <!-- <li class="list">
+                                <div class="left flex">
+                                    <div class="l">
+                                        <span class="num">1</span>
+                                    </div>
+                                    <img src="../../image/test/03.jpg" class="tx" alt="">
+                                </div>
+                                <span class="price">共奖励1000元现金</span>
+                            </li> -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <p class="more" onclick="_url({url:'about', id: 14, title:'活动规则'})">活动规则>></p>
+        </div>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+
+            shareTxt: '',
+            aIndex: 0,
+            dataObj: {
+                0: { // 收益
+                    page: 1,
+                    bottom: 0,
+                },
+                1: { // 邀请
+                    page: 1,
+                    bottom: 0,
+                },
+                2: { // 奖励
+                    page: 1,
+                    bottom: 0,
+                },
+            },
+            syList: [], // 收益
+            yaoList: [], // 邀请
+            rwList: [], // 奖励
+
+        },
+        methods: {
+            // 跳转
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+        }
+    })
+    apiready = function() {
+        getPageContent(7, function(data) {
+            view.shareTxt = data.body;
+        })
+        _getUser(function(ret) {
+            view.ffInfo = ret.result;
+        })
+        getSY()
+        getYao()
+        getRW();
+        _scrollToBottom(function() {
+            if (view.dataObj[view.aIndex].bottom == 0) {
+                getData();
+            }
+        })
+    }
+
+
+    function getData() {
+        view.dataObj[view.aIndex].page++;
+        switch (view.aIndex) {
+            case 1:
+                getYao()
+                break;
+            case 2:
+                getRW();
+                break;
+            default:
+                getSY()
+                break;
+        }
+    }
+
+    // 收益明细
+    function getSY() {
+        _ajax('api/member/income', function(ret, err) {
+            if (ret && ret.code == 200) {
+                if (ret.data.length > 0) {
+                    view.syList = view.syList.concat(ret.data);
+                } else {
+                    view.dataObj[0].bottom = 1;
+                }
+            }
+        }, {
+            user_id: $api.getStorage('userid'),
+            page: view.dataObj[1].page
+        })
+    }
+    // 邀请列表
+    function getYao() {
+        _ajax('api/Member/team', function(ret, err) {
+            if (ret && ret.code == 200) {
+                if (ret.data.length > 0) {
+                    view.yaoList = view.yaoList.concat(ret.data);
+                } else {
+                    view.dataObj[1].bottom = 1;
+                }
+            }
+        }, {
+            id: $api.getStorage('userid'),
+            level: 1,
+            page: view.dataObj[1].page
+        })
+    }
+    // 奖励排行榜
+    function getRW() {
+        _ajax('api/member/rewardRanking', function(ret, err) {
+            if (ret && ret.code == 200) {
+                view.dataObj[2].bottom = 1;
+                if (ret.data.length > 0) {
+                    view.rwList = view.rwList.concat(ret.data);
+                } else {
+                    view.dataObj[2].bottom = 1;
+                }
+            }
+
+        }, {
+            page: view.dataObj[2].page
+        })
+    }
+
+    function openShare() {
+        showDetail('frame0/share')
+        return;
+        // var buttons = ['海报', '链接'];
+        // _action('', buttons, function(bIndex) {
+        //     if (bIndex != buttons.length + 1) {
+        //         if (bIndex == 1) {
+        //             _url({
+        //                 url: 'frame4/ewm',
+        //                 title: '海报'
+        //             })
+        //         } else {
+        //             showDetail('frame0/share')
+        //         }
+        //     }
+        // })
+
+    }
+</script>
+
+</html>

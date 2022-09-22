@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/aui_font.css">
+    <link rel="stylesheet" href="../../css/base_icon.css">
+    <link rel="stylesheet" href="../../css/swiper.css">
+    <link rel="stylesheet" href="../../css/uinfo.css">
+    <script src="../../script/swiper.js"></script>
+    <style>
+        /* vx解锁 */
+        .wx-wrap {
+            background: #FF82CC;
+            color: #fff;
+            border-radius: 7px;
+            margin: 10px 0;
+            padding: 15px 10px;
+            font-size: 14px;
+        }
+
+        .wx-wrap .left img {
+            height: 30px;
+            margin-right: 5px;
+        }
+
+        .wx-wrap .left span {
+            color: #fff;
+        }
+
+        .wx-wrap .btn {
+            background: #fff;
+            color: #E63BE4;
+            border-radius: 5px;
+            padding: 5px;
+        }
+
+        .container {
+            padding-bottom: 50vw;
+        }
+
+        footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            z-index: 1;
+            background: #fff;
+        }
+
+
+        /* 心动 */
+        .heart-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 20px;
+            background: linear-gradient(to left, #7338d8, #ff66c1);
+            color: #fff;
+            box-shadow: 0 2px 2px;
+            width: 35vw;
+            line-height: 35px;
+            margin: 20px;
+        }
+
+        .chat-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 20px;
+            border: 1px solid;
+            color: #7338d8;
+            width: 35vw;
+            line-height: 35px;
+            margin: 20px;
+            background: #fff;
+        }
+
+        .chat-img {
+            width: 20px;
+            margin-right: 10px;
+        }
+
+        .heart-img {
+            width: 20px;
+            animation-name: heart;
+            animation-duration: 0.5s;
+            animation-iteration-count: infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes heart {
+            0% {
+                transform: scale(1);
+            }
+
+            100% {
+                transform: scale(1.1);
+            }
+        }
+
+        /* 心动礼物 */
+        .gift-box {
+            position: absolute;
+            z-index: 2;
+            text-align: center;
+            width: 100%;
+        }
+
+        .gift-box img {
+            animation-name: big;
+            animation-duration: 8s;
+            width: 0;
+        }
+
+
+        @keyframes big {
+            0% {
+                width: 0;
+                margin-top: 80vh;
+            }
+
+            50% {
+                width: 200px;
+                margin-top: 50vh;
+            }
+
+            100% {
+                width: 0;
+                margin-top: 10vh;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <header id="fx-header">
+            <div class="head flex-c">
+                <div class="back" tapmode onclick="_closeToWin()"><i class="aui-iconfont aui-icon-left"></i></div>
+                <div class="title">
+                    <p class="name">{{data.name}}</p>
+                    <p class="area flex-c"><i class="base-icon area-icon"></i>{{data.distance}}</p>
+                </div>
+                <div class="more" tapmode onclick="_more()"><i class="aui-iconfont aui-icon-more"></i></div>
+            </div>
+        </header>
+        <!-- 心动 赠送的礼物动画 -->
+        <div class="gift-box" v-if="gCover && !ios">
+            <img :src="returnImg(gCover)" alt="">
+        </div>
+
+        <!-- 守护 弹窗-->
+        <div class="shouhumodal" v-show="showshouhu">
+            <div class="shouhubox">
+                <div class="tx-wrap">
+                    <img :src="returnImg(data.head_portrait)" onerror="this.src='../../image/touxiang.png'" alt="">
+                    <img v-if="data.angel" class="sh-tx" :src="returnImg(data.angel_avatar)" onerror="this.src='../../image/touxiang.png'" alt="">
+                </div>
+                <div class="name">{{data.name}}</div>
+                <div class="text">赠送{{data.angel_min}}金币以上的礼物，就能成为TA的守护天使</div>
+                <div class="btn shouhu" @click="_url({touid: touserid}, 'frame0/gift_win');showshouhu=false;">立即守护TA</div>
+                <div class="btn cancel" @click="showshouhu = false">默默离开</div>
+            </div>
+        </div>
+        <!-- 头部轮播 -->
+        <div class="header" v-if="data.id">
+            <div class="swiper-container" v-if="data.photo_show && data.photo_show.length>0">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide" v-for="(m ,sindex) in data.photo_show">
+                        <img @click="_url({uid:touserid, iIndex:sindex, showZan:1,  slide:1}, 'frame0/img_win')" :src="returnImg(m)" onerror="this.src='../../image/touxiang.png'" alt="">
+                    </div>
+                </div>
+            </div>
+            <img class="big-tx" v-else :src="returnImg(data.head_portrait)" onerror="this.src='../../image/touxiang.png'" alt="">
+            <!-- 语音 -->
+            <div class="voice-wrap" v-show="data.voice">
+                <i class="voice-play-icon" :class="{'voice-icon':vplay==1}" onclick="playVoice()"></i>
+                <div class="voice-content">
+                    <p class="voice-time">{{data.voice_time}}''</p>
+                    <p class="voice-zan flex" onclick="dianzan()">
+                        <i class="voice-zan-icon" :class="{'voice-zans-icon':data.had_voice_zan==1}"></i>
+                        <span>({{data.voice_zan}})</span>
+                    </p>
+                </div>
+            </div>
+            <!-- 守护 -->
+            <div class="shouhu-wrap" v-if="configInfo.hide_defend_angel==0 && !ios" @click="showshouhu = true">
+                <div class="sh-bg">
+                    <div class="tx">
+                        <img v-if="data.angel" :src="returnImg(data.angel_avatar)" onerror="this.src='../../image/touxiang.png'" alt="">
+                        <img v-else src="../../image/man/ms_details_angel_bj.png" alt="">
+                    </div>
+                    <div class="sh-bottom">
+                        <img src="../../image/man/ms_details_angel_label_level.png" alt="">
+                        <span v-if="data.angel">Lv{{data.angel_grade}} {{data.angel_name}}</span>
+                        <span v-else>守护TA</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="user-wrap">
+                <div class="username">{{data.name}}
+                    <span class="boy-tag" :class="{'girl-tag':data.sex == '女'}">{{data.age}}</span>
+                    <span class="new-fuhao" @click="showDetail('modal/user_fuhao', {data:data})" v-if="data.tycoonGrade && data.tycoonIcon && !ios"><img :src="returnImg(data.tycoonIcon)" onerror="this.src='../../image/error-img.png'" alt=""></span>
+                    <span class="new-fuhao" @click="showDetail('modal/user_meili', {data:data})" v-if="data.charmGrade && data.charmIcon && !ios"><img :src="returnImg(data.charmIcon)" onerror="this.src='../../image/error-img.png'" alt=""></span>
+                    <img class="new-noble" v-if="data.is_noble && data.noble && !ios" :src="returnImg(data.noble.icon)" onerror="this.src='../../image/error-img.png'" alt="">
+                    <button onclick="guanzhu()" class="gz-btn" v-if="!data.love">+ 关注</button>
+                </div>
+                <div class="account" @click="copyTxt(data.id)">ID:{{data.id}} · <i class="base-icon area-icon"></i> {{data.distance}} · 被心动{{data.heart}}
+                    <!-- <span v-if="data.sex=='男' && !ios"> · 余额{{data.volley}}</span> -->
+                </div>
+            </div>
+            <div v-if="!ios && data.sex == '女'">
+                <!-- <div v-if="data.wxcount">
+                    <div class="wx-wrap flex-bt" v-if="!data.wechat_link" onclick="showLink(1)">
+                        <div class="left flex">
+                            <img src="../../image/icon/wx.png" alt="">
+                            <span>成为贵族免费解锁</span>
+                        </div>
+                        <button class="btn">解锁</button>
+                    </div>
+                    <div class="wx-wrap flex-bt" v-else>
+                        <div class="left flex">
+                            <img src="../../image/icon/wx.png" alt="">
+                            <span>{{data.wxcount}}</span>
+                        </div>
+                        <button class="btn" @click="copyTxt(data.wxcount)">复制</button>
+                    </div>
+                </div> -->
+                <!-- <div v-if="data.qq">
+                    <div class="wx-wrap flex-bt" v-if="!data.qq_link" onclick="showLink(2)">
+                        <div class="left flex">
+                            <img src="../../image/icon/qq.png" alt="">
+                            <span>成为贵族免费解锁</span>
+                        </div>
+                        <button class="btn">解锁</button>
+                    </div>
+                    <div class="wx-wrap flex-bt" v-else>
+                        <div class="left flex">
+                            <img src="../../image/icon/qq.png" alt="">
+                            <span>{{data.qq}}</span>
+                        </div>
+                        <button class="btn" @click="copyTxt(data.qq)">复制</button>
+                    </div>
+                </div> -->
+                <!-- <div v-if="data.phone">
+                    <div class="wx-wrap flex-bt" v-if="!data.phone_link" onclick="showLink(3)">
+                        <div class="left flex">
+                            <img src="../../image/icon/phone.png" alt="">
+                            <span>成为贵族免费解锁</span>
+                        </div>
+                        <button class="btn">解锁</button>
+                    </div>
+                    <div class="wx-wrap flex-bt" v-else>
+                        <div class="left flex">
+                            <img src="../../image/icon/phone.png" alt="">
+                            <span>{{data.phone}}</span>
+                        </div>
+                        <button class="btn" @click="copyTxt(data.phone)">复制</button>
+                    </div>
+                </div> -->
+            </div>
+            <div class="tab">
+                <div class="titem" v-if="dyList.length>0" @click="_url({url:'frame4/broadcast_frame', title:data.name+'的动态', uid: data.id})">
+                    <div class="left flex-bt">
+                        <div class="label">最新动态</div>
+                        <span class="aui-iconfont aui-icon-right"></span>
+                    </div>
+                    <div class="dt-wrap" id="js-dt">
+                        <img v-for="(m, index) in dyList" :src="returnImg(m)" onerror="this.src='../../image/error-img.png'" alt="">
+                    </div>
+                </div>
+                <div class="titem" v-if="photo.length">
+                    <div class="left flex-bt">
+                        <div class="label">个人相册({{photo.length}})</div>
+                        <span class="aui-iconfont aui-icon-right"></span>
+                    </div>
+                    <div class="dt-wrap">
+                        <img @click="_url({uid:touserid, showZan:1, iIndex:index}, 'frame0/img_win')" v-for="(m, index) in photo" :src="returnImg(m)" onerror="this.src='../../image/error-img.png'" alt="">
+                    </div>
+                </div>
+                <div class="titem" v-if="!ios">
+                    <div class="left flex-bt">
+                        <div class="label">认证信息</div>
+                    </div>
+                    <ul class="flex-w rz-wrap">
+                        <li class="list" v-if="rzInfo.real_auth" :class="{'ready': rzInfo.real_auth.status==2}">
+                            <i class="rz-icon rz-man"></i>
+                            <p class="text">真人{{rzInfo.real_auth.status==2?'已':'未'}}认证</p>
+                        </li>
+                        <li class="list" v-if="rzInfo.name_auth" :class="{'ready': rzInfo.name_auth.status==2}">
+                            <i class="rz-icon rz-name"></i>
+                            <p class="text">实名{{rzInfo.name_auth.status==2?'已':'未'}}认证</p>
+                        </li>
+                        <li class="list" v-if="rzInfo.phone_auth" :class="{'ready': rzInfo.phone_auth.status==2}">
+                            <i class="rz-icon rz-phone"></i>
+                            <p class="text">手机{{rzInfo.phone_auth.status==2?'已':'未'}}认证</p>
+                        </li>
+                        <li class="list" v-if="rzInfo.education_auth" :class="{'ready': rzInfo.education_auth.status==2}">
+                            <i class="rz-icon rz-edu"></i>
+                            <p class="text">学历{{rzInfo.education_auth.status==2?'已':'未'}}认证</p>
+                        </li>
+                        <!-- <li class="list" v-if="rzInfo.car_auth" :class="{'ready': rzInfo.car_auth.status==2}">
+                            <i class="rz-icon rz-edu"></i>
+                            <p class="text">车辆{{rzInfo.car_auth.status==2?'已':'未'}}认证</p>
+                        </li>
+                        <li class="list" v-if="rzInfo.house_auth" :class="{'ready': rzInfo.house_auth.status==2}">
+                            <i class="rz-icon rz-house"></i>
+                            <p class="text">房产{{rzInfo.house_auth.status==2?'已':'未'}}认证</p>
+                        </li> -->
+                    </ul>
+                </div>
+                <div class="titem">
+                    <div class="left flex-bt">
+                        <div class="label">基本资料</div>
+                        <span class="aui-iconfont aui-icon-right"></span>
+                    </div>
+                    <div class="flex-w">
+                        <!-- <div class="jbitem" v-if="data.sex=='男'"><span class="text">余额：{{data.volley}}</span> </div> -->
+                        <div class="jbitem" v-if="data.age"><span class="text">{{ data.sex }} {{ data.age }}岁</span> </div>
+                        <div class="jbitem" v-if="data.emotion"><span class="text">{{ data.emotion }}</span></div>
+                        <div class="jbitem" v-if="data.stature"><span class="text">{{ data.stature }}cm</span></div>
+                        <div class="jbitem" v-if="data.weight"><span class="text">{{ data.weight }}kg</span></div>
+                        <div class="jbitem" v-if="data.city"><span class="text">所在地：{{ data.city }}</span></div>
+                        <div class="jbitem" v-if="data.education_background"><span class="text">{{ data.education_background }}</span></div>
+                        <div class="jbitem" v-if="data.monthly_salary">年收入：<span class="text">{{ data.monthly_salary }}</span></div>
+                        <div class="jbitem" v-if="data.occupation"><span class="text">{{ data.occupation }}</span></div>
+                        <div class="jbitem" v-if="data.school_of_graduation"><span class="text">{{ data.school_of_graduation }}</span></div>
+                        <div class="jbitem" v-if="data.through_membership">家乡：<span class="text">{{ data.through_membership }}</span></div>
+                        <div class="jbitem" v-if="data.live_status"><span class="text">{{ data.live_status }}</span> </div>
+                        <div class="jbitem" v-if="data.is_house_purchase"><span class="text">{{ data.is_house_purchase }}</span></div>
+                        <div class="jbitem" v-if="data.is_car_purchase"><span class="text">{{ data.is_car_purchase }}</span></div>
+                    </div>
+                </div>
+                <div class="titem " v-if="data.self_slogan">
+                    <div class="left flex-bt">
+                        <div class="label">自我介绍</div>
+                        <span class="aui-iconfont aui-icon-right"></span>
+                    </div>
+                    <div class="slogan-content" v-html="data.self_slogan"></div>
+                    <div class="slogan-img" v-for="(m, index) in data.self_images">
+                        <img :src="returnImg(m)" alt="" @click="_url({imgArr:data.self_images, iIndex:index}, 'frame1/dy_img_win')">
+                    </div>
+                </div>
+                <!-- <div class="titem " >
+                    <div class="left flex-bt">
+                        <div class="label">贵族</div>
+                        <div class="right">
+                            <img :src="returnImg(data.cluster.logo)" onerror="this.src='../../image/touxiang.png'" alt="">
+                            <span class="aui-iconfont aui-icon-right"></span>
+                        </div>
+                    </div>
+                </div> -->
+                <div class="titem " v-if="data.cluster && data.cluster.id">
+                    <div class="left flex-bt">
+                        <div class="label">家族</div>
+                        <div class="right">
+                            <img class="jiazu-icon" :src="returnImg(data.cluster.logo)" onerror="this.src='../../image/touxiang.png'" alt="">
+                            <span class="aui-iconfont aui-icon-right"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="titem" v-if="data.tags && data.tags.length>0">
+                    <div class="left flex-bt">
+                        <div class="label">我的标签</div>
+                    </div>
+                    <div class="tag-ul flex-w">
+                        <span class="tag" v-for="(m, index) in data.tags">{{m}}</span>
+                    </div>
+                </div>
+                <div class="titem" v-if="data.slogan">
+                    <div class="left flex-bt">
+                        <div class="label">个性签名</div>
+                    </div>
+                    <div class="txt" v-html="data.slogan"></div>
+                </div>
+                <div class="titem" v-if="data.gift && data.gift.length>0 && configInfo.hide_gift!=1 && !ios">
+                    <div class="left flex-bt">
+                        <div class="label">收到的礼物</div>
+                        <span class="aui-iconfont aui-icon-right"></span>
+                    </div>
+                </div>
+                <div class="glist" v-if="data.gift && data.gift.length>0 && configInfo.hide_gift!=1 && !ios">
+                    <div class="gitem" v-for="(item, index) in data.gift" @click="showDetail('modal/send_gift', {data:item, touid :touserid, giftbox:1})">
+                        <img :src="returnImg(item.preview)" onerror="this.src='../../image/error-img.png'">
+                        <div class="gname">{{item.name}}</div>
+                        <div class="gnum">X{{item.num}}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <img class="car" v-if="car && !ios" :src="returnImg(car)" alt="">
+        <footer v-if="!ios">
+            <div class="footer flex-c">
+                <button class="heart-btn" onclick="dashan()"><img class="heart-img" src="../../image/modal/heart_animation.png" alt=""> 打招呼</button>
+                <button class="chat-btn" onclick="openChat()"><img class="chat-img" src="../../image/man/data_button_news_icon.png" alt=""> 私信</button>
+            </div>
+        </footer>
+        <!-- <div class="gift-box">
+            <img src="../../image/test/car1.png" alt="">
+        </div> -->
+        <div class="loading-bg"></div>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/limitchat.js"></script>
+<script src="../../script/vue.js"></script>
+<script src="../../script/swiper.js"></script>
+<script src="../../script/uinfo.js"></script>
+<script src="../../script/audio.js"></script>
+
+<script src="../../json/user.js"></script>
+<script src="../../json/frame1.js"></script>
+<script>
+    var myuserid;
+    var touserid;
+    var audio;
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            data: {},
+            touserid: '',
+            myuserid: '',
+            isVip: $api.getStorage('isVip'),
+            showshouhu: false,
+            car: '',
+            ios: 1, // 1上架 0非上架
+            myInfo: {}, // 获取自己用户资料
+            vplay: 0, // 0 未播放 1播放中
+            configInfo: {},
+            dyObj: {
+                page: 0,
+                last: 0
+            },
+            rzInfo: [], // 认证情况
+            dyList: [],
+            photo: [],
+            gCover: '' // 心动礼物
+        },
+        methods: {
+            // 举报
+            more(index) {
+                more(index)
+            },
+            // 约会报名
+            joinEnroll(id, index) {
+                joinEnroll(id, index)
+            },
+            // 点赞
+            zan(id, index, type) {
+                zan(id, index, type)
+            },
+            // 评论
+            addComment(dy_id, uid) {
+                addComment(dy_id, uid)
+            },
+            // 发布评论
+            send() {
+                send()
+            },
+            openLM() {
+                openLM(touserid);
+            },
+            openVideoChat() {
+                openVideoChat(touserid);
+            },
+            copyTxt(text) {
+                copyTxt(text)
+            },
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+
+            showDetail(url, data, topH, footerH) {
+                showDetail(url, data, topH, footerH)
+            },
+
+        }
+    })
+    apiready = function() {
+        audio = new Audio();
+        $api.fixStatusBar($api.dom('header'));
+        view.ios = $api.getStorage('shang');
+        view.myuserid = $api.getStorage('userid');
+        myuserid = $api.getStorage('userid');
+        touserid = api.pageParam['user_id'];
+        view.touserid = api.pageParam['user_id'];
+        getInfo()
+        _heibai(1);
+        // 礼物赠送 更新用户资料
+        _listener('updateGift', function() {
+            getInfo()
+        })
+
+        _listener('newmsg', function(ret) {
+            var result = ret.value.data;
+            showMsgFrm(result);
+            var data = result.new[0];
+            if (data.userid == $api.getStorage('userid') && data.self == 1 && data.type == 8) {
+                view.gCover = data.data.cover;
+                setTimeout(function() {
+                    view.gCover = ''
+                }, 6000)
+            }
+        })
+
+        getDY(0);
+        $('#js-dt').on('scroll', function() {
+            var w = $('#js-dt').innerWidth();
+            var l = $('#js-dt').scrollLeft();
+            if (l + 20 > w && view.dyObj.last == 0) {
+                view.dyObj.page++;
+                getDY(view.dyObj.page);
+            }
+        })
+
+        $(window).on('scroll', function() {
+            topNavScroll();
+        });
+
+    }
+
+
+    // 关注
+    function guanzhu() {
+        var msg = view.data.love == 0 ? '关注成功' : '取消关注';
+        _ajax('api/user/attention', function(ret, err) {
+            console.log(JSON.stringify(ret));
+            if (ret && ret.code == 200) {
+                _msg(msg);
+                view.data.love = view.data.love == 0 ? 1 : 0;
+                pushMsg(touserid);
+            }
+        }, {
+            user_id: myuserid,
+            to_user: touserid,
+        })
+    }
+
+    // 更多
+    function _more() {
+        // if (view.data.love) {
+        //     var buttons = ['取消关注', '拉黑', '举报'];
+        // } else {
+        //     var buttons = ['关注', '拉黑', '举报'];
+        // }
+        // var buttons = ['推荐给朋友', '举报', '拉黑'];
+        var lhTxt = view.data.pull_black == 1 ? '移出黑名单' : '拉黑';
+        var buttons = ['举报', lhTxt];
+        var keyArr = [2, 3];
+        _action('', buttons, function(bindex) {
+            if (bindex != (buttons.length + 1)) {
+                var index = keyArr[bindex - 1];
+                if (index == 1) {
+                    // guanzhu()
+                } else if (index == 2) {
+                    // 举报
+                    _url({
+                        url: 'frame0/ju_bao_frame',
+                        title: '匿名举报',
+                        uid: touserid
+                    })
+                } else if (index == 3) {
+                    _addBlack(view.touserid, function(type) {
+                        if (type == 1) {
+                            timerWin();
+                        }
+                    })
+                }
+            }
+        })
+    }
+
+    // 私聊
+    function openChat() {
+        checkChat(view.touserid, function() {
+            // view.data.link = 1;
+            _url({
+                touserid: view.data.id,
+                title: '与' + view.data.name + '的聊天',
+                moreType: 1
+            }, 'frame0/liaotian_win')
+        })
+    }
+
+    // 社交账号
+    function showLink(type) {
+        judgeLinkQx(view.touserid, function() {
+            switch (type) {
+                case 1:
+                    view.data.wechat_link = 1;
+                    break;
+                case 2:
+                    view.data.qq_link = 1;
+                    break;
+                default:
+                    view.data.phone_link = 1;
+                    break;
+            }
+        }, type)
+    }
+
+    var dashanIndex = 0;
+    // 心动
+    function dashan() {
+        if (dashanIndex == 1) return;
+        dashanIndex = 1;
+        _ajax('api/privatechat/greet', function(ret, err) {
+            _msg(ret.msg);
+        }, {
+            user_id: $api.getStorage('userid'),
+            id: view.touserid,
+        })
+    }
+
+    // 语音点赞
+    function dianzan() {
+        _ajax('api/user/voiceLike', function(ret, err) {
+            _msg(ret.msg);
+            if (ret && ret.code == 200) {
+                view.data.had_voice_zan = 1;
+                view.data.voice_zan++;
+            }
+        }, {
+            user_id: $api.getStorage('userid'),
+            to_user: view.touserid,
+        })
+    }
+</script>
+
+</html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/win.css">
+    <style>
+        .bg {
+            position: fixed;
+            background-color: #000;
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            background-position: center center;
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+        }
+
+        .img-bg {
+            position: fixed;
+            height: 100vh;
+            width: 100vw;
+            filter: blur(20px);
+        }
+
+        .tip-wrap {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            font-size: 14px;
+            z-index: 999;
+        }
+
+        .tip-wrap span {
+            color: #fff;
+            text-shadow: #000 0 2px 3px;
+            /* background: rgba(0, 0, 0, 0.5);
+        padding: 3px 10px; */
+        }
+
+        .tip-btn {
+            border: 1px solid;
+            color: #673AB7;
+            border-radius: 5px;
+            padding: 7px 15px;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <header>
+            <div class="head new-padding-10 flex-c">
+                <div class="back" tapmode onclick="_closeToWin()"></div>
+                <div class="title">观看视频</div>
+            </div>
+        </header>
+        <div class="bg">
+            <img :src="cover" alt="" class="img-bg">
+        </div>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script src="../../script/video1.js"></script>
+<script>
+    var vplay;
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            url: '',
+            cover: '',
+        },
+        methods: {
+
+        }
+    })
+
+    apiready = function() {
+        // _loading();
+        $api.fixStatusBar($api.dom('header'));
+        vplay = new videoPlay();
+        view.url = returnImg(api.pageParam['video']);
+        view.cover = returnImg(api.pageParam['cover']);
+        vplay.play({
+            url: view.url
+        })
+    }
+</script>
+
+</html>

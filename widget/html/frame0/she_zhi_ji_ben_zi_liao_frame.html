@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/baseinfo.css">
+    <link rel="stylesheet" href="../../css/mobile_select.css">
+</head>
+
+<body>
+    <div class="wrap-bg" id="view" v-cloak>
+        <header class="new-head">
+            <div class="head">
+                <div class="back" onclick="_closeToWin()"></div>
+            </div>
+            <div class="head-title">
+                <h3 class="big-title">小火苗</h3>
+                <p class="head-des">寻觅爱的气息!</p>
+            </div>
+            <div class="wrap" style="padding-bottom: 30px;">
+                <div class="tx-wrap flex-c flex-col new-margin-tb-10">
+                    <div class="no-tx" v-if="!head" onclick="changeHeader()">
+                        <img src="../../image/icon/add1.png" alt="">
+                    </div>
+                    <div v-else class="tx img-h" onclick="changeHeader()">
+                        <img :src="returnImg(head)" alt="">
+                    </div>
+                    <p class="font-ss">上传头像</p>
+                </div>
+                <div class="sex-wrap">
+                    <ul class="sex-ul">
+                        <li class="list man" @click="listData.sex='男'" :class="{'active':listData.sex=='男'}" style="border-right: 1px solid #E0E0E0;"><i class="base-icon man-icon"></i></li>
+                        <li class="list woman" @click="listData.sex='女'" :class="{'active':listData.sex=='女'}"><i class="base-icon woman-icon"></i></li>
+                    </ul>
+                    <ul class="sex-name">
+                        <li class="list man" :class="{'active':listData.sex=='男'}">男生</li>
+                        <li class="list woman" :class="{'active':listData.sex=='女'}">女生</li>
+                    </ul>
+                    <p class="tip">性别一经确认后续无法修改哦</p>
+                </div>
+                <ul class="select-ul w-bg">
+                    <li class="li" style="margin-top: 20px;">
+                        <div class="content">
+                            <input type="text" placeholder="请输入昵称" v-model="listData.name">
+                        </div>
+                    </li>
+                    <li class="li" id="select_2">
+                        <div class="content">
+                            <input type="text" placeholder="请选择生日" readonly v-model="listData.birthday">
+                        </div>
+                    </li>
+                </ul>
+                <div v-if="!ios">
+                    <div class="yqm-wrap flex-c" style="margin-top: 20px;" v-if="!GONGHUI">
+                        <input class="new-btn" type="text" placeholder="请输入邀请码" style="color: #000;" v-model="listData.send_code">
+                    </div>
+                    <div class="yqm-wrap flex-c" style="margin-top: 20px;" v-else>
+                        <input class="new-btn" type="text" placeholder="请输入邀请码" style="color: #000;" readonly v-model="GONGHUI" v-show="GONGHUI==''">
+                    </div>
+                </div>
+                <div class="flex-c" style="margin: 20px 0;">
+                    <button class="new-btn" onclick="submit()">完成</button>
+                </div>
+                <div class="xieyi flex-c">
+                    <div @click.stop @click="xieyi= xieyi==1?0:1" class="check-box" :class="{'active':xieyi==1}"></div>
+                    <p> 我已阅读并同意<a href="javascript:;" onclick="openPage(2)">《用户使用协议》</a> </p>
+                </div>
+            </div>
+        </header>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script src="../../script/select_json.js"></script>
+<script src="../../script/user.js"></script>
+<script src="../../script/mobile_select.js"></script>
+<script src="../../script/select_date.js"></script>
+<script src="../../script/gonghui.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+            head: '',
+            xieyi: 0,
+            listData: {
+                phone: '',
+                password: '',
+                send_code: '',
+                birthday: '',
+                name: '',
+                city: '',
+                offten_city: '',
+                // age: '',
+                // constellation: '', // 星座
+                occupation: '', // 职业
+                // dy_program: '',
+                dy_conditions: '',
+                wxcount: '',
+                qq: '',
+                stature: '',
+                weight: '',
+                self_slogan: '',
+                sex: '',
+                head: '',
+                qq_openID: $api.getStorage('qq_openID'),
+                wechat: $api.getStorage('wechat'),
+                device_id: ''
+            },
+            GONGHUI: GONGHUI,
+            info: {}
+        },
+        methods: {
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+        }
+    })
+
+    var nowDate = new Date();
+    var nowYear = nowDate.getFullYear();
+    var nowMon = nowDate.getMonth();
+    var nowDay = nowDate.getDate();
+
+    /*默认全部参数*/
+    $.selectDate("#select_2", {
+        start: nowYear - 100,
+        end: nowYear - 18,
+        select: [nowYear - 18, nowMon + 1, nowDay],
+        title: '请选择生日'
+    }, function(data) {
+        console.log(data);
+        view.listData.birthday = data.year + "-" + data.month + "-" + data.day;
+    });
+
+    apiready = function() {
+        view.info = api.pageParam['info'];
+        if (view.info.headimgurl) {
+            view.head = view.info.headimgurl;
+        }
+        if (view.info.name) {
+            view.head = view.info.name;
+        }
+        if (view.info.sex) {
+            view.head = view.info.sex;
+        }
+        view.listData.device_id = api.deviceId;
+        $api.fixStatusBar($api.dom('header'));
+        view.ios = $api.getStorage('shang');
+
+        // 当前城市
+        _listener('selectCity', function(ret) {
+            if (ret && ret.value.city) {
+                view.listData.offten_city = ret.value.city[0];
+                view.listData.city = ret.value.city[0];
+            }
+        })
+        if (GONGHUI) {
+            view.listData.send_code = GONGHUI;
+        }
+    }
+
+
+    // 提交个人资料
+    function submit() {
+        if (view.xieyi == 0) {
+            _msg('请先查看协议并勾选协议');
+            return;
+        }
+        var time = $('#activeTime').val();
+        if (!view.listData.name) {
+            _msg('昵称还没未填写');
+            return;
+        }
+        if (!view.listData.birthday) {
+            _msg('请选择生日');
+            return;
+        }
+        _loading();
+        if (view.head) {
+            _upImg({
+                image: view.head,
+                water: 0
+            }, function(u) {
+                view.listData.head = u;
+                submitReg(view.listData);
+            })
+        } else {
+            submitReg(view.listData);
+        }
+    }
+
+    function submitReg(obj) {
+        for (var k in obj) {
+            if (!obj[k]) {
+                delete obj[k];
+            }
+        }
+        if (view.info.phone) {
+            view.listData.phone = view.info.phone;
+        }
+        if (view.info.password) {
+            view.listData.password = view.info.password;
+        }
+        if (view.info.code) {
+            view.listData.code = view.info.code;
+        }
+        if (view.info.token) {
+            view.listData.token = view.info.token;
+        }
+        _ajax('api/reg/index', function(ret, err) {
+            _loadingClose();
+            if (ret.code == '200') {
+                $api.rmStorage('wechat');
+                $api.rmStorage('qq_openID');
+                _msg('提交成功')
+                $api.setStorage('sex', view.listData.sex);
+                $api.setStorage('userid', ret.id);
+                loginToUpdate(ret.id)
+                _home()
+            } else {
+                _msg(ret.msg);
+            }
+        }, obj)
+    }
+</script>
+
+</html>

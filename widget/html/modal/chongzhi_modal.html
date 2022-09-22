@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>小火苗</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/modal.css">
+    <style>
+        .modal .container .content {
+            height: 20vw;
+        }
+
+        .modal .container .content * {
+            color: #707070;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+<div id="view" v-cloak>
+    <div class="modal-bg" onclick="_close()">
+        <div class="modal">
+            <img class="img-bg" src="../../image/modal/spzrtcic@4x.jpg" alt="">
+            <div class="container">
+                <div class="content flex-c">
+                    <p>金币余额不足，去充值</p>
+                </div>
+                <div class="flex-c flex-col">
+                    <button class="modal-btn"
+                            onclick="_url({ url: 'frame4/chongzhicenter', title: '充值中心' });_close();">去充值</button>
+                    <button class="modal-cancel-btn" onclick="_close()">继续单身</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+            content: '',
+        },
+        methods: {
+            // 跳转
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+        }
+    })
+    apiready = function () {
+        view.content = api.pageParam['content'];
+    }
+
+    // 
+    function _close() {
+        api.closeFrame();
+    }
+</script>
+
+</html>

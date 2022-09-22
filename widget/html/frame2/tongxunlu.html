@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <header>
+            <div class="new-nav flex-a small-nav">
+                <!-- <div class="n-list" :class="{active: index==0}" tapmode onclick="randomSwitchBtn(0)">亲密</div> -->
+                <div class="n-list" :class="{active: index==1}" tapmode onclick="randomSwitchBtn(1)">好友</div>
+                <div class="n-list" :class="{active: index==2}" tapmode onclick="randomSwitchBtn(2)">关注</div>
+                <div class="n-list" :class="{active: index==3}" tapmode onclick="randomSwitchBtn(3)">粉丝</div>
+            </div>
+        </header>
+    </div>
+</body>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/api.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script src="../../script/group.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            ios: 1, // 1上架 0非上架
+            index: 0
+        }
+    })
+    apiready = function() {
+        view.ios = $api.getStorage('shang');
+        if (api.pageParam['index']) {
+            view.index = api.pageParam['index'] + 1;
+        }
+        _heibai(1)
+        var h = $api.offset($api.dom('header')).h;
+
+        var t = api.pageParam['t'];
+        var f = api.pageParam['f'];
+        //  1我的关注|2我的粉丝|3我的好友
+        var pageParam = [{ types: 3 }, { types: 1 }, { types: 2 }];
+        var frmArr = [];
+        for (var i = 0; i < 3; i++) {
+            frmArr.push('frame4/collect_frame');
+        }
+        groupInit('collect', frmArr, h + t, f, view.index, '.new-nav .n-list', pageParam, {
+            pre: 3
+        });
+        _listener('newmsg', function(ret) {
+            showMsgFrm(ret.value.data)
+        })
+    }
+
+    function randomSwitchBtn(index) {
+        view.index = index;
+        api.setFrameGroupIndex({
+            name: 'collect',
+            index: index - 1,
+            scroll: true, //是否平滑滚动至目标窗口，即是否带有动画
+            reload: false, // 刷新
+        });
+    }
+</script>
+
+</html>

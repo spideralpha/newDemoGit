@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <style>
+        .bg {
+            background: #2a2b30;
+            position: fixed;
+            width: 100vw;
+            height: 100vh;
+            color: #fff;
+        }
+
+        .user-wrap {
+            text-align: center;
+            align-items: center;
+            justify-content: center;
+            display: flex;
+            flex-direction: column;
+            margin-top: 20vw;
+        }
+
+        .user-wrap .name {
+            font-size: 30px;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        .user-wrap p {
+            color: #fff;
+        }
+
+        .tx {
+            margin-right: 0;
+            width: 130px;
+            height: 130px;
+        }
+
+        .tx img {
+            width: 130px;
+            height: 130px;
+        }
+
+        /* 底部按钮 */
+        .btn-wrap i {
+            background-image: url('../../image/icon/phone.png');
+            background-size: 70% 70%;
+            background-color: #0eb20c;
+            background-repeat: no-repeat;
+            background-position: center center;
+            width: 50px;
+            height: 50px;
+            display: block;
+            border-radius: 50%;
+            overflow: hidden;
+        }
+
+        .btn-wrap i.cancel-icon {
+            background-color: #d94849;
+            transform: rotate(135deg);
+        }
+
+        #fx-footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        #fx-footer .btn-wrap {
+            padding: 20px 30px;
+            text-align: center;
+        }
+
+        #fx-footer .btn-wrap button {
+            color: #fff;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg" id="view" v-cloak>
+        <div class="user-wrap">
+            <div class="tx img-h">
+                <!-- <img src="../../image/test/01.jpg" alt=""> -->
+                <img :src="returnImg(ffInfo.head_portrait)"
+                    onerror="this.src='../../image/touxiang.png'" alt="" />
+            </div>
+            <p class="name">{{ffInfo.name}}</p>
+            <p v-if="type == -1">正在等待对方接受邀请</p>
+            <p v-if="type == 0">邀请您连麦</p>
+            <p v-if="type == 1">正在通话中</p>
+            <!-- <p class="time" v-if="type == 1">{{time}}</p> -->
+        </div>
+        <footer id="fx-footer" :class="{'flex-bt':type==0, 'flex-c':type!=0}">
+            <div class="btn-wrap" onclick="refuse()">
+                <i class="cancel-icon"></i>
+                <button class="cancel-btn btn" v-if="type == -1">取消</button>
+                <button class="cancel-btn btn" v-if="type == 0">拒绝</button>
+                <button class="cancel-btn btn" v-if="type == 1">挂断</button>
+            </div>
+            <div class="btn-wrap" v-if="type == 0" onclick="call()">
+                <i class="sub-icon"></i>
+                <button class="sub-btn btn">接听</button>
+            </div>
+        </footer>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+
+<script src="../../script/agora.js"></script>
+<script src="../../script/audio.js"></script>
+<script>
+    var myuserid = $api.getStorage('userid');
+    var touserid;
+    var view = new Vue({
+        el: '#view',
+        data: {
+            type: 0, // 连接情况 -1发起 0 未连接 1已连接
+            status: 0, // 后端是否有推送状态过来
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            time: '0',
+        },
+        methods: {
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+            
+        }
+    })
+    var artc;
+    var audio;
+    apiready = function () {
+        touserid = api.pageParam['id'];
+        view.type = api.pageParam['type'];
+
+        artc = new ARtc();
+        audio = new Audio();
+        audio.play({
+            url: 'widget://res/tip.mp3',
+            loop: 1,
+            volume: 0.1
+        })
+        audio.call()
+
+        getOtherInfo();
+        $api.setStorage('callStatus', 1); // 正在通话中
+        if (view.type == -1) {
+            // 发起 要求后端推送B方
+            sendB();
+        }
+
+        // 监听 后端推送过来的 1接听/0挂断 状态
+        _listener('returnRequest', function (ret) {
+            console.log(JSON.stringify(ret))
+            var data = ret.value;
+            if(data.types == 1){
+                if (data.uid == touserid) { // 如果状态是当前连接用户返回的
+                    audio.stop();
+                    if (data.status == 0) {
+                        artc.leave();
+                        _msg('对方已挂断');
+                        $api.setStorage('callStatus', 0); // 正在通话中
+                        timerWin();
+                    } else if (data.status == 1) {
+                        // 通话连接成功
+                        useLM(); // 使用一次连麦权限
+                    } else if (data.status == 4) {
+                        _alert('对方已接听，但因您余额不足，无法支持本次通话，请充值后再尝试', function () {
+                            artc.leave();
+                            $api.setStorage('callStatus', 0); // 正在通话中
+                            api.closeWin();
+                        })
+                    }
+                    view.status = 1;
+                }
+            }
+        })
+    }
+
+    // 发起 要求后端推送B方
+    function sendB() {
+        artc.join('channel' + myuserid, myuserid);
+        var obj = {
+            user_id: myuserid,
+            another_id: touserid,
+            channel: 'channel' + myuserid
+        };
+
+        $api.setStorage('callStatus', 1); // 正在通话中
+        console.log(JSON.stringify(obj))
+        _ajax('home/Privatechat/toRequest', function () {
+            var i = 60;
+            var dt = setInterval(function () {
+                i--;
+                if (view.status == 1) {
+                    clearInterval(dt);
+                    dt = null;
+                    return;
+                }
+                console.log(i);
+                if (i == 0) {
+                    artc.leave();
+                    _msg('对方未接受邀请');
+                    clearInterval(dt);
+                    $api.setStorage('callStatus', 0); // 不在通话
+                    dt = null;
+                    // 
+                    _ajax('home/Privatechat/returnRequest', function () {}, {
+                        user_id: touserid,
+                        another_id: myuserid,
+                        channel: 'channel' + myuserid,
+                        status: 0,
+                        types: 1 //  1语音|2视频
+                    })
+                    timerWin();
+                    return;
+                }
+            }, 1000)
+        }, {
+            user_id: touserid,
+            another_id: myuserid,
+            channel: 'channel' + myuserid,
+            types: 1 //  1语音|2视频
+        })
+    }
+
+    // 接听 接收方
+    function call() {
+        getPermission(['microphone'], function (code) {
+            if (code != 0) {
+                _msg('请先开启相关权限');
+            } else {
+                // 检查发起方余额是否充足
+                // _ajax('api/member/checkMic', function (rets, errs) {
+                //     console.log(JSON.stringify(rets))
+                //     console.log(JSON.stringify(errs))
+                //     if (rets.code == 200) {
+                        view.type = 1;
+                        audio.stop();
+                        artc.join('channel' + touserid, myuserid);
+                        $api.setStorage('callStatus', 1); // 正在通话中
+                        showCallTime();
+                        _ajax('home/Privatechat/returnRequest', function () {
+
+                        }, {
+                            user_id: touserid,
+                            another_id: myuserid,
+                            channel: 'channel' + myuserid,
+                            status: 1,
+                            types: 1
+                        })
+                //     } else {
+                //         _alert('对方余额不足, 无法支持本次通话', function () {
+                //             refuse(4);
+                //         })
+                //     }
+                // }, {
+                //     user_id: touserid,
+                // })
+            }
+        })
+
+    }
+
+    // 使用连麦一次
+    function useLM() {
+        // 检查权限 创建订单
+        _ajax('api/member/checkMic', function (rets, errs) {
+            console.log(JSON.stringify(rets))
+            console.log(JSON.stringify(errs))
+            if (rets.code == 200) {
+                view.type = 1;
+                showCallTime();
+                // 余额充足
+                _ajax('api/member/useOrder', function (ret, err) {
+                    console.log(JSON.stringify(ret))
+                    console.log(JSON.stringify(err))
+                    _msg('本次操作已扣除相应费用');
+                }, {
+                    user_id: myuserid,
+                })
+                return;
+            }else{
+                // 无权限
+
+            }
+        }, {
+            user_id: myuserid,
+        })
+    }
+
+    // 拒绝
+    function refuse(status) {
+        artc.leave();
+        if (!status) {
+            var arr = ['取消', '拒绝', '挂断'];
+            _msg('已' + arr[view.type + 1]);
+        } else {
+            _msg('已取消');
+        }
+        $api.setStorage('callStatus', 0); // 不在通话
+        // 通知后端已取消 推送给对方
+        _ajax('home/Privatechat/returnRequest', function () {
+
+        }, {
+            user_id: touserid,
+            another_id: myuserid,
+            channel: 'channel' + myuserid,
+            status: status || 0,
+            types: 1
+        })
+        timerWin();
+    }
+
+    // 获取用户信息
+    function getOtherInfo() {
+        _getUser(function (ret) {
+            view.ffInfo = ret.result;
+        }, touserid)
+    }
+
+
+    // 通话时间
+    function showCallTime() {
+        var t = 0;
+        var time = setInterval(function () {
+            t++;
+            var mm = Math.floor(t / 60);
+            var ss = t - mm * 60;
+            var m = mm < 10 ? '0' + mm : mm;
+            var s = ss < 10 ? '0' + ss : ss;
+            view.time = m + ':' + s;
+        }, 1000)
+    }
+
+    // 
+</script>
+
+</html>

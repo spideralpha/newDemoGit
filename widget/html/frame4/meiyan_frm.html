@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>小火苗</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <!-- <div class="wrap">
+            <div class="flex-c">
+                <button class="new-submit" onclick="useRTC(1)">用户1</button>
+            </div>
+            <div class="flex-c">
+                <button class="new-submit" onclick="useRTC(2)">用户2</button>
+            </div>
+            <div class="flex-c">
+                <button class="new-submit" onclick="submit()">对方已进入房间</button>
+            </div>
+            <div class="flex-c">
+                <button class="new-btn" onclick="exitRoom()">离开房间</button>
+            </div>
+        </div> -->
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script src="../../script/rtc.js"></script>
+<script src="../../json/lvjing.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+        },
+        methods: {
+            // 跳转
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+        }
+    })
+    var rtc;
+    var openStatus = 0;
+    apiready = function() {
+        if (!$api.getStorage('rtcid')) {
+            _alert('缺少视频通话配置，无法进行美颜设置', function() {
+                api.closeWin();
+            });
+            return;
+        }
+        rtc = new RTC();
+        rtc.setTrtcListener(function(ret) {
+            if (ret.status) {
+                if (ret.action == 'enterRoom') {
+                    rtc.startLocalPreview(1)
+                }
+                // 开始渲染本地或远程用户的首帧画面
+                if (ret.action.indexOf('firstVideoFram') != -1) {
+                    api.bringFrameToFront({
+                        from: 'frame4/meiyan_menu',
+                    });
+                }
+
+                // 开始播放远程用户的首帧音频（本地声音暂不通知）
+                if (ret.action == 'firstAudioFrame') {
+                    rtc.startLocalAudio();
+                }
+            }
+        })
+        getBeauty(function(obj) {
+            rtc.meiyan(obj);
+        })
+        useRTC();
+        getData();
+    }
+
+    // 获取滤镜列表
+    function getData() {
+        _ajax('api/user/beautyImages', function(ret, err) {
+            if (ret && ret.code == 200) {
+                view.ffList = ret.data;
+            }
+        }, {
+            user_id: $api.getStorage('userid'),
+        })
+    }
+
+    function useRTC() {
+        if (openStatus == 1) return;
+        _ajax('api/Tencent/userSig', function(ret, err) {
+            if (ret && ret.code == 200) {
+                getPermission(['camera', 'microphone', 'photos'], function(code) {
+                    if (code == 0) {
+                        openStatus = 1;
+                        rtc.enterRoom({
+                            uid: $api.getStorage('userid'),
+                            sign: ret.data.userSig,
+                            room: $api.getStorage('userid')
+                        })
+                        showDetail('frame4/meiyan_menu')
+                    } else {
+                        _alert('缺少相应权限', function() {
+                            exitRoom();
+                        })
+                    }
+                })
+            } else {
+                _msg(ret.msg);
+                timerWin();
+            }
+        }, {
+            user_id: $api.getStorage('userid')
+        })
+
+    }
+
+    // 离开
+    function exitRoom() {
+        rtc.exitRoom();
+        api.closeWin();
+    }
+
+    // 设置美颜等级
+    function setLevel(mode, num) {
+        var obj = $api.getStorage('meiyan');
+        if (!obj) {
+            obj = {};
+        }
+        switch (mode) {
+            case 'mp':
+                obj.mp = num;
+                rtc.setBeautyLevel(num);
+                break;
+            case 'mb':
+                obj.mb = num;
+                rtc.setWhitenessLevel(num);
+                break;
+            case 'hr':
+                obj.hr = num;
+                rtc.setRuddyLevel(num);
+                break;
+            case 'lj':
+                obj.lj = num;
+                rtc.setFilterStrength(num);
+                break;
+            default:
+                break;
+        }
+        $api.setStorage('meiyan', obj);
+        var myArr = [obj.mp, obj.mb, obj.hr, obj.lj, obj.id];
+        setBeauty(myArr)
+    }
+    // 设置滤镜图片
+    function setEffect(index) {
+        var obj = $api.getStorage('meiyan');
+        if (!obj) {
+            obj = {};
+        }
+        var data = view.ffList[index];
+        if (data.is_original) {
+            rtc.setFilter();
+        } else {
+            var img = returnImg(data.image);
+            api.imageCache({
+                url: img
+            }, function(ret, err) {
+                rtc.setFilter(ret.url)
+            });
+        }
+        obj.img = data.image;
+        obj.id = data.id;
+        $api.setStorage('meiyan', obj);
+        var myArr = [obj.mp, obj.mb, obj.hr, obj.lj, obj.id];
+        setBeauty(myArr)
+    }
+
+    // 设置美颜
+    function setBeauty(beauty) {
+        _ajax('api/user/editInfo', function(ret, err) {
+
+        }, {
+            user_id: $api.getStorage('userid'),
+            beauty: beauty.join(',')
+        })
+    }
+</script>
+
+</html>

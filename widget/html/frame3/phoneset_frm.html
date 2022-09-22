@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <style>
+        header {
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        header .head {
+            font-size: 16px;
+            margin: 6px 0;
+            font-weight: bold;
+        }
+
+        header .label {
+            font-size: 12px;
+        }
+
+        .images {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .images img {
+            width: 60%;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <header>
+            <div class="head" v-if="types==1">vivo手机</div>
+            <div class="head" v-if="types==2">魅族手机</div>
+            <div class="head" v-if="types==3">华为手机</div>
+            <div class="head" v-if="types==4">小米手机</div>
+            <div class="head" v-if="types==5">oppo手机</div>
+            <div class="head">遇到问题使用技巧</div>
+            <div class="label">遇到退后(按Home键或者锁屏)，收不到来电界面？</div>
+            <div class="label">按下面步骤进行操作！</div>
+        </header>
+        <div class="images" v-if="types==1">
+            <img src="../../image/phoneset/vivo_one.png" alt="">
+            <img src="../../image/phoneset/vivo_two.png" alt="">
+            <img src="../../image/phoneset/vivo_three.png" alt="">
+            <img src="../../image/phoneset/vivo_four.png" alt="">
+            <img src="../../image/phoneset/vivo_five.png" alt="">
+            <img src="../../image/phoneset/vivo_six.png" alt="">
+            <img src="../../image/phoneset/vivo_seven.png" alt="">
+            <img src="../../image/phoneset/vivo_eight.png" alt="">
+            <img src="../../image/phoneset/vivo_nine.png" alt="">
+            <img src="../../image/phoneset/vivo_ten.png" alt="">
+        </div>
+        <div class="images" v-if="types==2">
+            <img src="../../image/phoneset/meizu_one.png" alt="">
+            <img src="../../image/phoneset/meizu_two.png" alt="">
+            <img src="../../image/phoneset/meizu_three.png" alt="">
+            <img src="../../image/phoneset/meizu_four.png" alt="">
+            <img src="../../image/phoneset/meizu_five.png" alt="">
+            <img src="../../image/phoneset/meizu_six.png" alt="">
+            <img src="../../image/phoneset/meizu_seven.png" alt="">
+        </div>
+        <div class="images" v-if="types==3">
+            <img src="../../image/phoneset/huawei_one.png" alt="">
+            <img src="../../image/phoneset/huawei_two.png" alt="">
+            <img src="../../image/phoneset/huawei_three.png" alt="">
+        </div>
+        <div class="images" v-if="types==4">
+            <img src="../../image/phoneset/xiaomi_one.png" alt="">
+            <img src="../../image/phoneset/xiaomi_one_one.png" alt="">
+            <img src="../../image/phoneset/xiaomi_two.png" alt="">
+            <img src="../../image/phoneset/xiaomi_two_two.png" alt="">
+            <img src="../../image/phoneset/xiaomi_three.png" alt="">
+            <img src="../../image/phoneset/xiaomi_three_three.png" alt="">
+            <img src="../../image/phoneset/xiaomi_four.png" alt="">
+            <img src="../../image/phoneset/xiaomi_four_four.png" alt="">
+            <img src="../../image/phoneset/xiaomi_five_five.png" alt="">
+        </div>
+        <div class="images" v-if="types==5">
+            <img src="../../image/phoneset/oppo_one.png" alt="">
+            <img src="../../image/phoneset/oppo_two.png" alt="">
+            <img src="../../image/phoneset/oppo_two_one.png" alt="">
+            <img src="../../image/phoneset/oppo_two_two.png" alt="">
+            <img src="../../image/phoneset/oppo_two_three.png" alt="">
+            <img src="../../image/phoneset/oppo_three.png" alt="">
+            <img src="../../image/phoneset/oppo_three_one.png" alt="">
+            <img src="../../image/phoneset/oppo_three_two.png" alt="">
+            <img src="../../image/phoneset/oppo_three_three.png" alt="">
+            <img src="../../image/phoneset/oppo_three_four.png" alt="">
+        </div>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            types: 1
+        }
+    })
+    apiready = function() {
+        view.types = api.pageParam['types']
+    }
+</script>
+
+</html>

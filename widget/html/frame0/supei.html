@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>小火苗</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/supei.css">
+</head>
+
+<body>
+    <div class="sp-wrap" id="view" v-cloak>
+        <!-- <img class="bg" src="../../image/index/ms_sp_boy_bg_1.jpg" alt=""> -->
+        <div class="flex-bt top">
+            <div class="btn-w" tapmode onclick="closeWinSupei()">
+                <span class="back-btn">退出</span>
+            </div>
+            <div class="btn-w" tapmode onclick="changeMusic()">
+                <span class="music-btn" :class="{'no':music==0}"></span>
+            </div>
+        </div>
+        <div class="sp-content flex-c">
+            <div class="border-w">
+                <div class="border">
+                    <div class="border">
+                        <div class="border">
+                            <div class="border"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="center">
+                <span class="type-img" :class="{'video-img':type==2}"></span>
+                <p class="txt">速配有缘人，请稍后</p>
+            </div>
+            <div class="scan"></div>
+        </div>
+        <!-- <img class="scan" src="../../image/index/ms_sp_scan.png" alt=""> -->
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script src="../../script/audio.js"></script>
+<script src="../../script/limitchat.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+            music: 0,
+            type: 1, // 1语音 2视频 
+        },
+        methods: {
+            // 跳转
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+            // 发起连麦
+            openLM() {
+                if (view.type == 1) {
+                    openLM(view.ffInfo.user_id, 'index_win', 1)
+                } else {
+                    openVideoChat(view.ffInfo.user_id, 'index_win', 1)
+                }
+            },
+        }
+    })
+    var audio;
+    apiready = function() {
+        $api.fixStatusBar($api.dom('.top'));
+        audio = new Audio();
+        changeMusic();
+        view.type = api.pageParam['type'];
+
+        start();
+
+        _listener('audioStop', function(ret) {
+            audio.stop();
+
+            setTimeout(function() {
+                api.closeWin({
+                    name: 'frame0/supei'
+                });
+            }, 1000)
+        })
+
+        setTimeout(function() {
+            _msg('暂未匹配到合适人选，请稍后再试')
+
+            api.closeWin({
+                name: 'frame0/supei'
+            });
+        }, 60000)
+    }
+
+    // 背景音乐
+    function changeMusic() {
+        view.music = view.music ? 0 : 1;
+        if (!view.music) {
+            audio.stop();
+        } else {
+            audio.play({
+                url: 'widget://res/kiss_the_rain.mp3',
+                // volume: 0.5,
+                loop: 1
+            })
+        }
+    }
+
+
+    // 开始
+    function start() {
+        _getUser(function(ret) {
+            if (view.type == 2) {
+                // 视频
+                if (ret.result.is_identity_authentication != 2 && $api.getStorage('sex') == '女') {
+                    var obj = {
+                        msg: '需真人认证后才能进入视频速配。聊得越久，赚的多多呦！',
+                        btn: ['放弃奖励', '立即认证'],
+                    }
+                    _confirm(obj, function(bIndex) {
+                        if (bIndex == 2) {
+                            _url({
+                                url: 'frame4/authentication_frame',
+                                title: '认证身份',
+                                winName: 'index_win'
+                            });
+                        } else {
+                            _closeToWin();
+                        }
+                    })
+                    return;
+                }
+            } else {
+                if (!ret.result.voice && $api.getStorage('sex') == '女') {
+                    var obj = {
+                        msg: '需先录制交友宣言后才能进入语音速配。聊得越久，赚的多多呦！',
+                        btn: ['放弃奖励', '立即录制'],
+                    }
+                    _confirm(obj, function(bIndex) {
+                        if (bIndex == 2) {
+                            _url({
+                                url: 'frame4/jiao_you_xuan_yan',
+                                title: '交友宣言',
+                                winName: 'index_win'
+                            })
+                        } else {
+                            _closeToWin();
+                        }
+                    })
+                    return;
+                }
+            }
+
+            if (view.type == 2) {
+                getPiPei();
+            } else {
+                setTimeout(function() {
+                    getData();
+                }, 5000)
+            }
+        })
+    }
+
+    // 获取匹配
+    function getData() {
+        var lon = $api.getStorage('lon');
+        var lat = $api.getStorage('lat');
+        var obj = {
+            user_id: $api.getStorage('userid'),
+            longitude: lon,
+            latitude: lat,
+        };
+        if (view.type == 2) {
+            obj.video_mate = 1;
+        } else {
+            obj.voice_mate = 1;
+        }
+        _ajax('api/user/index', function(ret, err) {
+            if (ret && ret.code == 200) {
+                audio.stop();
+                view.ffInfo = ret.result[0];
+                view.openLM();
+            }
+        }, obj)
+    }
+
+    function getPiPei() {
+        var obj = {
+            user_id: $api.getStorage('userid'),
+        };
+
+        if (view.type == 2) {
+            obj.video_mate = 1;
+        } else {
+            obj.voice_mate = 1;
+        }
+        _ajax('api/user/pipei', function(ret, err) {
+
+        }, obj)
+    }
+
+    function closeWinSupei()
+    {
+        var obj = {
+            exclude_id: 0,
+            user_id: $api.getStorage('userid'),
+        };
+
+        _ajax('api/user/pipeiClose', function(ret, err) {
+            console.log(JSON.stringify(ret))
+            console.log(JSON.stringify(err))
+        }, obj)
+
+        _closeToWin()
+    }
+</script>
+
+</html>

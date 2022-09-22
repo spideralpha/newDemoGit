@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="../../css/liaotian/mui.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/liaotian/app.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/liaotian/main.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/liaotian/reset.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/news.css">
+    <link rel="stylesheet" type="text/css" href="../../css/aui_font.css">
+    <link rel="stylesheet" type="text/css" href="../../css/liaotian1.css">
+    <style>
+
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <div class="wanshan flex-bt" v-if="wanshan==1 && !ios">
+            <div class="left">
+                <p class="title">小火苗提倡真实交友</p>
+                <p class="txt">完善资料即可获得金币奖励</p>
+            </div>
+            <div class="right flex">
+                <button class="btn" onclick="_url({url:'frame4/user', title:'编辑资料', moreTitle: '保存'})">领取</button>
+                <i class="aui-iconfont aui-icon-close" @click="wanshan=0"></i>
+            </div>
+        </div>
+        <!-- 录音提示 -->
+        <div id="sound-alert" class="rprogress" v-if="record==1">
+            <div class="rschedule"></div>
+            <div class="r-sigh">!</div>
+            <div id="audio_tips" class="rsalert">{{recordTxt}}</div>
+        </div>
+        <!-- 座驾 -->
+        <!-- <div class="car-wrap">
+            <img src="../../image/more/10-32-06.png" alt="">
+        </div> -->
+        <!-- 聊天列表 -->
+        <div class="mui-content">
+            <!-- <div class="tips">请文明聊天，严禁低俗、涉黄、欺诈行为</div> -->
+            <!-- <div class="tip" onclick="_url({url:'about', id:8, title:'防骗指南'})"> <img src="../../image/icon/tsic@2x.png" alt=""> 请谨慎添加陌生人{{escape_w}}、QQ等联系方式，谨防上当受骗 <span>防骗指南<i class="aui-iconfont aui-icon-right"></i></span> </div> -->
+            <div class="loadmore" v-if="loadmore==1"></div>
+            <!-- 系统广播 -->
+            <!-- <div class="notice">
+                <img class="avatar" src="../../image/touxiang.png" alt="">
+                <div class="info">
+                    <div class="name">大大喵星人</div>
+                    <div class="value">大大喵星人 送给 布偶 一个 超级火箭，掌声祝福 </div>
+                </div>
+                <div class="djtime"><span>3S</span><img src="../../image/icon/djs.png" alt=""></div>
+            </div> -->
+            <div id="msg-list">
+                <div class="info-box" v-if="showInput==1 && !ios && otherInfo.sex=='女'">
+                    <ul class="info-ul" @click="goUserInfo(otherInfo.id, otherInfo.name)">
+                        <li class="list">
+                            <img class="info-icon" src="../../image/chat/icon_rzzt_line.png" alt="">
+                            <span class="i-title">认证状态: </span>
+                            <div class="info-content">
+                                <span class="rz-man rz-bg" v-if="otherInfo.is_identity_authentication==2">已真人认证</span>
+                                <span class="rz-name rz-bg" v-if="otherInfo.realname_auth==2">已实名认证</span>
+                                <span class="rz" v-if="otherInfo.is_identity_authentication!=2 && otherInfo.realname_auth!=2">邀请对方认证</span>
+                            </div>
+                        </li>
+                        <li class="list">
+                            <img class="info-icon" src="../../image/chat/icon_zuobiao_line.png" alt="">
+                            <span class="i-title">所在城市: </span>
+                            <div class="info-content">{{otherInfo.city}}（距离{{otherInfo.distance}}）</div>
+                        </li>
+                        <li class="list">
+                            <img class="info-icon" src="../../image/chat/icon_ziliao_line.png" alt="">
+                            <span class="i-title">基本资料: </span>
+                            <div class="info-content">
+                                <span class="info-tag" v-if="otherInfo.age">{{otherInfo.age}}岁</span>
+                                <span class="info-tag" style="border-color: #2196f3;" v-if="otherInfo.occupation">{{otherInfo.occupation}}</span>
+                                <span class="info-tag" style="border-color: #795548;" v-if="otherInfo.stature">{{otherInfo.stature}}cm</span>
+                            </div>
+                        </li>
+                        <li class="list" style="align-items: flex-start;">
+                            <img class="info-icon" src="../../image/chat/icon_meizhao_lin.png" alt="">
+                            <span class="i-title">美照: </span>
+                            <div class="info-content flex-w">
+                                <img class="info-img" @click.stop="_url({uid:otherInfo.id, iIndex:pindex, showZan:1,slide:1}, 'frame0/img_win')" v-for="(p, pindex) in otherInfo.photos" v-if="pindex<2" :src="returnImg(p)" onerror="this.src='../../image/error-img.png'" alt="">
+                                <span class="add-btn">
+                                    <img src="../../image/chat/icon_upload.png" alt="">
+                                    <span>邀请上传</span>
+                                </span>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <!-- <div class="infobox" v-if="showInput==1 && !ios">
+                    <div class="info-top">交友资料</div>
+                    <div class="head">
+                        <img class="avatar" :src="returnImg(otherInfo.head_portrait)" onerror="this.src='../../image/touxiang.png'" alt="">
+                        <div class="info" style="overflow: hidden;">
+                            <div class="tags">
+                                <span class="new-tag rz-tag" v-if="otherInfo.is_identity_authentication==2"></span>
+                                <span class="boy-tag" :class="{'girl-tag':otherInfo.sex == '女'}">{{otherInfo.age}}岁</span>
+                            </div>
+                            <div class="description">{{otherInfo.city}} | {{otherInfo.stature}}cm | {{otherInfo.occupation}}</div>
+                            <div class="sign">{{otherInfo.self_slogan}}</div>
+                        </div>
+                    </div>
+                    <div class="listavatar" v-if="otherInfo.photo_show && otherInfo.photo_show.length>0">
+                        <img v-for="(t, tindex) in otherInfo.photo_show" v-if="tindex < 3" :src="returnImg(t)" onerror="this.src='../../image/touxiang.png'" alt="">
+                    </div>
+                    <div class="dushu"><img src="../../image/icon/dashan1.png" alt=""><span>{{otherInfo.intimate}}°C</span></div>
+                </div> -->
+                <div class="msg-wrap" v-for="(item, index) in ffList" :id="'id'+item.id">
+                    <div class="time" v-if="item.showtime"><span>{{item.time}}</span></div>
+                    <div class="recall" v-if="item['status'] == 3"><span>该消息已被撤回</span></div>
+                    <div v-else>
+                        <div class="hongbao-msg" v-if="item['type'] == -1">
+                            <div v-if="item['state'] == 1 && item.data && item.data.chat_id">
+                                <p v-if="item.data.userid == userid">{{otherInfo.name}}领取了你的<span @click="openRedDetail(item.data.chat_id, item.data.type)">红包</span></p>
+                                <p v-else>你领取了{{otherInfo.name}}的<span @click="openRedDetail(item.data.chat_id, item.data.type)">红包</span> </p>
+                            </div>
+                            <div v-if="item['id'] > 0">
+                                <span class="chat-content" v-html="item.content"></span>
+                            </div>
+                            <div class="tip-content" v-else v-html="item.content"></div>
+                        </div>
+                        <li v-else :class="{'msg-item-self':item.self==1, 'red-envelope':item.type==5||item.type==7, 'money':item.type==7, 'read-burn':Number(item.is_burn)!=0, 'msg-area':(item.type==6||item.type==8||item.type==11)}" class="msg-item">
+                            <div class="msg-user">
+                                <img @click="goUserInfo(item.userid, item.name);" :id="item.userid" :src="returnImg(item.head_portrait)" onerror="this.src='../../image/touxiang.png'" />
+                            </div>
+                            <div class="msg-container">
+                                <!-- <p class="user-name" v-if="qun==1">{{item.name}}</p> -->
+                                <div class="msg-content" @touchstart="touchstartF(index);" @touchend="touchendF(index);">
+                                    <div class="msg-content-inner" style="word-break: break-word;">
+                                        <div v-if="item.type==0">
+                                            <div v-if="item.k==0" v-html="getMesge(item.content, item)"></div>
+                                            <div class="msg-apply" v-else>
+                                                <div v-html="dealContent(item)"></div>
+                                                <div class="btn-wrap flex-bt" v-if="item.state!=1">
+                                                    <button class="btn" @click.stop @click="applyQun(index, -1)">拒绝</button>
+                                                    <button class="btn btn2" @click.stop @click="applyQun(index,1)">允许</button>
+                                                </div>
+                                                <div class="btn-wrap flex-c" v-else>
+                                                    <button class="btn ">已处理</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div v-else-if="item.type==1">
+                                            <img v-if="Number(item.is_burn)==0" @click.stop @click="_url({imgArr:[item.content], iIndex:0}, 'frame1/dy_img_win')" class="msg-content-image load" :src="returnImg(item.content)" onerror="this.src='../../image/error-img.png'" style="max-width: 100px;" />
+                                            <div v-else @click="openBurn(index)" class="burn-msg" :class="{'burn':item.is_burn==-1}"></div>
+                                        </div>
+                                        <div v-else-if="item.type==2" @click.stop @click="audioPlay(index)">
+                                            <span class="play-state" style="margin-top:3px;">
+                                                <span class="audio" :class="{'aplaying':audio.id==item.id && audio.play==1}"></span>
+                                            </span>
+                                        </div>
+                                        <div v-else-if="item.type==3" class="msg-video" @click="openVideo(index)">
+                                            <img :src="returnImg(item.data.cover)" onerror="this.src='../../image/error-img.png'" alt="">
+                                            <!-- <img src="../../image/shop/01.jpg" alt=""> -->
+                                            <i class="video-icon"></i>
+                                        </div>
+                                        <div class="red-wrap" @click.stop @click="openRed(index)" v-else-if="item.type==5||item.type==7">
+                                            <div class="red-img" :class="{'red-img-no':item.state==1}"></div>
+                                            <div class="game">
+                                                <p class="red-game-text">{{item.content}}</p>
+                                                <p class="red-game" v-if="item.state==0">等待领取</p>
+                                                <p class="red-game" v-else-if="item.state==1">已领取</p>
+                                                <p class="red-game" v-else-if="item.state==2">已过期</p>
+                                            </div>
+                                        </div>
+                                        <div class="msg-video" v-else-if="item.type==6" @click="openArea(index)">
+                                            <img src="../../image/icon/nim_location_bk.png" alt="">
+                                        </div>
+                                        <img v-else-if="item.type==8" @click="showDetail('modal/send_gift', {data:item.data, touid :touserid, fa:item.userid})" class="msg-content-image load" :src="returnImg(item.data.cover)" onerror="this.src='../../image/error-img.png'" style="max-width: 150px;" />
+                                        <img v-else-if="item.type==11" class="msg-content-image load" :src="returnImg(item.data.image)" onerror="this.src='../../image/error-img.png'" style="max-width: 50px;" />
+                                        <div v-else-if="item.type==9 || item.type==10" class="msg-voice">
+                                            <i class="msg-voice-icon" :class="{'msg-voice-icon2':item.type==10}"></i>
+                                            <span v-if="!item.chat_time">{{item.content}}</span>
+                                            <span v-else>通话时长 {{item.chat_time}}</span>
+                                            <!-- <span>{{item.content}}</span> -->
+                                        </div>
+                                    </div>
+                                    <div class="msg-content-arrow"></div>
+                                </div>
+                                <p class="price" :class="{'getting': item.finish==1}" v-if="item.self!=1 && Number(item.score) && !ios">+{{item.score}}积分</p>
+                            </div>
+                            <div class="timeSec" v-if="item.type!=9 && item.type!=10 && item.type!=8 && item.type!=11">
+                                <div v-if="item.self == 1" style="line-height:50px;float:right;font-size:14px;color:#999;">
+                                    <span v-if="item.type==2">{{item.second}}s"</span>
+                                    <span class="read-status ready-read" v-if="item.isRead==1">已读</span>
+                                    <span class="read-status" v-else>未读</span>
+                                </div>
+                                <div v-else style="line-height:50px;font-size:14px;color:#999;">
+                                    <span v-if="item.type==2">{{item.second}}s"</span>
+                                </div>
+                            </div>
+                            <div class="timeSec" v-if="item.type==8 || item.type==11">
+                                <div v-if="item.self == 1" style="line-height:50px;float:right;font-size:14px;color:#999;">
+                                    <span class="read-status ready-read" v-if="item.isRead==1">{{item.data.name}}x{{item.data.num}}</span>
+                                    <span class="read-status" v-else>{{item.data.name}}x{{item.data.num}}</span>
+                                </div>
+                                <div v-else style="line-height:50px;font-size:14px;color:#999;">
+                                    <span class="read-status ready-read" v-if="item.isRead==1">{{item.data.name}}x{{item.data.num}}</span>
+                                    <span class="read-status" v-else>{{item.data.name}}x{{item.data.num}}</span>
+                                </div>
+                            </div>
+                            <div class="mui-item-clear"></div>
+                        </li>
+                    </div>
+                </div>
+                <div id="msg-bottom"></div>
+            </div>
+        </div>
+        <footer v-if="showInput==1">
+            <div class="quick-word" v-if="cyyList.length>0">
+                <span v-for="(m, index) in cyyList" v-if="index<5" @click.stop="sendmsg(m.content)">{{returnQ(m.content)}}</span>
+                <!-- <span>这是快捷语这是快捷语这是快捷语这是快捷语</span>
+                <span>这是快捷语这是快捷语</span> -->
+            </div>
+            <div class="footer">
+                <div class="input">
+                    <!-- 录音键 -->
+                    <img class="tool-img" @click="clickRecord(0)" v-if="recordBtn==1" src="../../image/chat/chat_voice_icon_n.png" alt="">
+                    <img class="tool-img" @click="clickRecord(1)" v-else src="../../image/chat/chat_keyboard_icon_n.png" alt="">
+                    <!-- 录音时输入框禁止状态 -->
+                    <div class="input-wrap" :class="{'new-hide':recordBtn==1}">
+                        <div id="js-input2" style="width: 100%;" contenteditable="false" class="css-input" @touchstart="recordBegin($event);" @touchmove="recordCancel($event);" @touchend="recordEnd($event);">{{recordBtnTxt}}</div>
+                    </div>
+                    <!-- 输入框 -->
+                    <div class="input-wrap" :class="{'new-hide':recordBtn==0}">
+                        <div id="js-input" class="css-input" contenteditable="true" @click="inputClick()" @input="handleSelection"></div>
+                        <span style="height: 25px;" onclick="uiboxClick('常用语')"><img style="width: 30px;" src="../../image/chat/more.png" alt=""></span>
+                    </div>
+                    <!-- <img class="tool-img" v-if="recordEmo==1" @click="clickEmo(0)" src="../../image/icon/face.png" alt="">
+                    <img class="tool-img" v-else @click="clickEmo(1)" src="../../image/chat/chat_keyboard_icon_n.png" alt=""> -->
+                    <!-- <img class="tool-img" src="../../image/icon/gift.png" alt=""> -->
+                    <button class="send-btn" onclick="sendTxt()">发送</button>
+                </div>
+                <!-- 聊天操作 -->
+                <div class="moreoptions">
+                    <!-- <div class="op" onclick="dashan()"><img src="../../image/icon/hi.png" alt=""></div> -->
+                    <div class="op" onclick="selectPicType()"><img src="../../image/chat/chat_picture_icon_n.png" alt=""></div>
+                    <!-- 语音，视频聊天图标按钮 -->
+                    <div class="op" v-if="show_video_voice" @click="openChat()"><img src="../../image/chat/chat_call_icon_n.png" alt=""></div>
+                    <div class="op" v-if="!ios" onclick="showDetail('modal/gift_modal',{uid: view.touserid})"><img src="../../image/chat/chat_gift_icon_n.png" alt=""></div>
+                    <div class="op" v-if="recordEmo==1" @click="clickEmo(0)"><img src="../../image/chat/chat_expression_icon_h.png" alt=""> </div>
+                    <div class="op" v-else @click="clickEmo(1)"><img src="../../image/chat/chat_expression_icon_n.png" alt=""> </div>
+
+                    <!-- <div class="op" v-if="extra==0" @click="clickExtra(1)"><img src="../../image/chat/chat_add_icon_n.png" alt=""></div>
+                    <div class="op" v-else @click="clickExtra(0)"><img src="../../image/chat/chat_add_icon_h.png" alt=""></div> -->
+                </div>
+                <!-- 表情 -->
+                <div class="emo-wrap" :class="{'new-hide':recordEmo!=0}">
+                    <img v-for="(m, index) in emotionArr" :src="'../../res/img/emotion/'+m.name+'.png'" alt="" @click="handleTag(m.name)">
+                    <!-- <img class="del-btn" src="../../res/img/emotion/delete.png" alt="" @click="delEmo()"> -->
+                </div>
+                <!-- 附加面板 -->
+<!--                <ul class="extra-wrap flex-w" :class="{'new-hide':extra!=0}">-->
+<!--                    <li class="list" onclick="selectPicType()">-->
+<!--                        <img src="../../image/chat/chat_add_picture_icon_n.png" alt="">-->
+<!--                        <p>图片</p>-->
+<!--                    </li>-->
+<!--                    <li class="list" onclick="uiboxClick('视频')">-->
+<!--                        <img src="../../image/chat/chat_add_video_icon_n.png" alt="">-->
+<!--                        <p>小视频</p>-->
+<!--                    </li>-->
+                    <!-- <li class="list" onclick="uiboxClick('位置')">
+                        <img src="../../image/chat/chat_add_position_icon_n.png" alt="">
+                        <p>位置</p>
+                    </li> -->
+<!--                </ul>-->
+            </div>
+        </footer>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/emotion.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/liaotian.js"></script>
+<script src="../../script/map.js"></script>
+<script src="../../script/audio.js"></script>
+<script src="../../script/uibutton.js"></script>
+<script src="../../script/limitchat.js"></script>
+<script src="../../script/vue.js"></script>
+<script src="../../script/input.js"></script>
+<script src="../../json/liaotian.js"></script>
+<script src="../../json/user.js"></script>
+
+<script type="text/javascript" charset="utf-8">
+    heigutgao = 1; // 默认允许加载
+    pagenum = 0;
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            // ffList: retJson.result,
+            ffList: [],
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+            userid: 0,
+            userInfo: {}, // 我的
+            touserid: 0,
+            otherInfo: {}, // 对方的
+            info: {}, // 附加信息
+            loadmore: 0, // 1加载中 0隐藏
+            panelHeight: 0, // 面板高度
+            inputBarHeight: 0, // 输入框高度
+            panStatus: 0, // 面板是否有开启
+            panNum: { // 统计次数
+                input: 0, // 面板高度变化的次数
+                ext: 0, // 控件面板是第几次打开
+                emo: 0, // 表情面板是第几次打开
+            },
+            nowH: 0, // 当前列表的高度
+            isKeFu: 0, // 是否为客服
+            audio: {
+                id: 0, // 消息id
+                play: 0 // 状态 1播放 0未播放
+            },
+            recordPoi: { // 记录按下的位置 避免轻微移动导致录音失败
+                x: 0,
+                y: 0
+            },
+            recordBtnTxt: '按住说话',
+            recordBtn: 1, // 录音按钮是否显示 1显示(即为非录音状态) 0隐藏(切换为可录音状态)
+            record: 0, // 1 录音中 0未录音
+            recordTxt: '手指上划，取消发送', // 录音提示文本
+            frameH: 0, // frame 原始高度
+
+            extra: 1, // 附加面板 1隐藏 0显示
+            // 表情输入
+            selection: '',
+            range: '',
+            textNode: '',
+            rangeStartOffset: '',
+            recordEmo: 1, // 表情面板 1隐藏 0显示
+
+            inputContent: '',
+
+            showInput: 0, // 是否显示自定义输入框 1显示 0不显示
+
+            emotionArr: emotionUrl,
+
+            inputLimit: 1, // 是否允许输入 1允许 0禁止
+
+            isResume: 1, // 是否切换为前台
+
+            cyyList: [], // 常用语列表
+
+            wanshan: 0,
+
+            config: {}, // 系统配置
+            scroll: 0,
+            show_video_voice: 1
+        },
+        methods: {
+            // 内容处理
+            dealContent(m) {
+                var name = m.data.apply_name;
+                var id = m.data.apply_user;
+                var c = m.content.replace(`${name}(${id})`, `<a onclick="go_userInfo(${id}, '${name}')">${name}(${id})</a>`)
+                return c;
+            },
+            // 快捷语处理
+            returnQ(s) {
+                if (s && s.length > 10) {
+                    s = s.substring(0, 10);
+                    s += '...';
+                }
+                return s;
+            },
+            // 发送常用语
+            sendmsg(msg) {
+                var data = {
+                    type: 0,
+                    content: msg,
+                }
+                sendMsg(data)
+            },
+            // 时间处理
+            returnTime(time) {
+                return returnTime(time * 60);
+            },
+            // 输入框点击
+            inputClick() {
+                handleSelection();
+                view.recordEmo = 1;
+                view.extra = 1;
+            },
+            handleTag(imgname) {
+                handleTag(imgname);
+            },
+            // 记录光标位置等 （debounce防抖提升性能）
+            handleSelection() {
+                handleSelection()
+            },
+            // 点击表情按钮
+            clickEmo(type) {
+                view.recordBtn = 1;
+                view.recordEmo = type;
+                view.extra = 1;
+            },
+            // 点击附加面板
+            clickExtra(type) {
+                view.recordBtn = 1;
+                view.recordEmo = 1;
+                view.extra = type;
+            },
+            // 点击录音按钮
+            clickRecord(type) {
+                view.recordEmo = 1;
+                view.extra = 1;
+                view.recordBtn = type;
+            },
+            // 开始录音
+            recordBegin(e) {
+                var x = e.changedTouches[0].pageX;
+                var y = e.changedTouches[0].pageY;
+                view.recordPoi = {
+                    x: x,
+                    y: y
+                }
+                // console.log('===开始====：x=' + x + ',' + 'y=' + y);
+                recordBegin();
+            },
+            // 录音取消
+            recordCancel(e) {
+                var x = e.changedTouches[0].pageX;
+                var y = e.changedTouches[0].pageY;
+                if (Math.abs(y - view.recordPoi.y) < 50) return;
+                // console.log('===取消====：x=' + x + ',' + 'y=' + y);
+                recordCancel();
+            },
+            // 录音结束
+            recordEnd(e) {
+                recordEnd()
+            },
+            changeText() {
+                var content = $.trim($('#js-input').html());
+                view.inputContent = content;
+            },
+            openChat() {
+                var min = view.config.intimate_min;
+                var open = view.info.intimate - min >= 0;
+                var voiceTime = view.userInfo.free_voice;
+                var videoTime = view.userInfo.free_video
+
+                var voiceBtn = '语音通话🔒';
+                if (voiceTime > 0 || open) {
+                    voiceBtn = '语音通话';
+                }
+                var videoBtn = '视频通话🔒';
+                if (videoTime > 0 || open) {
+                    videoBtn = '视频通话';
+                }
+
+                var buttons = [voiceBtn, videoBtn];
+                _action('', buttons, function(bIndex) {
+                    if (bIndex != 3) {
+                        if (bIndex == 1) {
+                            if (voiceTime > 0) {
+                                _alert('本次语音可享免费通话' + voiceTime + '分钟', function() {
+                                    view.openLM(1);
+                                })
+                            } else if (open) {
+                                view.openLM();
+                            } else {
+                                _msg('亲密度达到' + min + '°C才能解锁该功能')
+                            }
+                        } else if (bIndex == 2) {
+                            if (videoTime > 0) {
+                                _alert('本次视频可享免费通话' + videoTime + '分钟', function() {
+                                    view.openVideoChat(1);
+                                })
+                            } else if (open) {
+                                view.openVideoChat();
+                            } else {
+                                _msg('亲密度达到' + min + '°C才能解锁该功能')
+                            }
+
+                        }
+                    }
+                })
+            },
+            // 视频
+            openVideoChat(type) {
+                openVideoChat(view.touserid, 'frame0/liaotian_win', type)
+            },
+            // 连麦
+            openLM(type) {
+                openLM(view.touserid, 'frame0/liaotian_win', type)
+            },
+            // 申请
+            applyQun(index, status) {
+                var _this = this;
+                var data = _this.ffList[index].data;
+
+                var url = _this.ffList[index].k == 1 ? 'check' : 'checkIdentity'; // 入会 | 身份
+                url = 'api/family/' + url;
+                _ajax(url, function(ret, err) {
+                    _msg(ret.msg);
+                    if (ret && ret.code == 200) {
+                        _this.ffList[index].state = 1;
+                        pushMsg(data.apply_id);
+                    }
+                }, {
+                    id: data.apply_id,
+                    user_id: $api.getStorage('userid'),
+                    status: status
+                })
+            },
+            touchstartF(index) {
+                // var e = event.currentTarget;
+                touchstartF(index);
+            },
+            touchendF(index) {
+                // var e = event.currentTarget;
+                touchendF(index);
+            },
+            getMesge(s, data) {
+                var str = getMesge(s);
+                if (data && data.data && data.data.cluster_id && data.data.cluster_name) {
+                    var id = data.data.cluster_id;
+                    var name = data.data.cluster_name;
+                    var btn = '点击申请加入';
+                    str = str.replace(name, `<a onclick="openQun(${id},'${name}')">${name}</a>`);
+                    str = str.replace(btn, `<a onclick="openQun(${id},'${name}')">${btn}</a>`);
+                }
+                return str;
+            },
+            _url(param, url) {
+                _url(param, url);
+            },
+            showDetail(url, data, topH, footerH) {
+                showDetail(url, data, topH, footerH)
+            },
+            // 打开音频
+            audioPlay(index) {
+                var _this = this;
+                var data = _this.ffList[index];
+                if (_this.audio.id == data.id) {
+                    _this.audio.play = _this.audio.play == 0 ? 1 : 0;
+                } else {
+                    _this.audio.id = data.id;
+                    _this.audio.play = 1;
+                }
+                if (_this.audio.play == 1) {
+                    audio.play({
+                        url: returnImg(data.content)
+                    })
+                    setTimeout(function() {
+                        _this.audio.play = 0;
+                        audio.stop();
+                    }, data.second * 1000)
+                } else {
+                    audio.stop();
+                }
+            },
+            // 打开红包详情
+            openRed(index) {
+                openRed(index)
+            },
+            // 打开红包详情
+            openRedDetail(id, type) {
+                if (type == 5) {
+                    // 平台币
+                    _url({
+                        id: id
+                    }, 'frame0/hong_bao_detail');
+                } else {
+                    // 现金
+                    _url({
+                        id: id
+                    }, 'frame0/money_detail');
+                }
+            },
+            // 跳转 查看用户详情
+            goUserInfo(id, name) {
+                if (view.isKeFu == 1 && id == view.touserid) return;
+                go_userInfo(id, name)
+            },
+            // 打开阅后即焚的详情
+            openBurn(index) {
+                openBurn(index);
+            },
+            // 打开视频
+            openVideo(index) {
+                openVideo(index)
+            },
+            // 打开地址
+            openArea(index) {
+                openArea(index)
+            },
+            // 图片
+            returnImg(url) {
+                return returnImg(url);
+            },
+        }
+    })
+    var recMp3, map, audio;
+    apiready = function() {
+
+        view.config = $api.getStorage('config');
+
+        view.frameH = api.frameHeight;
+        // $api.fixTabBar($api.dom('footer'));
+        view.ios = $api.getStorage('shang');
+        view.userid = $api.getStorage('userid');
+        view.touserid = api.pageParam['touserid'];
+
+        // 语音视频是否隐藏
+        view.show_video_voice = $api.getStorage('hide_video_voice') == 0;
+
+        view.panelHeight = api.safeArea.bottom;
+        if (api.pageParam['info']) {
+            view.otherInfo = api.pageParam['info'].another;
+            view.userInfo = api.pageParam['info'].self;
+            view.info = api.pageParam['info'].data;
+            view.isKeFu = view.info.kefu;
+
+            if (view.isKeFu == 1) {
+                var btnObj = returnButton(['图片', '视频']);
+                view.showInput = 0;
+                editor(btnObj);
+            } else {
+                view.showInput = 1;
+                getCyy();
+                // 非客服才提醒
+                view.wanshan = $api.getStorage('ws_rw');
+            }
+        }
+        // 当前应用进入前台。
+        _listener('resume', function() {
+            view.isResume = 1;
+            setRead();
+        })
+        // 当前应用退入到后台。
+        _listener('pause', function() {
+            view.isResume = 0;
+        })
+        // 清空聊天记录
+        _listener('clearMsg', function(ret) {
+            if (ret.value.uid == view.touserid) {
+                view.ffList = [];
+            }
+        })
+
+        // 加载消息列表
+        getMsgList(0);
+        _listener('viewappear', function() {
+            view.isResume = 1;
+            setRead();
+            getChatInfo();
+        })
+        _listener('viewdisappear', function() {
+            view.isResume = 0;
+        })
+
+        // 监听领取情况
+        _listener('updateHB', function(ret) {
+            var result = ret.value;
+            updateHongbao(result.id, result.state)
+        })
+
+        // 新消息
+        _listener('newmsg', function(ret) {
+            var data = ret.value.data;
+            showChat(data);
+        })
+        // 消息数量变化
+        _listener('changeread', function(ret) {
+            var data = ret.value.result;
+            if (data.touserid == view.touserid) {
+                // 消息已被对方读取
+                updateMsg();
+            }
+        })
+        // 阅后即焚
+        _listener('chat_burnImg', function(ret) {
+            var data = ret.value.result;
+            updateBurn(data);
+        })
+
+        recMp3 = api.require('recMp3');
+        map = new Map();
+        audio = new Audio();
+
+        // // 监听ios键盘弹起后
+        // _listener('keyboardshow', function (ret) {
+        //     console.log(JSON.stringify(ret));
+        //     var h = view.frameH - ret.h;
+        //     changeFH(h);
+        // })
+        // // 监听ios键盘收起后
+        // _listener('keyboardhide', function (ret) {
+        //     changeFH(view.frameH);
+        // })
+
+    }
+
+    setTimeout(function() {
+        $('#msg-list').scroll(function() {
+            var $msg = $('#msg-list');
+            var liaoH = $msg[0].scrollHeight; // 实际高度
+            var viewH = $msg.height(); // 显示的高度
+            var toTop = $msg.scrollTop(); // 滚动条移动的距离
+            if (view.scroll == 1) return;
+            if (toTop < 20) {
+                if (heigutgao == 1) {
+                    view.scroll = 1;
+                    pagenum++;
+                    getMsgList(pagenum);
+                }
+            }
+        })
+    }, 1000)
+
+    // 获取私聊资料
+    function getChatInfo() {
+        _ajax('api/privatechat/detail', function(ret, err) {
+            if (ret && ret.code == 200 && ret.data) {
+                var dd = ret.data;
+                view.otherInfo = dd.another;
+                view.userInfo = dd.self;
+                view.info = dd.data;
+                api.execScript({
+                    script: 'changeScore(' + view.info.intimate + ')'
+                })
+            }
+        }, {
+            user_id: $api.getStorage('userid'),
+            to_user: view.touserid
+        })
+    }
+
+    // 渲染新消息
+    function showChat(data) {
+        var userid = view.userid;
+        var touserid = view.touserid;
+
+        var useObj = data.users;
+        // 对方既不是发送者也不是接收者 则不渲染
+        if (useObj.userid != touserid && useObj.touserid != touserid) return;
+        var dn = data.new;
+        console.log(JSON.stringify(dn))
+        if (dn && dn.length > 0) {
+            if (useObj.userid == view.myuserid && view.userInfo.free_chat > 0 && !view.isKeFu) {
+                view.userInfo.free_chat--;
+                // 免费次数用完
+                if (view.userInfo.free_chat == 0) {
+                    view.ffList = view.ffList.concat(chatNotice([{
+                        key: 'limit',
+                    }]))
+                }
+            }
+            view.ffList = view.ffList.concat(dn);
+            // view.ffList = rets.data.new.concat(view.ffList);
+            setRead();
+
+            // 亲密度超过限定值
+            if (view.info.intimate < view.config.intimate_min && useObj.intimate >= view.config.intimate_min && !view.isKeFu) {
+                view.ffList = view.ffList.concat(chatNotice([{
+                    key: 'score',
+                    val: useObj.intimate
+                }]))
+            }
+            if (view.otherInfo.chat_price > 0 && view.info.intimate < 300 && useObj.intimate >= 300 && !view.isKeFu) {
+                view.ffList = view.ffList.concat(chatNotice([{
+                    key: 'gz',
+                    val: view.otherInfo.chat_price
+                }]))
+            }
+            view.info.intimate = useObj.intimate;
+            api.execScript({
+                script: 'changeScore(' + useObj.intimate + ')'
+            })
+        }
+        if (data.recall && data.recall.length > 0) {
+            for (var i = 0, len = data.recall.length; i < len; i++) {
+                recallCss(data.recall[i]);
+            }
+        }
+        goBottom();
+    }
+
+
+    // 获取常用语
+    function getCyy() {
+        _ajax('api/Privatechat/commonWords', function(ret, err) {
+            if (ret && ret.code == 200) {
+                view.cyyList = ret.data.splice(0, 5);
+                console.log(JSON.stringify(view.cyyList))
+            }
+        }, {
+            user_id: $api.getStorage('userid'),
+            channel: 2, // 1语音|2文字
+        })
+    }
+    $(window).on('resize', function() {
+        goBottom();
+    })
+    $('#js-input').on('click', function() {
+        $('#js-input').focus();
+    })
+
+    // 发送
+    function sendTxt() {
+        var content = $('#js-input').html();
+        content = replaceEmotion(content);
+        content = clearHtml(content);
+        content = htmlRestore(content);
+        if (!$api.trim(content)) {
+            _msg('内容不能为空');
+            return
+        }
+
+        if (content.indexOf("微信") > -1 || content.indexOf("银行卡") > -1 || content.indexOf("转帐") > -1 || content.indexOf("借钱") > -1 || content.indexOf("支付宝") > -1) {
+            var obj = {
+                msg: '您和对方还不够熟悉，贸然留其他联系方式可能有安全风险。频繁恶意留外部联系方式、引流等，帐号将被系统封禁，请勿转账，谨防诈骗。',
+            }
+
+            _confirm(obj, function(bIndex) {
+                if (bIndex == 1) {
+                    $('#js-input').html('');
+                    sendMsg({
+                        type: 0,
+                        content: content,
+                    })
+                }
+            })
+        } else {
+            $('#js-input').html('');
+            sendMsg({
+                type: 0,
+                content: content,
+            })
+        }
+    }
+
+    // 修改frame高度
+    function changeFH(h) {
+        api.setFrameAttr({
+            name: api.frameName,
+            rect: {
+                h: h
+            }
+        });
+    }
+
+
+
+    // 加载上一页
+    function getMsgList(page) {
+        view.loadmore = 1;
+        view.nowH = $('#msg-list').height();
+        _ajax('home/Privatechat/getMsgList', function(ret, err) {
+            console.log(JSON.stringify(ret))
+            console.log(JSON.stringify(err))
+            if (ret.code == 200) {
+                if (ret.result && ret.result.length > 0) {
+                    view.scroll = 0;
+                }
+                view.ffList = ret.result.concat(view.ffList);
+            } else if (ret.code == 201) {
+                heigutgao = 0;
+            }
+            view.loadmore = 0;
+            if (page == 0) {
+                if (!view.isKeFu) {
+                    var arr = [{
+                        key: 'pian'
+                    }];
+                    if (view.otherInfo.is_identity_authentication != 2) {
+                        arr.push({
+                            key: 'rz'
+                        })
+                    }
+                    view.ffList = view.ffList.concat(chatNotice(arr));
+                }
+                setTimeout(function() {
+                    goBottom();
+                }, 400)
+            }
+        }, {
+            userid: view.userid,
+            touserid: view.touserid,
+            page: page,
+        })
+    }
+
+    // 更多操作
+    function _more() {
+        if (view.isKeFu == 1) return;
+        var gzTxt = view.info.attention == 0 ? '关注' : '取消关注';
+        var lhTxt = view.info.blacklist == 1 ? '移出黑名单' : '拉黑';
+        var buttons = ['查看资料', gzTxt, '举报', lhTxt];
+        var keyArr = [3, 4, 5, 6]
+        // var buttons = ['添加备注名', '消息置顶', '查看资料', gzTxt, '举报', '拉黑'];
+        // var keyArr = [1, 2, 3, 4, 5, 6]
+        _action('', buttons, function(bIndex) {
+            if (bIndex != (buttons.length + 1)) {
+                var index = keyArr[bIndex - 1];
+                switch (index) {
+                    case 1:
+                        _url({
+                            url: 'frame2/beizhu',
+                            title: '设置备注名'
+                        })
+                        break;
+                    case 2:
+                        setMsgTop();
+                        break;
+                    case 3:
+                        go_userInfo(view.touserid);
+                        break;
+                    case 4:
+                        guanzhu()
+                        break;
+                    case 5:
+                        _url({
+                            url: 'frame0/ju_bao_frame',
+                            title: '匿名举报',
+                            uid: view.touserid
+                        })
+                        break;
+                    case 6:
+                        addBlack();
+                        break;
+                    default:
+                        break;
+                }
+            }
+        })
+    }
+
+    // 拉黑
+    function addBlack() {
+        _addBlack(view.touserid, function(type) {
+            view.info.blacklist = type;
+        })
+    }
+
+    // 关注
+    function guanzhu() {
+        _ajax('api/user/attention', function(ret, err) {
+            _msg(ret.msg);
+            if (ret && ret.code == 200) {
+                if (ret.msg == '关注成功') {
+                    view.info.attention = 1;
+                } else {
+                    view.info.attention = 0;
+                }
+                pushMsg(view.touserid);
+            }
+        }, {
+            user_id: view.userid,
+            to_user: view.touserid,
+        })
+    }
+    // 消息置顶
+    function setMsgTop() {
+
+    }
+
+
+    // 录音开始
+    function recordBegin() {
+        if (view.record != 0) return;
+        console.log('=======录音开始==========')
+        var micResult = api.hasPermission({
+            list: ['microphone', 'storage']
+        });
+        if (!micResult[0].granted) {
+            getPermission(['microphone', 'storage'], function(code) {
+                if (code != 0) {
+                    _msg('请先开启相关权限');
+                }
+            })
+        } else {
+            view.recordTxt = '手指上划，取消发送';
+            view.recordBtnTxt = '松开结束';
+            view.record = 1;
+            recMp3.start();
+        }
+    }
+    // 录音取消
+    function recordCancel() {
+        if (view.record != 1) return;
+        console.log('=======录音取消==========')
+        view.recordTxt = '已取消';
+        view.recordBtnTxt = '按住说话';
+        view.record = 0;
+        setTimeout(function() {
+            recMp3.stop();
+        }, 500)
+    }
+    // 录音结束
+    function recordEnd() {
+        if (view.record != 1) return;
+        console.log('=======录音结束==========')
+        setTimeout(function() {
+            view.recordBtnTxt = '按住说话';
+            recMp3.stop(function(ret) {
+                console.log(JSON.stringify(ret))
+                if (ret && ret.status) {
+                    if (ret.duration) {
+                        if (ret.duration < 1) {
+                            view.recordTxt = '录音时间太短';
+                            setTimeout(function() {
+                                view.record = 0;
+                            }, 500)
+                        } else {
+                            view.record = 0;
+                            var path = ret.path;
+                            path = path.replace('fs://', api.fsDir + '/');
+                            sendMsg({
+                                type: 2,
+                                second: ret.duration,
+                                content: ret.path
+                            })
+                        }
+                    } else {
+                        view.recordTxt = '录音时间太短';
+                        setTimeout(function() {
+                            view.record = 0;
+                        }, 500)
+                    }
+                }
+            });
+        }, 500)
+    }
+
+    // 心动
+    function dashan() {
+        _ajax('api/privatechat/greet', function(ret, err) {
+            _msg(ret.msg);
+        }, {
+            user_id: view.userid,
+            id: view.touserid,
+        })
+    }
+</script>
+
+</html>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <style>
+        html, body {
+            background: none;
+        }
+        /* 分类 */
+        .classfiy_ul {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            padding: 10px;
+        }
+
+        .classfiy_ul .li {
+            width: 25%;
+            height: 98px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            -webkit-box-pack: center;
+            /* 12版 */
+            -webkit-justify-content: center;
+            -moz-justify-content: center;
+            -ms-justify-content: center;
+            -o-justify-content: center;
+            justify-content: center;
+            font-size: 14px;
+            line-height: 2;
+            color: #aaaaaa;
+        }
+
+        .classfiy_ul .li .img-wrap {
+            /* background: linear-gradient(24deg, #fff, #fca0cf, #673AB7, #673AB7); */
+            /* background: linear-gradient(24deg, #fff, #ba9fe8, #673AB7, #4208A7); */
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            /* box-shadow: 0px 0px 10px #673AB7; */
+        }
+
+        .classfiy_ul .li .img-wrap img {
+            width: 50px;
+            height: 50px;
+        }
+
+        #view {
+            position: fixed;
+            top: 0;
+            background: rgba(255, 255, 255, 0.9);
+            height: 100vh;
+        }
+
+        #view h3 {
+            text-align: center;
+        }
+
+        .close {
+            width: 25px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak class="flex-c flex-col">
+        <h3>请选择发布节目主题</h3>
+        <ul class="classfiy_ul">
+            <li class="li" v-for="(m, index) in themeList" @click="selectTheme(m.id, m.name)">
+                <div class="img-wrap">
+                    <img class="img" :src="returnImg(m.image)" onerror="this.src='../../image/error-img.png'" />
+                </div>
+                <aside>{{ m.name }}</aside>
+            </li>
+        </ul>
+        <img class="close" onclick="closeModalFrm()" src="../../image/icon/close3.png" alt="">
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/vue.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            themeList: []
+        },
+        methods: {
+            // 选择主题
+            selectTheme(id, name) {
+                _url({ type: 1, cid: id, name: name, url: 'frame1/fa_bu_yue_hui', title: '发节目' });
+                closeModalFrm();
+            }
+        }
+    })
+    apiready = function(){
+        getTheme();
+    }
+
+
+    // 获取主题列表
+    function getTheme() {
+        _ajax('home/dymanic/category', function (ret, err) {
+            if (ret && ret.code == 200 && ret.result && ret.result.length > 0) {
+                view.themeList = ret.result;
+            }
+        })
+    }
+
+    // 关闭模态框
+    function closeModalFrm(){
+        api.closeFrame({name: 'frame1/theme_modal'});
+    }
+</script>
+
+</html>

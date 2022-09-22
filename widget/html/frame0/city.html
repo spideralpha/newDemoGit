@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <style>
+        #city-view .bg {
+            width: 100vw;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        #city-view .city-wrap {
+            background: #fff;
+            width: 100vw;
+            /* position: fixed;
+            bottom: 0;
+            left: 0; */
+        }
+
+        #city-view .city-wrap .li {
+            line-height: 20px;
+            border-bottom: 1px solid #eee;
+            padding: 10px;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        #city-view .city-wrap ul .li:last-child {
+            border-bottom: 0;
+        }
+
+        #city-view .city-wrap .left {
+            width: 40vw;
+            overflow-y: auto;
+            height: 100vh;
+            border-right: 1px solid #eee;
+            box-sizing: border-box;
+        }
+
+        #city-view .city-wrap .left.padding {
+            padding-bottom: 60px;
+        }
+
+        #city-view .city-wrap .right ul {
+            width: 60vw;
+            overflow-y: auto;
+            height: 100vh;
+            box-sizing: border-box;
+        }
+
+        #city-view .city-wrap .right ul.padding {
+            padding-bottom: 60px;
+        }
+
+        #city-view .city-wrap ul .li.active {
+            color: #F46CEF;
+            /* font-weight: bold; */
+        }
+
+        #city-view .city-wrap .left .li.active {
+            background: #F46CEF;
+            color: #fff;
+        }
+
+        /* 按钮 */
+        #city-view .btn-wrap {
+            border-bottom: 1px solid #eee;
+        }
+
+        #city-view .btn-wrap .btn {
+            color: #F46CEF;
+            font-size: 14px;
+        }
+
+        /* 选中的城市 */
+        #city-view .select-wrap {
+            position: fixed;
+            bottom: 0;
+            width: 100vw;
+            z-index: 2;
+            background: #fff;
+            display: flex;
+            overflow-x: auto;
+        }
+
+        #city-view .select-wrap .tag {
+            border: 1px solid;
+            color: #fff;
+            background: #F46CEF;
+            font-size: 12px;
+            padding: 2px 10px;
+            border-radius: 5px;
+            margin: 10px 5px;
+            position: relative;
+            word-break: keep-all;
+        }
+
+        #city-view .select-wrap .tag::after {
+            display: inline-block;
+            content: '';
+            background-image: url('../../image/icon/delete.png');
+            background-repeat: no-repeat;
+            width: 15px;
+            height: 15px;
+            background-size: 100%;
+            position: absolute;
+            top: -7px;
+            right: -7px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap" id="city-view">
+        <!-- <div class="bg" onclick="closeModalFrm()"></div> -->
+        <div class="city-wrap">
+            <!-- <div class="btn-wrap flex-bt new-padding-10">
+                <button class="btn" onclick="closeModalFrm()">取消</button>
+                <button class="btn" onclick="frmSubmit()">确定</button>
+            </div> -->
+            <div class="flex">
+                <ul class="left" :class="{'padding':Object.keys(selectCity).length>0}">
+                    <li class="li" :class="{'active': index == proIndex}" v-for="(m, index) in proList"
+                        @click="proIndex=index">{{m}}</li>
+                    <!-- <li class="li">1</li> -->
+                </ul>
+                <div class="right">
+                    <ul class="ul" :class="{'new-hide' : index != proIndex, 'padding':Object.keys(selectCity).length>0}"
+                        v-for="(m, index) in city">
+                        <li class="li " :class="{'active':selectCity[c]}" v-for="(c, cIndex) in m" @click="selectC(c)">
+                            {{c}}</li>
+                    </ul>
+                    <!-- <ul class="ul">
+                        <li class="li ">120</li>
+                        <li class="li active">120</li>
+                    </ul> -->
+                </div>
+            </div>
+
+            <div class="select-wrap" v-if="Object.keys(selectCity).length>0">
+                <span class="tag" v-for="(m, key, index) in selectCity" @click="delCity(key)">{{key}}</span>
+                <!-- <span class="tag">广州</span>
+                <span class="tag">广州</span>
+                <span class="tag">广州</span> -->
+                <span class="tag new-invisible">占位</span>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/area.js"></script>
+<script src="../../script/vue.js"></script>
+<script>
+    var cityView = new Vue({
+        el: '#city-view',
+        data: {
+            proList: province,
+            city: city,
+            proIndex: 0,
+            selectCity: {},
+            cityLen: 1,
+        },
+        methods: {
+            // 选中城市
+            selectC(name) {
+                var _this = this;
+                var pro = _this.proList[_this.proIndex]; // 对应省份
+                if (_this.selectCity[name]) {
+                    _this.$delete(_this.selectCity, name)
+                } else {
+                    if (Object.keys(_this.selectCity).length < _this.cityLen) {
+                        // 选择数量少于限定数量
+                        _this.$set(_this.selectCity, name, pro);
+
+                        if(_this.cityLen==1){
+                            // 限定数量为1 则选中后直接确定
+                            frmSubmit();
+                        }
+                    } else {
+                        _msg('最多只能选择' + _this.cityLen + '个城市');
+                    }
+                }
+            },
+            delCity(name) {
+                var _this = this;
+                _this.$delete(_this.selectCity, name)
+            }
+        }
+    })
+
+    apiready = function () {
+        $api.fixTabBar($api.dom('.select-wrap'));
+        if (api.pageParam['cityLen']) {
+            cityView.cityLen = api.pageParam['cityLen'];
+        }
+
+        var type = api.pageParam['type'];
+        console.log(type)
+
+        if (type == 0) {
+            province.unshift('附近');
+            city.unshift(['附近']);
+        }
+        if (type == 1) {
+            province.unshift('不限地区');
+            city.unshift(['不限地区']);
+        }
+    }
+
+    //更多按钮
+    function _more() {
+        frmSubmit();
+    }
+
+    function frmSubmit() {
+        var data = cityView.selectCity;
+        if (Object.keys(data).length == 0) {
+            _msg('请选择至少一个城市');
+            return;
+        }
+
+        var arr = [];
+        for(var k in data){
+            arr.push(k);
+        }
+        var str = arr.join(',');
+
+        if (api.pageParam['event']) {
+            api.sendEvent({
+                name: api.pageParam['event'],
+                extra: {
+                    city: str
+                }
+            })
+        }
+
+        api.closeWin();
+    }
+</script>
+
+</html>

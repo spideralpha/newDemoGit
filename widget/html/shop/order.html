@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html class="htmlWeiLei">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport"
+        content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>title</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/news.css" />
+    <link rel="stylesheet" href="../../css/dingdan.css">
+    <style>
+        body {
+            width: 100vw;
+            height: 100vh;
+            /* background-size: cover;
+			background-attachment: fixed; */
+        }
+
+        .goodsList {
+            background: #fafafa;
+        }
+
+        .no-result {
+            line-height: 80px;
+            text-align: center;
+            /* background: #fff; */
+            color: #888;
+        }
+
+        .user-wrap {
+            padding: 7px;
+        }
+
+        .user-wrap .tx {
+            width: 25px;
+            height: 25px;
+        }
+
+        .user-wrap .name {
+            font-size: 12px;
+            
+        }
+
+        .user-wrap .name span {
+            color: #52AAFB;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="orderList" id="view" v-cloak>
+        <ul class="orderUl">
+            <li class="list" v-for="(order, index) in ffList">
+                <div class="orderNumber">
+                    <span>订单号：{{ order.number }}</span>
+                    <span class="state" v-if="status==0">待付款</span>
+                    <span class="state" v-else-if="status==1">待发货</span>
+                    <span class="state" v-else-if="status==2">待收货</span>
+                    <span class="state" v-else>已完成</span>
+                </div>
+                <div class="goodsList">
+                    <!-- <div class="user-wrap flex">
+                        <img class="tx" src="../../image/test/03.jpg" alt="">
+                        <p class="name"><span>张三</span>送了你, <span style="color: #F37C15;">去感谢TA</span></p>
+                    </div> -->
+                    <ul>
+                        <li class="clearfix" v-for="g in order.list">
+                            <div class="goodsPic">
+                                <img :src="returnImg(g.image)" onerror="this.src='../../image/error-img.png'" alt="" />
+                            </div>
+                            <div class="goodsInfo">
+                                <p class="goodsName">
+                                    <span>{{ g.name }}</span>
+                                    <!-- <span class="goodsPrice">￥215.36</span> -->
+                                </p>
+
+                                <!-- <p class="goodsName oldPrice" style="color:#999999;">
+                                    <span class="goodsPrice">x1</span>
+                                </p> -->
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="sumPrice">
+                    <p>
+                        <span>共 1 件商品</span>
+                        <span>合计：￥{{ order.money }}</span>
+                    </p>
+                </div>
+            </li>
+        </ul>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/jquery.js"></script>
+<script type="text/javascript" src="../../script/ffkj.js"></script>
+<script type="text/javascript" src="../../script/vue.js"></script>
+<script type="text/javascript" src="../../script/zhifu.js"></script>
+<script type="text/javascript">
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            status: 0,
+        },
+        methods: {
+            _url(param, url) {
+                _url(param, url);
+            },
+            returnImg(url) {
+                return returnImg(url);
+            },
+        }
+    })
+
+
+    apiready = function () {
+        view.status = api.pageParam['status'];
+        _shangla(function () {
+            _lists('api/mall.member/orderList', 1, 1, {
+                uid: $api.getStorage('userid'),
+                status: view.status
+            });
+        })
+        _scrollToBottom(function () {
+            if (heigutgao == 1) {
+                pagenum++;
+                _lists('api/mall.member/orderList', pagenum, '', {
+                    uid: $api.getStorage('userid'),
+                    status: view.status
+                });
+            }
+        })
+    }
+</script>
+
+</html>

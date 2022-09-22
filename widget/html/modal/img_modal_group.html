@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>小火苗</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/imgmodal.css">
+    <style>
+        .img-ul {
+            height: 50vh;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <div class="modal-bg" onclick="_close()">
+            <div class="wrap" @click.stop>
+                <header class="flex-c">
+                    <div class="head-title flex-c" v-if="open==2">
+                        <span :class="{'active':show==0}" onclick="randomSwitchBtn(0)">相册</span>
+                        <span :class="{'active':show==1}" onclick="randomSwitchBtn(1)">视频</span>
+                    </div>
+                    <div class="head-title flex-c" v-else>
+                        <span class="active">{{!open? '相册':'视频'}}</span>
+                    </div>
+                    <span class="success-btn" onclick="submit()">完成({{num}})</span>
+                </header>
+                <div class="img-ul"></div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script src="../../script/group.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+            num: 0,
+            show: 0,
+            open: 0, // 0图片 1视频 2两者
+        },
+        methods: {
+            // 跳转
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+        }
+    })
+    apiready = function() {
+        if (api.pageParam['max']) {
+            view.max = api.pageParam['max'];
+        }
+        if (api.pageParam['open']) {
+            view.open = api.pageParam['open'];
+        }
+        openGroup();
+        _listener('imgNum', function(ret) {
+            view.num = ret.value.num;
+        })
+    }
+
+    // 打开组
+    function openGroup() {
+        var $head = $api.offset($api.dom('header'));
+        var headerh = $head.h + $head.t;
+        console.log(headerh);
+        var frameArr = [];
+        var pageParam = [];
+        for (var i = 0; i < 2; i++) {
+            frameArr.push('modal/img_modal');
+            var obj = {
+                max: view.max,
+                show: i,
+                event: api.pageParam['event']
+            }
+            pageParam.push(obj);
+        }
+        groupInit('img', frameArr, headerh, 0, 0, '', pageParam, {
+            pre: 1
+        });
+    }
+    // 点击分类栏目时，设置 frame 组当前可见 frame
+    function randomSwitchBtn(index) {
+        view.show = index;
+        api.setFrameGroupIndex({
+            name: 'img',
+            index: index,
+            scroll: true, //是否平滑滚动至目标窗口，即是否带有动画
+            reload: false, // 刷新
+        });
+    }
+
+    // 关闭
+    function _close() {
+        api.closeFrame();
+    }
+</script>
+
+</html>

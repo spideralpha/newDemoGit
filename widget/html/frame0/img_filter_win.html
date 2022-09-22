@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/aui_font.css">
+    <link rel="stylesheet" href="../../css/win.css">
+</head>
+
+<body>
+    <header>
+        <div class="head new-padding-10 flex-c">
+            <div class="back" tapmode onclick="_c()"></div>
+            <div class="title"></div>
+        </div>
+    </header>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/group.js"></script>
+<script>
+    apiready = function () {
+        _heibai(1);
+        $api.fixStatusBar($api.dom('header'));
+        $api.text($api.dom('.title'), api.pageParam['name'] + '的相册');
+        openGroup();
+
+        _listener('keyback', function () {
+            _c();
+        })
+    }
+
+
+
+    // 关闭
+    function _c() {
+        _send('img_filter');
+        api.closeWin({});
+    }
+
+    // 打开组
+    function openGroup() {
+        var touserid = api.pageParam.touserid;
+        var headerh = $api.offset($api.dom('header')).h;
+        var frameArr = [];
+        var pageParam = [];
+        var imgArr = api.pageParam.imgArr;
+        for (var i = 0, len = imgArr.length; i < len; i++) {
+            var frm = 'frame0/filter_frm';
+            var obj = {
+                imgInfo: imgArr[i],
+                index: i,
+                touserid: touserid,
+            }
+            frameArr.push(frm);
+            pageParam.push(obj);
+        }
+        groupInit('order', frameArr, headerh, 0, api.pageParam.index, '', pageParam);
+    }
+</script>
+
+</html>

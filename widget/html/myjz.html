@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/api.css">
+    <link rel="stylesheet" href="../css/news.css">
+    <link rel="stylesheet" href="../css/base_icon.css">
+    <link rel="stylesheet" href="../css/jiazu.css">
+    <title>Document</title>
+    <style>
+
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <!-- <div class="search-wrap flex">
+            <i class="base-icon index-search-icon "></i>
+            <input type="text" readonly placeholder="大家都在搜：小火苗家族">
+        </div> -->
+        <div class="add-wrap" onclick="_url({url:'frame0/create_jz',title:'创建家族'})">创建</div>
+        <div class="list">
+            <div class="item" v-for="(m, index) in ffList" @click="openQun(m.id, m.name)">
+                <div class="qun-img">
+                    <img class="avatar" :src="returnImg(m.logo)" onerror="this.src='../image/touxiang.png'" alt="">
+                    <!-- <div class="tx">
+                        <img src="../image/test/03.jpg" alt="">
+                    </div> -->
+                </div>
+                <div class="content">
+                    <div class="name">{{m.name}}</div>
+                    <div class="desc aui-ellipsis-1">{{m.description}}</div>
+                    <div class="footer">
+                        <span class="num">{{m.count}}</span>
+                        <button class="btn active">已加入</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="no_more" class="null" v-if="ffList.length==0"></div>
+    </div>
+</body>
+<script src="../script/jquery.js"></script>
+<script src="../script/api.js"></script>
+<script src="../script/ffkj.js"></script>
+<script src="../script/vue.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+        },
+        methods: {
+            openQun(id, name, type) {
+                openQun(id, name, type)
+            },
+            // 跳转
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+        }
+    })
+    apiready = function() {
+        view.ios = $api.getStorage('shang');
+        view.myuserid = $api.getStorage('userid');
+        // 监听登录
+        _listener('fresh', function(ret) {
+            view.myuserid = $api.getStorage('userid');
+            getMyFamily()
+        })
+
+        _shangla(function() {
+            getMyFamily()
+        })
+    }
+
+    // 获取我的家族
+    function getMyFamily() {
+        _ajax('api/family/myFamily', function(ret, err) {
+            if (ret && ret.code == 200 && ret.data && ret.data.id) {
+                view.ffList = [ret.data];
+            }
+            api.refreshHeaderLoadDone();
+        }, {
+            user_id: $api.getStorage('userid'),
+        })
+    }
+</script>
+
+</html>

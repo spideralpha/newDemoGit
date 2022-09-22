@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport"
+		content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+	<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+	<title>title</title>
+	<link rel="stylesheet" type="text/css" href="../../css/api.css" />
+	<link rel="stylesheet" type="text/css" href="../../css/mycss.css" />
+	<link rel="stylesheet" type="text/css" href="../../css/news.css" />
+	<link rel="stylesheet" type="text/css" href="../../css/frame3.css" />
+	<style>
+		body {
+			margin: 0;
+		}
+
+		.lab {
+			padding: 10px 14px;
+			font-size: 12px;
+		}
+
+		.lists {
+			display: flex;
+			flex-wrap: wrap;
+			background-color: #fff;
+		}
+
+		.item {
+			width: 29%;
+			text-align: center;
+			font-size: 12px;
+			padding: 8px 0;
+			background-color: rgb(233, 233, 233);
+			border-radius: 14px;
+			margin-left: 3.25%;
+			margin-bottom: 8px;
+			color: #666;
+		}
+
+		.item.active {
+			background: linear-gradient(to right, rgb(121, 90, 205), rgb(172, 90, 205));
+			color: #fff;
+		}
+
+		textarea {
+			padding: 3.25%;
+			width: 100%;
+			box-sizing: border-box;
+			background-color: #fff;
+			margin: 8px 0;
+		}
+
+		.pushImg {
+			padding-top: 10px;
+		}
+
+		.pushImg .li {
+			margin-bottom: 10px;
+		}
+	</style>
+</head>
+
+<body>
+	<div id="view" v-cloak>
+		<div class="lab">请选择您想反馈的功能点</div>
+		<div class="lists">
+			<div class="item" v-for="(item,index) in bugtype" :key="item.text" :class="{active:index==selectindex}"
+				@click="selectindex = index">{{item.text}}</div>
+		</div>
+		<textarea class="txt" id="message" rows="10" placeholder="请填写你要反馈的问题"></textarea>
+
+		<p class="lab">相关问题的截图和照片(选填)</p>
+		<div class="pushImg">
+			<div class="pushImg2">
+				<div class="li" v-for="(i, sindex) in imgList">
+					<div class="img img-h">
+						<img :src="i">
+					</div>
+					<i class="aui-iconfont aui-icon-close" @click.stop @click="delImg(sindex)"></i>
+				</div>
+				<div class="li">
+					<div class="add">
+						<img src="../../image/add.png" onclick="permission()">
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="new-submit" onclick="tijiao()">
+			提交
+		</div>
+	</div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/jquery.js"></script>
+<script type="text/javascript" src="../../script/ffkj.js"></script>
+<script type="text/javascript" src="../../script/vue.js"></script>
+<script type="text/javascript">
+	var view = new Vue({
+		el: '#view',
+		data: {
+			selectindex: 0,
+			bugtype: [{
+				text: '功能建议'
+			}, {
+				text: 'Bug反馈'
+			}, {
+				text: '内容建议'
+			}, {
+				text: '体验建议'
+			}, {
+				text: '其他建议'
+			}],
+			imgList: []
+		},
+		methods: {
+			
+			delImg(index) {
+				var _this = this;
+				_this.imgList.splice(index, 1);
+			}
+		}
+	})
+	apiready = function () {};
+
+	// 确定提交
+	function tijiao() {
+		var myuserid = $api.getStorage('userid');
+		var msg = $api.byId('message').value;
+		if (!msg) {
+			_msg('你还没有填写意见哦');
+			return false;
+		}
+		_loading();
+		if (view.imgList.length > 0) {
+			_upImgs({
+				image: view.imgList
+			}, function (img) {
+				_ajax('api/user/feedback', function (ret, err) {
+					var msg = ret.code == 200 ? '提交成功' : ret.msg;
+					_loadingClose();
+					_msg(msg);
+					if (ret && ret.code == 200) {
+						timerWin();
+					}
+				}, {
+					user_id: myuserid,
+					content: msg,
+					img: img
+				})
+			})
+		} else {
+			_ajax('api/user/feedback', function (ret, err) {
+				var msg = ret.code == 200 ? '提交成功' : ret.msg;
+				_loadingClose();
+				_msg(msg);
+				if (ret && ret.code == 200) {
+					timerWin();
+				}
+			}, {
+				user_id: myuserid,
+				content: msg
+			})
+		}
+	}
+
+	// 选择图片
+	function permission() {
+		openPic(function (ret) {
+			view.imgList.push(ret.data);
+		});
+	}
+</script>
+
+</html>

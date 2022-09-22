@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>小火苗</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/modal.css">
+    <style>
+        .modal .container {
+            text-align: center;
+            color: orangered;
+            bottom: 25vw;
+        }
+
+        .container p,
+        h3 {
+            color: orangered;
+        }
+
+        .container .title {
+            font-weight: normal;
+            font-size: 20px;
+        }
+
+        .container .money {
+            margin: 15px 0;
+        }
+
+        .container .money b {
+            color: orangered;
+            font-size: 30px;
+        }
+
+        .new-btn {
+            margin: 0;
+            background: #fd4a99;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <div class="modal-bg" onclick="_close()">
+            <div class="modal" @click.stop>
+                <img class="img-bg" src="../../image/modal/img_popup_reward.png" alt="">
+                <div class="container">
+                    <h3 class="title">录制语音签名奖励</h3>
+                    <p class="money">+<b>8</b>金币</p>
+                    <button class="new-btn">开心收下</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+        },
+        methods: {
+            // 跳转
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+        }
+    })
+    apiready = function() {
+        view.money = api.pageParam['money'];
+    }
+
+    // 
+    function _close() {
+        api.closeFrame();
+    }
+</script>
+
+</html>

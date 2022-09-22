@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/win.css">
+    <style>
+        header {
+            position: sticky;
+            position: -webkit-sticky;
+            top: 0;
+            background: #fff;
+        }
+
+        .wrap {
+            padding: 10px;
+            font-size: 14px;
+        }
+
+        .input {
+            border-bottom: 1px solid #f3f3f3;
+            display: flex;
+            padding: 10px 0;
+        }
+
+        .add {
+            width: 15px;
+            height: 15px;
+            font-size: 14px;
+            border-radius: 50%;
+            border: 1px solid;
+            margin-right: 10px;
+            line-height: 15px;
+            text-align: center;
+        }
+
+        .tags-ul .list {
+            background: #eee;
+            color: #555;
+            border-radius: 15px;
+            padding: 5px 15px;
+            margin-right: 10px;
+            margin-top: 10px;
+        }
+
+        .tags-ul .list.active {
+            background: #fffae8;
+            color: #cfb56a;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <header>
+            <div class="head new-padding-10  flex-c">
+                <div class="back new-back" tapmode onclick="_closeToWin()"></div>
+                <div class="title">我的标签({{num}}/10)</div>
+            </div>
+        </header>
+        <div class="wrap">
+            <div class="input">
+                <span class="add">+</span>
+                <input type="text" placeholder="创建我自己的标签" v-model="key" @keyup.enter="submit">({{key.length}}/6)</div>
+            <ul class="tags-ul flex-w">
+                <li class="list" @click="selectTag(index)" :class="{'active':m.selected == 1}" v-for="(m, index) in ffList">{{m.name}}</li>
+                <!-- <li class="list">声控</li>
+                <li class="list">安静</li>
+                <li class="list">实孩子</li>
+                <li class="list">孩子</li>
+                <li class="list">孩子</li> -->
+            </ul>
+        </div>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script src="../../json/tags.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: retJson,
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+            key: '',
+            num: 0,
+        },
+        watch: {
+            key: function(n, o) {
+                this.key = this.key.substring(0, 6);
+            }
+        },
+        methods: {
+            // 创建标签
+            submit() {
+                console.log(view.key);
+                var _this = this;
+                if (_this.num == 10) {
+                    _msg('标签最多只能选择10个');
+                    return;
+                }
+                if (view.key.length > 6) {
+                    _msg('标签最多为6个字');
+                    return;
+                }
+                var uid = $api.getStorage('userid');
+                if (!_this.key) return;
+                _ajax('api/user/createTag', function(ret, err) {
+                    if (ret && ret.code == 200) {
+                        var obj = {
+                            id: ret.msg,
+                            selected: 1,
+                            name: _this.key,
+                            user_id: uid
+                        }
+                        view.ffList.unshift(obj);
+                        _this.num++;
+                        _this.key = '';
+                    } else {
+                        _msg(ret.msg);
+                    }
+                }, {
+                    user_id: uid,
+                    name: _this.key
+                })
+            },
+            // 标签选择
+            selectTag(index) {
+                var _this = this;
+                var data = _this.ffList[index];
+                if (!data.selected && _this.num == 10) {
+                    _msg('标签最多只能选择10个');
+                    return;
+                }
+                _this.ffList[index].selected = _this.ffList[index].selected == 1 ? 0 : 1;
+                if (_this.ffList[index].selected == 0 && _this.ffList[index].user_id != 0) {
+                    _this.ffList.splice(index, 1);
+                }
+                var arr = [];
+                for (var i = 0, len = _this.ffList.length; i < len; i++) {
+                    if (_this.ffList[i].selected == 1) {
+                        arr.push(_this.ffList[i].id);
+                    }
+                }
+                _this.num = arr.length;
+                // console.log(arr)
+                _ajax('api/user/updateTags', function(ret, err) {}, {
+                    user_id: $api.getStorage('userid'),
+                    tags: arr.join(','),
+                })
+            },
+            // 跳转
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+        }
+    })
+    apiready = function() {
+        $api.fixStatusBar($api.dom('header'));
+        _listener('newmsg', function(ret) {
+            showMsgFrm(ret.value.data)
+        })
+
+        getData();
+    }
+
+    function getData() {
+        _ajax('api/user/tagsList', function(ret, err) {
+            if (ret && ret.code == 200) {
+                var num = 0;
+                var data = ret.data;
+                for (var i = 0, len = data.length; i < len; i++) {
+                    if (data[i].select == 1) {
+                        num++;
+                    }
+                }
+                view.num = num;
+                view.ffList = data;
+            }
+        }, {
+            user_id: $api.getStorage('userid')
+        })
+    }
+</script>
+
+</html>

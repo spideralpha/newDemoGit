@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/aui_font.css">
+    <link rel="stylesheet" href="../../css/base_icon.css">
+    <link rel="stylesheet" href="../../css/frame1.css">
+    <style>
+        .wrap-bottom {
+            padding-bottom: 60px;
+        }
+
+        /* 评论 */
+        .c-ul .li {
+            display: flex;
+        }
+
+        .c-ul .left {
+            width: calc(100% - 70px);
+        }
+
+        .c-ul .name {
+            margin-bottom: 0;
+        }
+
+        .c-ul .time {
+            color: #B3B3B3;
+            /* margin: 3px 0; */
+        }
+
+        .c-ul .c-content {
+            color: #333;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <!-- 个人广播 -->
+        <ul class="dylist-wrap wrap-bottom">
+            <!-- 约会详情 -->
+            <li class="list">
+                <div class="list-container">
+                    <div class="tx img-h" :class="{'xinren':ffInfo.is_new==1}" @click="go_userInfo(ffInfo.userid, ffInfo.name, ffInfo.sex)">
+                        <img :src="returnImg(ffInfo.head_100)" onerror="this.src='../../image/touxiang.png'" alt="">
+                    </div>
+                    <div class="left">
+                        <div class="name-wrap">
+                            <span class="name" :class="{'vip-name':ffInfo.noble_grade>0}">{{ffInfo.name}}</span>
+                            <span class="boy-tag" :class="{'girl-tag':ffInfo.sex == '女'}">{{ffInfo.age}}</span>
+                            <span class="new-tag man-ntag" :class="{'woman-ntag':ffInfo.sex=='女'}" v-if="ffInfo.realname_auth==2 && !ios"></span>
+                            <span class="new-tag rz-tag" v-if="ffInfo.is_identity_authentication==2 && !ios"></span>
+                        </div>
+                        <div class="dy-content-wrap">
+                            <div class="dy-content">{{ffInfo.content}}</div>
+                            <div class="img-wrap" :class="{moreimg: ffInfo.sumbImage.length>1}" v-if="ffInfo.sumbImage && ffInfo.sumbImage.length > 0 && ffInfo.sumbImage[0]">
+                                <div class="img img-h" v-for="(s, sindex) in ffInfo.sumbImage" @click.stop="_url({imgArr:ffInfo.masterimg, iIndex:sindex}, 'frame1/dy_img_win')">
+                                    <img :src="returnImg(s)" onerror="this.src='../../image/error-img.png'" alt="">
+                                </div>
+                            </div>
+                            <div class="img-wrap dy-video" v-if="ffInfo.video">
+                                <div class="img img-h" @click.stop="_url({ video: ffInfo.video, cover: ffInfo.cover, animationType: 0 }, 'frame0/liaotian_video')">
+                                    <img :src="returnImg(ffInfo.cover)" onerror="this.src='../image/error-img.png'" alt="">
+                                </div>
+                            </div>
+                        </div>
+                        <p class="time-wrap">
+                            <span class="time">{{ffInfo.addtime}}</span>
+                            <span class="time">浏览{{ffInfo.visit}}次</span>
+                            <span class="area" v-if="ffInfo.citys">{{ffInfo.citys}}</span>
+                        </p>
+                        <div class="footer" v-if="!ios">
+                            <div class="ul flex-bt">
+                                <div class="left flex">
+                                    <div class="li" @click.stop @click="zan(ffInfo.dy_id)">
+                                        <i class="base-icon dy-nozan-icon" :class="{'dy-zan-icon':ffInfo.isthumbsup == 1}"></i>
+                                        <span>{{ffInfo.thumbsup}}</span>
+                                    </div>
+                                    <div class="li">
+                                        <i class="base-icon dy-comment-icon"></i>
+                                        <span>{{ffInfo.text && ffInfo.text.length>0 ? ffInfo.text.length : '评论'}}</span>
+                                    </div>
+                                    <div class="li" v-if="ffInfo.id != myuserid && !ios" @click.stop="shareDY()">
+                                        <i class="base-icon dy-share-icon"></i>
+                                        <span>转发</span>
+                                    </div>
+                                </div>
+                                <div class="hi-tag" :class="{'hi-tags':ffInfo.dashan==1}" v-if="ffInfo.id != myuserid && !ios" @click.stop="dashan()">心动</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <!-- 评论列表 -->
+            <div class="comment-wrap w-bg new-margin-tb-10 new-padding-10" v-if="ffInfo.text && ffInfo.text.length > 0">
+                <ul class="c-ul">
+                    <li class="li" v-for="(m, index) in ffInfo.text" @click="go_userInfo(m.id, m.name)">
+                        <div class="tx img-h">
+                            <img :src="returnImg(m.head_100)" onerror="this.src='../../image/touxiang.png'" alt="">
+                        </div>
+                        <div class="left ">
+                            <div class="flex-bt name-wrap">
+                                <span class="name">{{ m.name }}</span>
+                                <p class="time">{{m.addtime}}</p>
+                            </div>
+                            <div class="c-content theme-font">
+                                {{m.content}}
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </ul>
+        <div class="input-bg">
+            <div class="input-wrap">
+                <input type="text" placeholder="说点什么">
+                <button class="send-btn" @click.stop @click="send()">发送</button>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script src="../../script/limitchat.js"></script>
+<script src="../../script/frame1.js"></script>
+<script src="../../json/dydetail.js"></script>
+<script>
+    var dy_id;
+    var view = new Vue({
+        el: '#view',
+        data: {
+            myuserid: $api.getStorage('userid'),
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            themeObj: {}, // 主题对象
+            myInfo: {}, // 用户信息
+            inputObj: {
+                id: 0,
+                uid: 0
+            }, // 评论 广播id
+            ios: 1, // 1上架 0非上架
+        },
+        methods: {
+            shareDY() {
+                shareDY(view.ffInfo)
+            },
+            dashan() {
+                if (view.ffInfo.dashan == 1) return;
+                _ajax('api/privatechat/greet', function(ret, err) {
+                    _msg(ret.msg);
+                    if (ret && ret.code == 200) {
+                        view.ffInfo.dashan = 1;
+                        view.$forceUpdate();
+                        // $(obj).addClass('hi-tags');
+                    }
+                }, {
+                    user_id: $api.getStorage('userid'),
+                    id: view.ffInfo.userid,
+                })
+            },
+            _more(index) {
+                var _this = this;
+                var data = _this.ffInfo.text;
+                var id = data[index].comment_id;
+                var buttons = ['删除'];
+                _action('', buttons, function(bIndex) {
+                    if (bIndex != buttons.length + 1) {
+                        if (bIndex == 1) {
+                            _ajax('api/Member/delComment', function(ret, err) {
+                                console.log(JSON.stringify(ret))
+                                console.log(JSON.stringify(err))
+                                _msg(ret.msg);
+                                if (ret && ret.code == 200) {
+                                    _this.ffInfo.text.splice(index, 1);
+                                }
+                            }, {
+                                id: id,
+                                user_id: $api.getStorage('userid')
+                            })
+                        }
+                    }
+                })
+            },
+            // 发布评论
+            send() {
+                var _this = this;
+                // if (_this.ffInfo.userid == myuserid) {
+                //     _msg('不能给自己的广播评论');
+                //     return;
+                // }
+                var val = $.trim($('.input-wrap input').val());
+                if (!val) {
+                    _msg('评论不能为空');
+                    return;
+                }
+                _loading();
+                _ajax('home/Dymanic/comment', function(ret, err) {
+                    console.log(JSON.stringify(ret))
+                    console.log(JSON.stringify(err))
+                    _loadingClose();
+                    if (ret) {
+                        _msg(ret.msg);
+                        if (ret.code == 200) {
+                            $('.input-wrap input').val('');
+                            getDynamic();
+                            pushMsg(_this.ffInfo.userid);
+                        }
+                    }
+                }, {
+                    dy_id: _this.ffInfo.dy_id,
+                    userid: $api.getStorage('userid'),
+                    touserid: _this.ffInfo.userid,
+                    type: 0, //0为评论，1为回复
+                    content: val,
+                })
+            },
+            // 联系对方
+            getContact(id) {
+                judgeQx(id, function() {
+                    showDetail('frame1/link_modal', {
+                        uid: id
+                    })
+                })
+            },
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+            // 查看用户资料
+            go_userInfo(id, name, sex) {
+                go_userInfo(id, name, sex);
+            },
+            // 清除html
+            clearHtml(s) {
+                return clearHtml(s);
+            },
+            // 点赞
+            zan(id) {
+                var status = view.ffInfo.isthumbsup;
+                _ajax('home/Dymanic/thumbsup', function(ret, err) {
+                    console.log(JSON.stringify(ret))
+                    console.log(JSON.stringify(err))
+                    if (ret) {
+                        _msg(ret.msg);
+                        if (ret.code == 200) {
+                            view.ffInfo.isthumbsup = status == 0 ? 1 : 0;
+                            view.ffInfo.num = status == 0 ? parseInt(view.ffInfo.num) + 1 : view
+                                .ffInfo.num - 1;
+                            pushMsg(view.ffInfo.id);
+                        }
+                    }
+                }, {
+                    type: parseInt(status) + 1,
+                    dy_id: id,
+                    userid: $api.getStorage('userid'),
+                })
+            },
+            //获取输入框焦点
+            getInput() {
+                $('input').focus();
+            }
+
+        }
+    })
+    apiready = function() {
+        view.ios = $api.getStorage('shang');
+        dy_id = api.pageParam['id'];
+        returnTheme(function(obj) {
+            view.themeObj = obj;
+        })
+        getDynamic();
+        getEnroll();
+
+        if (api.systemType == 'ios') {
+            _getUser(function(ret) {
+                // console.log(JSON.stringify(ret))
+                view.myInfo = ret.result;
+            })
+        }
+        _listener('viewappear', function(ret) {
+            _getUser(function(ret) {
+                // console.log(JSON.stringify(ret))
+                view.myInfo = ret.result;
+            });
+        })
+    }
+
+
+    // 获取约会详情
+    function getDynamic() {
+        _ajax('Home/Dymanic/dycommentlsts', function(ret, err) {
+            console.log(JSON.stringify(ret));
+            console.log(JSON.stringify(err));
+            if (ret && ret.code == 200) {
+                view.ffInfo = ret.result;
+            }
+        }, {
+            dy_id: dy_id,
+            userid: view.myuserid
+        })
+    }
+
+    // 获取报名列表
+    function getEnroll() {
+        _ajax('Home/Dymanic/enrolllist', function(ret, err) {
+            console.log(JSON.stringify(ret));
+            console.log(JSON.stringify(err));
+            if (ret && ret.code == 200) {
+                view.ffList = ret.data;
+            }
+        }, {
+            dy_id: dy_id
+        })
+    }
+</script>
+
+</html>

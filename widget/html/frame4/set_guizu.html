@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui_font.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/news.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/frame3.css" />
+    <style>
+        .base-icon {
+            width: 42px;
+            height: 25px;
+            display: inline-block;
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+        }
+
+        /* 我的 消息开启 */
+        .base-icon.my-msg {
+            background-image: url('../../image/icon/c2.png');
+        }
+
+        /* 我的 消息关闭 */
+        .base-icon.my-msg-close {
+            background-image: url('../../image/icon/c1.png');
+        }
+
+        .mt {
+            font-size: 12px;
+            display: inline-block;
+            margin-left: 6px;
+            font-weight: 400;
+            color: #787878;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <section class="m-frame">
+            <ul class="item">
+                <li class="item_li">
+                    <div class="lt">隐藏距离
+                        <div class="mt">对方看不到他与我的距离</div>
+                    </div>
+                    <div class="rt flex">
+                        <i class="base-icon my-msg" :class="{'my-msg-close':ffInfo.hide_distance==0}" onclick="changeSocial('hide_distance', 1)"></i>
+                    </div>
+                </li>
+                <li class="item_li">
+                    <div class="lt">隐藏访问
+                        <div class="mt">访问他人时不留下足迹</div>
+                    </div>
+                    <div class="rt flex">
+                        <i class="base-icon my-msg" :class="{'my-msg-close':ffInfo.hide_visit==0}" onclick="changeSocial('hide_visit', 1)"></i>
+                    </div>
+                </li>
+                <li class="item_li">
+                    <div class="lt">排行榜隐身
+                        <div class="mt">除活动榜单外不上榜</div>
+                    </div>
+                    <div class="rt flex">
+                        <i class="base-icon my-msg" :class="{'my-msg-close':ffInfo.hide_ranking==0}" onclick="changeSocial('hide_ranking', 1)"></i>
+                    </div>
+                </li>
+                <!-- <li class="item_li">
+                    <div class="lt">直播间隐身
+                        <div class="mt">隐身进入直播间</div>
+                    </div>
+                    <div class="rt flex">
+                        <i class="base-icon my-msg" :class="{'my-msg-close':ffInfo.lianmai_limit==1}"
+                            onclick="changeSocial('lianmai_limit')"></i>
+                    </div>
+                </li> -->
+                <li class="item_li">
+                    <div class="lt">家族隐身
+                        <div class="mt">隐身进入家族聊天室</div>
+                    </div>
+                    <div class="rt flex">
+                        <i class="base-icon my-msg" :class="{'my-msg-close':ffInfo.hide_family==0}" onclick="changeSocial('hide_family', 1)"></i>
+                    </div>
+                </li>
+                <!-- <li class="item_li">
+                    <div class="lt">守护者榜单隐身
+                        <div class="mt">默默守护心仪的TA</div>
+                    </div>
+                    <div class="rt flex">
+                        <i class="base-icon my-msg" :class="{'my-msg-close':ffInfo.lianmai_limit==1}" onclick="changeSocial('lianmai_limit')"></i>
+                    </div>
+                </li> -->
+            </ul>
+        </section>
+        <div class="new-submit" onclick="openVIP();" v-if="!isVip">开通贵族</div>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/jquery.js"></script>
+<script type="text/javascript" src="../../script/ffkj.js"></script>
+<script type="text/javascript" src="../../script/vue.js"></script>
+<script type="text/javascript" src="../../script/yinsi.js"></script>
+<script type="text/javascript">
+    var view = new Vue({
+        el: '#view',
+        data: {
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+            isVip: 0
+        },
+        methods: {
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+        }
+    })
+    apiready = function() {
+        view.isVip = $api.getStorage('isVip');
+        view.ios = $api.getStorage('shang');
+        getMyConfig()
+    }
+</script>
+
+</html>

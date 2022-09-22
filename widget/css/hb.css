@@ -1,0 +1,40 @@
+html,
+body {
+    background: none;
+}
+
+.bg {
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.wrap {
+    position: fixed;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+}
+
+.wrap .img {
+    position: relative;
+}
+
+.wrap img.red-bg {
+    width: 70vw;
+}
+
+.wrap img.red-click {
+    position: absolute;
+    width: 100px;
+    bottom: 10%;
+    left: 50%;
+    margin-left: -50px;
+}
+
+.close img {
+    margin-top: 20px;
+    width: 40px;
+}

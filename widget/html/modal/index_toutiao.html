@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>小火苗</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/modal.css">
+    <style>
+        .modal .container {
+            bottom: 0;
+        }
+
+        .modal .container .content {
+            margin: 0 24px;
+            width: calc(100% - 48px);
+            padding: 10px;
+            box-sizing: border-box;
+            border: 1px solid #F5F5F5;
+            background-color: #fff;
+            border-radius: 10px;
+            height: 40vw;
+            position: relative;
+        }
+
+        .modal .container .content textarea {
+            width: 100%;
+            height: 100%;
+            resize: none;
+        }
+
+        .tips {
+            text-align: center;
+            margin-bottom: 3vw;
+        }
+
+        .tips div {
+            font-size: 14px;
+            color: #fff;
+        }
+
+        .tips span {
+            color: #FFFD3A;
+        }
+
+        .modal-btn {
+            margin-top: 16px;
+            width: 52%;
+            opacity: 0;
+        }
+
+        .footerhint{
+            font-size: 12px;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 10px;
+            padding-bottom: 10px;
+            box-sizing: border-box;
+        }
+        .footerhint span{
+            zoom: 0.8;
+        }
+        .footerhint span{
+            color: rgb(201, 200, 200);
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <div class="modal-bg" onclick="_close()">
+            <div class="modal" @click.stop>
+                <img class="img-bg" src="../../image/modal/toutiaobj@2x.png" alt="">
+                <div class="container">
+                    <div class="tips">
+                        <div>你的头条将会在首页停留<span>30s</span></div>
+                        <!-- <div>预计<span>54236</span>人将会看到你的喊话</div> -->
+                    </div>
+                    <div class="content">
+                        <textarea :maxlength="fontCountNum" placeholder="写下你想说的话，请务必遵守社区规则(非必填项)" v-model="reason"></textarea>
+                        <div class="footerhint">
+                            <span>
+                                提示：什么？一个金币就能发霸屏？
+                            </span>
+                            <span>字数:{{currentfontCount}}/{{fontCountNum}}</span>
+                        </div>
+                    </div>
+                    <div class="flex-c">
+                        <button class="modal-btn" onclick="submit()">立即申请</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+            reason: '',
+            currentfontCount: 0,
+            fontCountNum: 40
+        },
+        methods: {
+            // 跳转
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+        },
+        watch:{
+            reason:function(n,o){
+                view.currentfontCount=n.length;
+                if(view.currentfontCount>=view.fontCountNum){
+                    view.currentfontCount=view.fontCountNum;
+                    _msg('字数不能超过'+view.fontCountNum+'个');
+                }
+            }
+        }
+    })
+    apiready = function () {
+        view.id = api.pageParam['id'];
+    }
+
+
+    // 
+    function _close() {
+        api.closeFrame();
+    }
+
+    // 
+    function submit() {
+        if (!view.reason) {
+            _msg('请填写你想说的话');
+            return;
+        }
+        _ajax('api/Speaker/publish', function (ret, err) {
+            if(ret.code==200){
+                _msg('发布成功并扣除了1金币');
+                setTimeout(function () {
+                    api.closeFrame();
+                }, 1000);
+            }else{
+                _msg(ret.msg);
+                if(ret.msg=="余额不足"){
+                    _url({url:'frame4/chongzhicenter',title:'充值中心', moreTitle: '账单'});
+                }
+            }
+        }, {
+            user_id: $api.getStorage('userid'),
+            content: view.reason
+        })
+    }
+</script>
+
+</html>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>小火苗</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/modal.css">
+    <style>
+        .btn-wrap .btn {
+            line-height: 35px;
+            border-radius: 20px;
+            text-align: center;
+            width: 45%;
+            color: #aaa;
+            border: 1px solid;
+        }
+
+        .btn-wrap .go-btn {
+            color: #fff;
+            border: none;
+            background: linear-gradient(to right, #ff66c1, #CD7DFE);
+        }
+
+        .modal {
+            background: #fff;
+            border-radius: 10px;
+            padding: 10px;
+            text-align: center;
+            width: 80vw;
+        }
+
+        .modal .bg {
+            position: relative;
+            padding: 20px 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        .modal .bg-img {
+            width: 70%;
+            height: 150px;
+        }
+
+        .bg .u-tx {
+            width: 82px;
+            height: 82px;
+            border-radius: 50%;
+            position: absolute;
+            top: 25px;
+        }
+
+        .modal .container {
+            text-align: center;
+            position: relative;
+            margin-top: -20px;
+        }
+
+        .container h3 {
+            font-size: 16px;
+        }
+
+        .text {
+            color: #757575;
+            font-size: 12px;
+            margin: 7px 0;
+        }
+
+        .tip {
+            font-weight: bold;
+            color: #CD7DFE;
+            font-size: 14px;
+            margin: 25px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <div class="modal-bg" onclick="_close()">
+            <div class="modal" @click.stop>
+                <div class="bg">
+                    <img class="bg-img" src="../../image/modal/popup_guide_news.png" alt="">
+                    <img :src="returnImg(ffInfo.sumb_headimg)" onerror="this.src='../../image/touxiang.png'" class="u-tx" alt="">
+                </div>
+                <div class="container">
+                    <h3>{{ffInfo.name}}</h3>
+                    <p class="text">{{ffInfo.city}} | {{ffInfo.age}}岁</p>
+                    <p class="tip">{{ffInfo.sex=='女'?'小姐姐':'小哥哥'}}发来新消息，不去看看吗？</p>
+                    <div class="btn-wrap flex-bt">
+                        <button class="btn" onclick="closeApp()">忍痛离开</button>
+                        <button class="btn go-btn" onclick="goChat()">去看看</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+            money: '',
+        },
+        methods: {
+            // 跳转
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+        }
+    })
+    apiready = function() {
+        view.ffInfo = $api.getStorage('msgList');
+    }
+
+    function _close() {
+        api.execScript({
+            script: 'kchat = 0;'
+        })
+        api.closeFrame();
+    }
+
+    function closeApp() {
+        api.closeWidget({
+            silent: true
+        });
+    }
+
+    function goChat() {
+        _url({
+            touserid: view.ffInfo.userid,
+            title: '与' + view.ffInfo.name + '的聊天',
+            moreType: 1,
+        }, 'frame0/liaotian_win')
+        _close();
+    }
+</script>
+
+</html>

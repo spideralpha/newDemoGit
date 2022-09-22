@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>测夫妻相</title>
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=no,width=device-width,initial-scale=1.0">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <link href="css/common.css" rel="stylesheet">
+    <link href="css/animate.css" rel="stylesheet">
+    <link href="css/index.css" rel="stylesheet">
+    <style type="text/css">
+        html {
+            font-size: 36px;
+        }
+
+        body {
+            font-size: 16px;
+        }
+
+        .layui-m-layercont {
+            padding: .4rem !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+
+        <div id="spouse">
+            <!-- 主页 -->
+            <div id="prevent_Default">
+                <!-- 进入加载 -->
+                <div class="loading_show" v-if="!userInfo.id">
+                    <img src="img/loading_icon.png" class="loading">
+                </div>
+
+                <!-- 解锁页 -->
+                <div id="guess" v-if="userInfo.id">
+                    <!-- 测算页 -->
+                    <div class="guess">
+                        <!-- 头部 -->
+                        <div class="scan flex justify-Center align-Center" style="display: none;">
+                            <div class="bigBell1"></div>
+                            <div class="lx item">
+                                <div class="flex justify-Center align-Center">
+                                    <div class="bell21 bell"></div>
+                                    <img src="img/icon_1_face@2x.png">
+                                </div>
+                                <p>脸型特征</p>
+                            </div>
+                            <div class="zl item">
+                                <div class="flex justify-Center align-Center">
+                                    <div class="bell22 bell"></div>
+                                    <img src="img/icon_2_ziliao@2x.png">
+                                </div>
+                                <p>基础资料</p>
+                            </div>
+                            <div class="ah item">
+                                <div class="flex justify-Center align-Center">
+                                    <div class="bell23 bell"></div>
+                                    <img src="img/icon_3_aihao@2x.png">
+                                </div>
+                                <p>兴趣爱好</p>
+                            </div>
+                            <div class="xx item">
+                                <div class="flex justify-Center align-Center">
+                                    <div class="bell24 bell"></div>
+                                    <img src="img/icon_4_xingxiang@2x.png">
+                                </div>
+                                <p>星相格局</p>
+                            </div>
+                            <div class="pp item">
+                                <div class="flex justify-Center align-Center">
+                                    <div class="bell25 bell"></div>
+                                    <img src="img/icon_5_zh@2x.png">
+                                </div>
+                                <p>综合匹配</p>
+                            </div>
+                        </div>
+                        <!-- 头像边框 -->
+                        <div class="scanItems">
+                            <img :src="returnImg(userInfo.head_portrait)" onerror="this.src='../../image/touxiang.png'" class="scanImg">
+                            <!-- 扫描 -->
+                            <div class="scan1 flex justify-Center align-Center">
+                                <div class="scanBox">
+                                    <img src="img/img_head_scanned.png" class="scanIcon" style="display: none;">
+                                </div>
+                            </div>
+                        </div>
+                        <!-- 底部 -->
+                        <div class="unlockFoot" style="display: none;">
+                            <div class="ppList flex justify-Around">
+                                <div class="ppList1 flex justify-Center align-Center">
+                                    <div class="ppList1Box">
+                                        <ul>
+                                            <li v-for="(m, index) in manList[0]"> <img :src="m" /> </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="ppList2 flex justify-Center align-Center">
+                                    <div class="ppList2Box">
+                                        <ul>
+                                            <li v-for="(m, index) in manList[1]"> <img :src="m" /> </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="ppList3 flex justify-Center align-Center">
+                                    <div class="ppList3Box">
+                                        <ul>
+                                            <li v-for="(m, index) in manList[2]"> <img :src="m" /> </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="unlock" class="" style="display: none;">
+                <div class="flex flex-column align-Center unlock_box">
+                    <img src="img/title_cesuan@2x.png" class="unlock_title">
+                    <div class="flex justify-Between unlock_hd">
+                        <a class="leftImg">
+                            <img :src="returnImg(ffInfo.avatar)" class="headImg" onerror="this.src='../../image/touxiang.png'">
+                        </a>
+                        <a class="rightImg">
+                            <div class="lock"></div>
+                            <img class="headImg" :src="returnImg(ffInfo.another_avatar)" onerror="this.src='../../image/touxiang.png'">
+                        </a>
+                        <div class="love_img"></div>
+                        <p>夫妻相指数</p>
+                    </div>
+                    <div class="unlock_num flex align-Center">
+                        <img src="img/img_dianlu_left@2x.png">
+                        <span class="num">{{ffInfo.rate}}</span>
+                        <img src="img/img_dianlu_right@2x.png">
+                    </div>
+                    <div class="unlock_content">
+                        <div class="face_state">
+                            <div class="my_face">
+                                <h2>你的面相分析</h2>
+                                <div class="flex align-Center state_lx">
+                                    <img src="img/icon_point@2x.png" class="state_circ">
+                                    <span class="state_title m-lr-8">脸型:</span><b class="state_info">{{ffInfo.face}}</b>
+                                </div>
+                                <div class="flex align-Center state_number">
+                                    <img src="img/icon_point@2x.png" class="state_circ">
+                                    <span class="state_title m-lr-8">招人爱指数:</span><b class="state_info">{{ffInfo.likeable}}%</b><i class="state_label m-lr-8">[{{ffInfo.description}}]</i>
+                                </div>
+                                <div class="state_attr_box">
+                                    <div class="flex align-Center">
+                                        <img src="img/icon_point@2x.png" class="state_circ">
+                                        <span class="state_title m-lr-8">招人爱属性:</span>
+                                    </div>
+                                    <div class="state_attr flex">
+                                        <p :class="'state_attr_p'+(index+1)" v-for="(m, index) in ffInfo.quality">
+                                            <span>{{m.title}}</span><b>{{m.rate}}%</b>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="state_preference">
+                                    <div class="flex align-Center">
+                                        <img src="img/icon_point@2x.png" class="state_circ">
+                                        <span class="state_title m-lr-8">脱单特性:</span>
+                                    </div>
+                                    <p class="flex">
+                                        <span class="state_lock state_info flex_1" v-if="!ffInfo.sign"><i>******</i></span>
+                                        <span class="state_lock state_info flex_1" v-else>{{ffInfo.sign}}</span>
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="friend_face">
+                                <h2><span>{{userInfo.sex=='女'? '他': '她'}}</span>的面相分析</h2>
+                                <div class="flex align-Center">
+                                    <img src='./img/icon_point@2x.png' class="state_circ" />
+                                    <span class="state_title m-lr-8">脸型:</span>
+                                    <span class="state_info flex_1">{{ffInfo.another_face}}</span>
+                                </div>
+                                <div class="flex align-Center">
+                                    <img src='./img/icon_point@2x.png' class="state_circ" />
+                                    <span class="state_title m-lr-8">特长:</span>
+                                    <span class="state_info flex_1">{{ffInfo.another_specialty}}</span>
+                                </div>
+                                <div class="flex align-Center">
+                                    <img src='./img/icon_point@2x.png' class="state_circ" />
+                                    <span class="state_title m-lr-8">DNA类型:</span>
+                                    <span class="state_info flex_1">{{ffInfo.another_dna}}</span>
+                                </div>
+                                <div class="flex align-Center">
+                                    <img src='./img/icon_point@2x.png' class="state_circ" />
+                                    <span class="state_title m-lr-8">恋爱中的形象:</span>
+                                    <span class="state_info flex_1">{{ffInfo.another_image}}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="appraisal">
+                            <h2>综合鉴定</h2>
+                            <span class="state_lock state_info" v-if="!ffInfo.outcome"><i>******</i></span>
+                            <span class="state_lock state_info" v-else>{{ffInfo.outcome}}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="unlock_Button_foot">
+                    <a class="unlock_Button" onclick="openChat()">立即私聊</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/jquery.js"></script>
+<script type="text/javascript" src="../../script/ffkj.js"></script>
+<script type="text/javascript" src="../../script/svga.js"></script>
+<script type="text/javascript" src="../../script/vue.js"></script>
+
+<script type="text/javascript" src="./json/main.js"></script>
+<script type="text/javascript" src="./json/fuqi.js"></script>
+<script type="text/javascript" src="../../json/user.js"></script>
+<script>
+    // http://spouse.yiliangogo.com/index.html?_token=74fe0eb2da07b6aa253d901386c5f726&_userid=16990183726669
+
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+            userInfo: userJson.result, // 用户资料
+            manList: [], // 滚动头像列表
+        },
+        methods: {
+            // 跳转
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+        }
+    })
+
+    apiready = function() {
+        _getUser(function(ret) {
+            view.userInfo = ret.result;
+            atFn();
+        })
+    }
+    // atFn();
+    //动画过程的方法
+    function atFn() {
+        _ajax('api/match/avatar', function(ret, err) {
+            if (ret && ret.code == 200) {
+                var arr = ret.data;
+                view.manList = dealData(arr);
+                setTimeout(function() {
+                    // 测算动画
+                    svgaList_bell.map(function(val, key) {
+                        var player = new SVGA.Player(val.name);
+                        var parser = new SVGA.Parser(val.name); // 如果你需要支持 IE6+，那么必须把同样的选择器传给 Parser。
+                        parser.load('./img/' + val.url, function(videoItem) {
+                            player.loops = 0;
+                            player.clearsAfterStop = false;
+                            player.setVideoItem(videoItem);
+                            player.startAnimation();
+                        })
+                    });
+                    $('.scanIcon').show();
+                    guessFn()
+                }, 500)
+            }
+        }, {
+            user_id: $api.getStorage('userid')
+        })
+
+    };
+
+    // 处理数据
+    function dealData(arr) {
+        if (!arr || arr.length == 0) return [];
+        arr = JSON.parse(JSON.stringify(arr));
+        while (arr.length < 60) {
+            arr = arr.concat(arr);
+        }
+        var brr = [];
+        while (arr.length > 0) {
+            brr.push(arr.splice(0, 20));
+        }
+        return brr;
+    }
+
+
+    function guessFn() { //测算动画流程
+        //扫描隐藏
+        //第1个动画3s
+        $('.scanImg').css('animation', 'radius .5s linear forwards');
+        $('.scan1').css('animation', 'opacity .1s linear forwards');
+        $('.scan').show();
+        $('.unlockFoot').show();
+        //测算页动画结束
+        let animaEnd_num = 0;
+        $(".ppList2").bind("animationend", function() {
+            animaEnd_num++;
+            if (animaEnd_num == 2) {
+                console.log('动画结束');
+                animaEnd_num = null;
+                setTimeout(function() {
+                    getTestData();
+                }, 300);
+            }
+        });
+    };
+
+    // 获取夫妻相数据
+    function getTestData() {
+        _ajax('api/Match/lover', function(ret, err) {
+            if (ret && ret.code == 200) {
+
+                resultFn(ret.data, 2);
+                svga_unlock.map(function(val, key) {
+                    var player = new SVGA.Player(val.name);
+                    var parser = new SVGA.Parser(val.name); // 如果你需要支持 IE6+，那么必须把同样的选择器传给 Parser。
+                    parser.load('./img/' + val.url, function(videoItem) {
+                        player.loops = 0;
+                        player.clearsAfterStop = false;
+                        player.setVideoItem(videoItem);
+                        player.startAnimation();
+                    })
+                });
+            } else {
+                _msg(ret.msg);
+            }
+        }, {
+            user_id: $api.getStorage('userid')
+        })
+    }
+
+
+    function resultFn(data, i) {
+        view.ffInfo = data;
+        // 解锁页显示
+        if (i == 2) { //从第一个页面进来
+            view.manList[1][1] = data.another_avatar;
+            $('#guess').hide();
+            $('.unlock_box').css("animation", "bigger .4s linear forwards")
+            $('.unlock_Button_foot').css("animation", "bigger .4s linear forwards");
+        }
+        $('#unlock').show();
+        $('.lock').hide();
+        $('.state_lock').removeClass('state_lock');
+        $('.unlock_hd .rightImg >img').css('filter', 'none');
+    }
+
+    /* Module 动画方法--------------------------------------------------- */
+    //测算动画页系列动画排序
+    $(".scanImg").bind("animationend", function() { //第2个动画
+        console.log(1);
+        $(".pp").addClass('ppAn');
+        $(".lx").addClass('lxAn');
+        $(".zl").addClass('zlAn');
+        $(".ah").addClass('ahAn');
+        $(".xx").addClass('xxAn');
+    });
+    var xx = 0;
+    $(".xx").bind("animationend", function() { //第3个系列动画_脸型
+        if (xx == 0) {
+            xx++;
+            console.log(2);
+            $(".scan .item>div").addClass('opacity1An');
+            $(".scan .item>p").addClass('opacity2An');
+            $(".item .bell").addClass('bellAn');
+            $(".ppList").addClass('opacity2An');
+            $(".ppList2Box ul").addClass('ppListBackAn');
+            $(".ppList1Box ul").addClass('ppListAn');
+            $(".ppList3Box ul").addClass('ppListAn').bind("animationend", function() {
+                console.log(3);
+                $(".ppList2").addClass('showppAn');
+            });
+        }
+    });
+
+    function openChat() {
+        var data = view.ffInfo;
+        _url({
+            touserid: data.another_id,
+            title: '与' + data.another_name + '的聊天',
+            moreType: 1,
+        }, 'frame0/liaotian_win')
+    }
+</script>
+
+</html>

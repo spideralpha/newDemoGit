@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>爱情故事</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/swiper.css">
+    <style>
+        html,
+        body {
+            margin: 0;
+        }
+
+        .head {
+            padding: 0 10px;
+        }
+
+        .head .left {
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+        }
+
+        .head .left img {
+            width: 20px;
+            height: 20px;
+            margin-right: 6px;
+            border-radius: 4px;
+        }
+
+        .head .time {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .chaohua {
+            font-size: 16px;
+            color: #757575;
+            padding: 10px;
+        }
+
+        .content {
+            padding: 10px;
+            font-size: 14px;
+            word-wrap: break-word;
+        }
+
+        .swiper-slide img {
+            width: 100vw;
+            height: 60vw;
+            object-fit: cover;
+        }
+
+        .video-wrap {
+            padding: 10px;
+        }
+
+        .video-wrap video {
+            width: 100%;
+        }
+
+        /* 评论 */
+        .ping-title {
+            font-size: 12px;
+            color: #757575;
+            padding: 10px;
+            border-top: 1px solid #eee;
+        }
+
+        .ping-ul {
+            padding-bottom: 80px;
+        }
+
+        .ping-ul .list {
+            display: flex;
+            padding: 10px 0;
+            margin: 0 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .ping-ul .content {
+            width: calc(100% - 45px);
+            padding: 0;
+        }
+
+        .ping-ul .txt {
+            width: 75%
+        }
+
+        .ping-ul .name {
+            font-size: 12px;
+            color: #757575;
+        }
+
+        .ping-ul .time {
+            font-size: 12px;
+            color: #757575;
+            word-break: keep-all;
+        }
+
+        /* 评论框 */
+
+        /* 评论框 */
+        .input-bg {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100vw;
+            /* height: 100vh; */
+            /* background: rgba(0, 0, 0, 0.5); */
+            z-index: 200;
+            display: flex;
+            align-items: flex-end;
+        }
+
+        .input-wrap {
+            background: transparent;
+            width: 100%;
+            padding: 10px 5px;
+            display: flex;
+        }
+
+        .input-wrap input {
+            background: rgb(230, 230, 230);
+            border-radius: 20px;
+            font-size: 14px;
+            padding: 10px;
+            width: 75%;
+        }
+
+        .input-wrap .send-btn {
+            background: #F46CEF;
+            color: #e6e6e6;
+            border-radius: 20px;
+            width: 25%;
+            margin-left: 10px;
+            text-align: center;
+        }
+
+        header {
+            position: sticky;
+            position: -webkit-sticky;
+            top: 0;
+            z-index: 1;
+            background: #fff;
+        }
+
+        header .new-back {
+            background-image: url('../../image/back.png');
+        }
+
+        header .tx {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            margin: 0;
+        }
+
+        header .tx-love {
+            height: 20px;
+        }
+
+        header .more img {
+            height: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <header>
+            <div class=" flex-bt">
+                <div class="back new-back" tapmode onclick="_closeToWin()"></div>
+                <div class="title flex-c" v-if="ffInfo.to_user">
+                    <img class="tx" @click="go_userInfo(ffInfo.userid, ffInfo.name)" :src="returnImg(ffInfo.head_100)" onerror="this.src='../../image/touxiang.png'" alt="">
+                    <img class="tx-love" src="../../image/chat.png" alt="">
+                    <img class="tx" @click="go_userInfo(ffInfo.to_user,ffInfo.to_user_name)" :src="returnImg(ffInfo.to_user_avatar)" onerror="this.src='../../image/touxiang.png'" alt="">
+                </div>
+                <div class="more  new-invisible">
+                    <img src="../../image/member/ic_pay_to_view.png" alt="">
+                </div>
+            </div>
+        </header>
+
+        <div class="video-wrap" v-show="ffInfo.video">
+            <video controls :poster="returnImg(ffInfo.cover)" :src="returnImg(ffInfo.video)"></video>
+        </div>
+        <div class="swiper-container" v-show="!ffInfo.video">
+            <div class="swiper-wrapper">
+                <div class="swiper-slide" v-for="(m, index) in ffInfo.sumbImage" @click="_url({imgArr:ffInfo.masterimg, iIndex:index}, 'frame1/dy_img_win')">
+                    <img :src="returnImg(m)" onerror="this.src='../../image/error-img.png'" alt="">
+                </div>
+                <!-- <div class="swiper-slide"><img src="../../image/bg.png" alt=""></div>
+                <div class="swiper-slide"><img src="../../image/bg.png" alt=""></div> -->
+            </div>
+        </div>
+        <div class="chaohua">#{{themeObj[ffInfo.category_id]}}</div>
+        <div class="head">
+            <div class="left" @click="go_userInfo(ffInfo.userid, ffInfo.name, ffInfo.sex)">
+                <img :src="returnImg(ffInfo.head_100)" onerror="this.src='../../image/touxiang.png'" alt="">
+                {{ffInfo.name}}
+            </div>
+            <p class="time">{{ffInfo.addtime}}</p>
+        </div>
+        <div class="content" v-html="ffInfo.content">
+            <!-- 啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦
+            111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111 -->
+        </div>
+        <!-- 评论列表 -->
+        <p class="ping-title" v-if="ffInfo.text">他们的爱情已经收到{{ffInfo.text.length}}份祝福</p>
+        <ul class="ping-ul">
+            <li class="list " v-for="(m, index) in ffInfo.text">
+                <img class="tx" :src="returnImg(m.head_100)" onerror="this.src='../../image/touxaing.png'" alt="">
+                <div class="content">
+                    <p class="name">{{m.name}}</p>
+                    <div class="txt-wrap flex-bt">
+                        <div class="txt" v-html="m.content"></div>
+                        <span class="time">{{m.addtime}}</span>
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <div class="input-bg">
+            <div class="input-wrap">
+                <input type="text" placeholder="送出你的祝福">
+                <button class="send-btn" @click.stop @click="send()">发送</button>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/api.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script src="../../script/swiper.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+            themeObj: {}, // 主题对象
+            userInfo: {}
+        },
+        methods: {
+            // 查看用户资料
+            go_userInfo(id, name, sex) {
+                go_userInfo(id, name, sex)
+            },
+            // 跳转
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+            // 发布评论
+            send() {
+                var _this = this;
+                var val = $.trim($('.input-wrap input').val());
+                if (!val) {
+                    _msg('评论不能为空');
+                    return;
+                }
+                _loading();
+                _ajax('home/Dymanic/comment', function(ret, err) {
+                    console.log(JSON.stringify(ret))
+                    console.log(JSON.stringify(err))
+                    _loadingClose();
+                    _msg(ret.msg);
+                    if (ret && ret.code == 200) {
+                        $('.input-wrap input').val('');
+                        var obj = {
+                            id: _this.userInfo.id,
+                            name: _this.userInfo.name,
+                            head_100: _this.userInfo.head_100,
+                            addtime: '刚刚',
+                            content: val,
+                        }
+                        _this.ffInfo.text.unshift(obj);
+                        pushMsg(_this.ffInfo.userid);
+                    }
+                }, {
+                    dy_id: _this.ffInfo.dy_id,
+                    userid: $api.getStorage('userid'),
+                    touserid: _this.ffInfo.userid,
+                    type: 0, //0为评论，1为回复
+                    content: val,
+                })
+            },
+        }
+    })
+
+    apiready = function() {
+        $api.fixStatusBar($api.dom('header'));
+        view.id = api.pageParam['id'];
+        returnTheme(function(obj) {
+            view.themeObj = obj;
+        })
+        _getUser(function(ret) {
+            view.userInfo = ret.result;
+        })
+        getData();
+    }
+
+    // 获取详情
+    function getData() {
+        _ajax('Home/Dymanic/dycommentlsts', function(ret, err) {
+            console.log(JSON.stringify(ret));
+            console.log(JSON.stringify(err));
+            if (ret && ret.code == 200) {
+                view.ffInfo = ret.result;
+                setTimeout(function() {
+                    var mySwiper = new Swiper('.swiper-container', {
+                        loop: true,
+                        autoplay: {
+                            delay: 5000,
+                            stopOnLastSlide: false,
+                            disableOnInteraction: false,
+                        },
+                    })
+                }, 300)
+            }
+        }, {
+            dy_id: view.id
+        })
+    }
+</script>
+
+</html>

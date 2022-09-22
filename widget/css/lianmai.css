@@ -1,0 +1,73 @@
+.bg {
+    background: #2a2b30;
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    color: #fff;
+}
+
+.user-wrap {
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+    margin-top: 20vw;
+}
+
+.user-wrap .name {
+    font-size: 30px;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+.user-wrap p {
+    color: #fff;
+}
+
+.tx {
+    margin-right: 0;
+    width: 130px;
+    height: 130px;
+}
+
+.tx img {
+    width: 130px;
+    height: 130px;
+}
+
+/* 底部按钮 */
+.btn-wrap i {
+    background-image: url('../image/icon/phone.png');
+    background-size: 70% 70%;
+    background-color: #0eb20c;
+    background-repeat: no-repeat;
+    background-position: center center;
+    width: 50px;
+    height: 50px;
+    display: block;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.btn-wrap i.cancel-icon {
+    background-color: #d94849;
+    transform: rotate(135deg);
+}
+
+#fx-footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+
+#fx-footer .btn-wrap {
+    padding: 20px 30px;
+    text-align: center;
+}
+
+#fx-footer .btn-wrap button {
+    color: #fff;
+    margin-top: 15px;
+    font-size: 14px;
+}

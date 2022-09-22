@@ -1,0 +1,68 @@
+.msglist-wrap .list-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.msglist-wrap .tx {
+    width: 50px;
+    height: 50px;
+    position: relative;
+
+    margin-right: 10px;
+}
+
+.msglist-wrap .tx img {
+    width: 50px;
+    height: 50px;
+    border-radius: 7px;
+}
+
+.msglist-wrap .u-wrap .list {
+    padding: 10px;
+    font-size: 12px;
+    color: #757575;
+    display: flex;
+    background: #fff;
+}
+
+.msglist-wrap .u-wrap .top .list {
+    background: #f5f5f5;
+}
+
+.msglist-wrap .u-wrap .list .name {
+    font-size: 15px;
+    font-weight: bold;
+    /* color: #222; */
+    color: #333333;
+}
+
+.msglist-wrap .u-wrap .list .yuan {
+    /* width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: red;
+    position: absolute;
+    top: 0;
+    right: -5px; */
+    border-radius: 10px;
+    background: linear-gradient(45deg, #E63BE4, #FF9BBE);
+    /* position: absolute;
+    bottom: 0;
+    right: 0; */
+    color: #fff;
+    font-size: 8px;
+    /* transform: scale(0.8); */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0px 5px;
+    /* width: 30px; */
+    height: 16px;
+    text-align: center;
+}
+
+.msglist-wrap .u-wrap .list .content {
+    width: calc(100vw - 20px - 50px - 10px);
+    position: relative;
+}

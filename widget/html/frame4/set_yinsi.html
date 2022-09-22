@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/aui_font.css">
+    <link rel="stylesheet" href="../../css/user.css">
+    <style>
+        .title {
+            color: #000 !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap" id="view" v-cloak>
+        <!-- <p class="tab">隐身</p>
+        <ul class="ul w-bg">
+            <li class="li">
+                <div class="title" style="word-break: keep-all;width: auto;;">在公园列表隐藏我</div>
+                <div class="content" style="width: 100%;text-align: right;">
+                    <i class="base-icon my-msg" :class="{'my-msg-close':ffInfo.hide_search!=1}" onclick="changeSocial('hide_search')"></i>
+                </div>
+            </li>
+        </ul>
+        <p class="tab">隐藏距离和在线时间</p>
+        <ul class="ul w-bg">
+            <li class="li">
+                <div class="title" style="word-break: keep-all;width: auto;;">对他人隐藏我的距离</div>
+                <div class="content" style="width: 100%;text-align: right;">
+                    <i class="base-icon my-msg" :class="{'my-msg-close':ffInfo.hide_distance!=1}" onclick="changeSocial('hide_distance')"></i>
+                </div>
+            </li>
+            <li class="li">
+                <div class="title" style="word-break: keep-all;width: auto;;">对他人隐藏我的在线时间</div>
+                <div class="content" style="width: 100%;text-align: right;">
+                    <i class="base-icon my-msg" :class="{'my-msg-close':ffInfo.hide_online_time !=1}" onclick="changeSocial('hide_online_time')"></i>
+                </div>
+            </li>
+        </ul>
+        <p class="tab"></p> -->
+        <ul class="ul w-bg no-go">
+            <li class="li">
+                <div class="content" style="width: 100%;text-align: right;">
+                    <div class="title" style="word-break: keep-all;width: auto;;">对他人隐藏我的距离</div>
+                    <i class="base-icon my-msg" :class="{'my-msg-close':ffInfo.hide_distance!=1}" onclick="changeSocial('hide_distance')"></i>
+                </div>
+            </li>
+            <li class="li">
+                <div class="content" style="width: 100%;text-align: right;">
+                    <div class="title" style="word-break: keep-all;width: auto;;">隐藏自己的守护天使</div>
+                    <i class="base-icon my-msg" :class="{'my-msg-close':ffInfo.hide_defend_angel!=1}" onclick="changeSocial('hide_defend_angel')"></i>
+                </div>
+            </li>
+            <li class="li">
+                <div class="content" style="width: 100%;text-align: right;">
+                    <div class="title" style="word-break: keep-all;width: auto;;">隐藏自己的守护者</div>
+                    <i class="base-icon my-msg" :class="{'my-msg-close':ffInfo.hide_defends !=1}" onclick="changeSocial('hide_defends')"></i>
+                </div>
+            </li>
+            <li class="li">
+                <div class="content" style="width: 100%;text-align: right;">
+                    <!-- <div class="title" style="word-break: keep-all;width: auto;;">隐藏自己的土豪值、魅力值、获赞数</div> -->
+                    <div class="title" style="word-break: keep-all;width: auto;;">隐藏自己的土豪值、魅力值</div>
+                    <i class="base-icon my-msg" :class="{'my-msg-close':ffInfo.hide_charm !=1}" onclick="changeSocial('hide_charm')"></i>
+                </div>
+            </li>
+            <li class="li">
+                <div class="content" style="width: 100%;text-align: right;">
+                    <div class="title" style="word-break: keep-all;width: auto;;">隐藏自己的勋章和礼物</div>
+                    <i class="base-icon my-msg" :class="{'my-msg-close':ffInfo.hide_gift !=1}" onclick="changeSocial('hide_gift')"></i>
+                </div>
+            </li>
+
+        </ul>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script src="../../script/yinsi.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+        },
+        methods: {
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+
+        }
+    })
+    apiready = function() {
+        getMyConfig()
+    }
+</script>
+
+</html>

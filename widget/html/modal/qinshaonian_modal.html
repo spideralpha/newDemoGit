@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>小火苗</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/modal.css">
+    <style>
+        .modal{
+            position: relative;
+        }
+        .modal .container .content {
+            height: 30vw;
+            padding: 0 10px;
+            box-sizing: border-box;
+        }
+
+        .modal .container .content * {
+            color: #707070;
+            text-align: center;
+        }
+        .btnbg{
+            background-image: linear-gradient(to bottom,grey,gray);
+        }
+        .xx{
+            position: absolute;
+            bottom: -70px;
+            width: 100%;
+            text-align: center;
+        }
+        .xx span{
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            line-height: 50px;
+            text-align: center;
+            background-color: rgba(0,0,0,.1);
+            border-radius: 50%;
+        }
+        .xx span i{
+            font-style: normal;
+            color: white;
+            display: inline-block;
+            transform: scaleX(1.2);
+        }
+        .content p{
+            margin: 0 !important;
+        }
+        .content p:last-of-type{
+            margin-top: 10px !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <div class="modal-bg">
+            <div class="modal">
+                <div class="xx"><span onclick="_close()"><i>X</i></span></div>
+                <img class="img-bg" src="../../image/modal/qsn.png" alt="">
+                <div class="container">
+                    <div class="content flex-c">
+                        <div v-html="content"></div>
+                    </div>
+                    <div class="flex-c flex-col">
+                        <button class="modal-btn" onclick="_closeWidget()">开启青少年模式</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+            content:'',
+            wenxintishi:'',
+            myFrame: ''
+        },
+        methods: {
+            // 跳转
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+        }
+    })
+    apiready = function () {
+        getPageContent(16, function (data) {
+            // $api.setStorage('myframe','modal/qinshaonian_modal');
+            // $api.setStorage('mybody',data.body);
+            // _openFrame("modal/qinshaonian_modal", 1, 1);
+            view.content=data.body;
+            data.myframe=api.pageParam.myframe;
+        })
+    }
+    
+    //  关闭协议 
+    function _close() {
+        $api.setStorage('isi',1);
+        api.closeFrame({
+            name: view.myFrame
+        })
+    }
+    //  关闭app
+    function _closeWidget() {
+        api.closeWidget({
+            silent:true
+        });
+    }
+</script>
+
+</html>

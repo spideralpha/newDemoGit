@@ -1,0 +1,350 @@
+/* 广播列表 */
+.dylist-wrap {
+    white-space: nowrap;
+    font-size: 14px;
+}
+
+.dylist-wrap .list {
+    padding: 0 10px;
+    margin-top: 10px;
+    position: relative;
+}
+
+.dylist-wrap .list-container {
+    display: flex;
+    border-bottom: 1px solid #f7f7f7;
+    padding-bottom: 15px;
+}
+
+.dylist-wrap .list-container .left {
+    width: calc(100% - 50px);
+}
+
+.dylist-wrap .tx {
+    width: 45px;
+    height: 45px;
+    position: relative;
+    border-radius: 10px;
+    margin-right: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.dylist-wrap .tx img {
+    width: 45px;
+    height: 45px;
+}
+
+.dylist-wrap .tx .base-icon {
+    position: absolute;
+    bottom: 4px;
+    right: 4px;
+}
+
+.dylist-wrap .aui-icon-more {
+    color: #999;
+    display: none;
+}
+
+.dylist-wrap .name-wrap {
+    display: flex;
+    align-items: center;
+}
+
+.dylist-wrap .name-wrap .base-icon {
+    margin-left: 5px;
+}
+
+.dylist-wrap .name-wrap .name {
+    color: #333;
+    font-size: 14px;
+}
+
+.dylist-wrap .name-wrap .vip-name {
+    color: red;
+}
+
+.dylist-wrap .name-wrap .dy-more {
+    background-image: url('../image/chat/more.png');
+    background-size: 20px 5px;
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 35px;
+    height: 35px;
+    /* float: right; */
+    position: absolute;
+    right: 10px;
+}
+
+
+.dylist-wrap .more {
+    color: #757575;
+    border: 1px solid;
+    border-radius: 4px;
+    padding: 1px 5px;
+}
+
+.dylist-wrap .dy-content-wrap {
+    position: relative;
+    margin-top: 10px;
+    /* border-radius: 7px;
+    margin-left: 50px; */
+}
+
+/*  */
+
+/* 时间 次数 地点  */
+
+.dylist-wrap .time-wrap span {
+    color: #aaa;
+    font-size: 10px;
+}
+
+.dylist-wrap .time-wrap span:nth-child(2) {
+    /* margin: 0 5px; */
+}
+
+.dylist-wrap .dy-content-wrap .dy-content {
+    width: 100%;
+    font-size: 14px;
+    color: #000;
+    word-break: break-all !important;
+    margin-top: 10px;
+    line-height: 21px;
+    white-space: pre-wrap;
+}
+
+.dylist-wrap .dy-content-wrap .li {
+    font-size: 14px;
+    margin-bottom: 5px;
+    display: flex;
+}
+
+.dylist-wrap .dy-content-wrap .li .base-icon {
+    margin-top: 3px;
+}
+
+/* 图片 */
+.dylist-wrap .img-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.dylist-wrap .img-wrap .img {
+    /* width: calc((100vw - 20px - 55px - 10px) / 3);
+    height: calc((100vw - 20px - 55px - 10px) / 3); */
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    border-radius: 0px;
+    margin-right: 5px;
+    margin-top: 7px;
+}
+
+.dylist-wrap .img-wrap .img:nth-child(3n) {
+    margin-right: 0;
+}
+
+.dylist-wrap .img-wrap img {
+    /* max-width: calc((100vw - 20px - 55px - 10px) / 3 * 2);
+    max-height: calc((100vw - 20px - 55px - 10px) / 3 * 2);
+    object-fit: contain; */
+    width: 50vw;
+    height: 50vw;
+    border-radius: 7px;
+
+}
+
+.dylist-wrap .img-wrap.moreimg img {
+    width: calc((100vw - 20px - 55px - 10px) / 3);
+    height: calc((100vw - 20px - 55px - 10px) / 3);
+    object-fit: cover;
+}
+
+/* 视频 */
+.dylist-wrap .dy-video .img {
+    justify-content: center;
+    position: relative;
+}
+
+.dylist-wrap .dy-video .img::after {
+    display: inline-block;
+    content: '';
+    background-image: url('../image/icon/album_ic_playclip.png');
+    background-size: 100%;
+    width: 20px;
+    height: 20px;
+    position: absolute;
+}
+
+
+/* 脚部 */
+.dylist-wrap .footer {
+    margin-top: 15px;
+}
+
+
+.dylist-wrap .footer .ul {}
+
+.dylist-wrap .footer .li {
+    display: flex;
+    align-items: center;
+    font-size: 12px;
+    color: #757575;
+    /* width: 30vw; */
+}
+
+.dylist-wrap .footer .left .li {
+    margin-right: 22px;
+}
+
+.dylist-wrap .footer .base-icon {
+    width: 20px;
+    height: 20px;
+}
+
+.dylist-wrap .footer .left .li span {
+    margin-left: 4px;
+    color: #B3B3B3;
+    font-size: 11px;
+}
+
+
+/* 评论框 */
+.input-bg {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100vw;
+    /* height: 100vh; */
+    /* background: rgba(0, 0, 0, 0.5); */
+    z-index: 200;
+    display: flex;
+    align-items: flex-end;
+}
+
+.input-wrap {
+    background: transparent;
+    width: 100%;
+    padding: 10px 5px;
+    display: flex;
+}
+
+.input-wrap input {
+    background: rgb(230, 230, 230);
+    border-radius: 20px;
+    font-size: 14px;
+    padding: 10px;
+    width: 75%;
+}
+
+.input-wrap .send-btn {
+    background: #F46CEF;
+    color: #e6e6e6;
+    border-radius: 20px;
+    width: 25%;
+    margin-left: 10px;
+    text-align: center;
+}
+
+/* 赞列表 */
+.zan-wrap .tx-ul .li {
+    width: 35px;
+    margin-left: 5px;
+}
+
+.zan-wrap .tx-ul .img {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.zan-wrap .tx-ul .img img {
+    height: 35px;
+    width: 35px;
+}
+
+
+/* 已报名列表 */
+.enroll-wrap h3 {
+    font-size: 14px;
+}
+
+.e-wrap .li {
+    padding: 7px 0;
+    /* border-bottom: 1px solid #eee; */
+}
+
+.e-wrap .img {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 10px;
+}
+
+.e-wrap .img img {
+    width: 35px;
+    height: 35px;
+}
+
+/* 评论列表 */
+.comment-wrap .li {
+    padding: 10px 0;
+
+}
+
+.comment-wrap .name-wrap {
+    width: 100%;
+}
+
+.comment-wrap .name-wrap .name {
+    font-size: 12px;
+    color: #757575;
+}
+
+.dylist-wrap .comment-wrap .name-wrap .time {
+    font-size: 10px;
+}
+
+.comment-wrap .li .c-content {
+    word-break: break-all !important;
+}
+
+
+/* 其他 */
+.w-bg {
+    background: #fff;
+}
+
+.theme-font {
+    font-size: 12px;
+    color: #666;
+}
+
+.over {
+    background-image: url('../image/overdue1.png');
+    background-size: 100% 100%;
+    width: 100px;
+    height: 100px;
+    position: absolute;
+    left: 50%;
+    top: 30%;
+    display: none;
+}
+
+.new-tag.hi-tag {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+}

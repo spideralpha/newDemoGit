@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .show{
+            padding: 60px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+        }
+        .show img{
+            width: 80px;
+        }
+        .tips{
+            font-size: 22px;
+            line-height: 1.8;
+        }
+        .list{}
+        .list .litem{
+            display: flex;
+            align-items: center;
+            padding: 10px 14px;
+            font-size: 13px;
+        }
+        .list .litem img{
+            width: 10px;
+            margin-right: 14px;
+        }
+        .open{
+            padding: 10px 0;
+            background: linear-gradient(to left, rgb(93, 161, 255), rgb(249, 61, 255));
+            width: 90vw;
+            margin-left: calc(5vw - 10px);
+            position: fixed;
+            bottom: 80px;
+            text-align: center;
+            color: #fff;
+            border-radius: 50px;
+        }
+    </style>
+</head>
+<body>
+    <div id="view" v-cloak>
+        <div class="show">
+            <img src="../../image/safe.png" alt="">
+            <div class="tips"><div>开启青少年模式</div><div>将会获得以下服务</div></div>
+        </div>
+        <div class="list">
+            <div class="litem">
+                <img src="../../image/icon/icon_status_online.png" alt="">
+                <div>针对青少年推送精选优化的内容</div>
+            </div>
+            <div class="litem">
+                <img src="../../image/icon/icon_status_online.png" alt="">
+                <div>其他用户将无法通过搜索找到该账号</div>
+            </div>
+            <div class="litem">
+                <img src="../../image/icon/icon_status_online.png" alt="">
+                <div>限制使用充值功能</div>
+            </div>
+            <div class="litem">
+                <img src="../../image/icon/icon_status_online.png" alt="">
+                <div>每天限玩保护</div>
+            </div>
+        </div>
+        <div class="open">开启青少年模式</div>
+    </div>
+</body>
+</html>

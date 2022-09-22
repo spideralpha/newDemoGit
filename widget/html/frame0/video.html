@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/win.css">
+    <style>
+        .bg {
+            position: fixed;
+            background-color: #000;
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            background-position: center center;
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+        }
+
+        .img-bg {
+            position: fixed;
+            height: 100vh;
+            width: 100vw;
+            filter: blur(20px);
+        }
+
+        .tip-wrap {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            font-size: 14px;
+            z-index: 999;
+        }
+
+        .tip-wrap span {
+            color: #fff;
+            text-shadow: #000 0 2px 3px;
+            /* background: rgba(0, 0, 0, 0.5);
+        padding: 3px 10px; */
+        }
+
+        .tip-btn {
+            border: 1px solid;
+            color: #673AB7;
+            border-radius: 5px;
+            padding: 7px 15px;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <header>
+            <div class="head new-padding-10 flex-c">
+                <div class="back" tapmode onclick="_closeToWin()"></div>
+                <div class="title">观看视频</div>
+            </div>
+        </header>
+        <div class="bg">
+            <img :src="m.cover" alt="" class="img-bg">
+            <!-- <img src="../../image/test/01.jpg" alt="" class="img-bg"> -->
+            <div class="tip-wrap" v-if="m.type == 0">
+                <div v-if="vip == 0">
+                    <span>视频已焚毁<br>(会员可延长查看时间达6秒)</span>
+                    <br>
+                    <button class="tip-btn" onclick="openVIP();">马上升级会员</button>
+                </div>
+                <div v-else>
+                    <span>视频已焚毁<br>
+                </div>
+            </div>
+            <div class="tip-wrap" v-else>
+                <span v-if="m.burn > 0 && Number(m.packet)==0" @click="lookImg(0)">阅后即焚视频<br>点击查看</span>
+                <span v-if="m.burn == 0 && (Number(m.packet)>0 && m.see == 0)" @click="lookImg(1)">红包视频<br>点击查看</span>
+                <span v-if="m.burn > 0 && Number(m.packet)>0" @click="lookImg(2)">阅后即焚的红包视频<br>点击查看</span>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script src="../../script/video1.js"></script>
+<script>
+    var myuserid;
+    var touserid;
+    var vplay;
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            m: {},
+            vip: 0,
+            videoShow: 0, // 0不显示 1显示 2播放中
+        },
+        methods: {
+            // 查看图片
+            lookImg(type) {
+                var _this = this;
+                if (type == 0) {
+                    // 阅后即焚视频
+                    vplay.play({
+                        url: view.m.url
+                    })
+                    burnImg();
+                } else if (type == 1) {
+                    // 红包视频
+                    payImg(function () {
+                        _this.m.packet = 0;
+                        vplay.play({
+                            url: view.m.url
+                        })
+                    });
+                } else if (type == 2) {
+                    // 阅后即焚的红包视频
+                    payImg(function () {
+                        _this.m.packet = 0;
+                        vplay.play({
+                            url: view.m.url
+                        })
+                        burnImg();
+                    });
+                } else {
+                    vplay.play({
+                        url: view.m.url
+                    })
+                }
+            }
+        }
+    })
+
+    apiready = function () {
+        $api.fixStatusBar($api.dom('header'));
+        myuserid = $api.getStorage('userid');
+        touserid = api.pageParam['uid'] ? api.pageParam['uid'] : myuserid;
+        var burn=api.pageParam['burn'];
+        var packet=api.pageParam['packet'];
+        var see=api.pageParam['see']
+        var type=api.pageParam['type'];
+        if(myuserid==touserid){
+            burn=0;
+            packet=0;
+            see=0;
+            type=1;
+        }
+        vplay = new videoPlay();
+        view.m = {
+            id: api.pageParam['id'],
+            url: returnImg(api.pageParam['video']),
+            cover: returnImg(api.pageParam['cover']),
+            burn: burn,
+            packet: packet,
+            see: see,
+            type: type,
+        };
+        getUserInfo();
+        console.log(JSON.stringify(view.m))
+        // 免费视频 自动播放
+        if (!Number(view.m.burn) && (!Number(view.m.packet) || Number(view.m.packet) && view.m.see == 1)) {
+            vplay.play({
+                url: view.m.url
+            })
+        }
+    }
+
+
+    // 获取用户信息
+    function getUserInfo() {
+        _getUser(function (ret) {
+            view.vip = ret.result.is_vip;
+        })
+    }
+
+    // 焚毁照片
+    function burnImg(callback) {
+        var time = view.vip == 0 ? 2000 : 6000;
+        setTimeout(function () {
+            vplay.stop();
+            view.m.type = 0;
+        }, time)
+        _ajax('Home/User/burn', function (ret, err) {
+            console.log(JSON.stringify(ret));
+        }, {
+            user_id: touserid,
+            to_user: myuserid,
+            id: view.m.id,
+        })
+    }
+
+    // 付费
+    function payImg(callback) {
+        var data = {
+            user_id: touserid,
+            to_user: myuserid,
+            img_id: view.m.id,
+            price: view.m.packet,
+        };
+        var obj = {
+            msg: '该视频的价格为' + view.m.packet + '平台币，请确认您的操作。',
+        }
+        _confirm(obj, function (bIndex) {
+            if (bIndex == 1) {
+                _ajax('Home/User/packetimg', function (ret) {
+                    console.log(JSON.stringify(ret));
+                    if (ret.code == 200) {
+                        _msg('支付成功，眼睛不要离开屏幕，视频马上出来~');
+                        if (typeof callback == 'function') {
+                            callback();
+                        }
+                    } else {
+                        _msg(ret.msg);
+                    }
+                }, data)
+            }
+        })
+    }
+</script>
+
+</html>

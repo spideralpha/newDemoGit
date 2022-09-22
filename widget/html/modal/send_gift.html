@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>小火苗</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/aui_font.css">
+    <style>
+        html,
+        body {
+            background: transparent;
+        }
+
+        .base-icon {
+            width: 15px;
+            height: 15px;
+            display: inline-block;
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+        }
+
+        .base-icon.coin-icon {
+            background-image: url('../../image/icon/m6.png');
+        }
+
+        .wrap-bg {
+            position: fixed;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .wrap {
+            width: 80vw;
+            border-radius: 10px;
+            overflow: hidden;
+            background: #fff;
+            text-align: center;
+        }
+
+        .top {
+            position: relative;
+        }
+
+        .top .top-bg {
+            width: 100%;
+        }
+
+        /* 礼物 */
+        .gift-img {
+            position: absolute;
+            width: 40%;
+        }
+
+        /* 关闭 */
+        .aui-icon-close {
+            color: #fff;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 50%;
+            padding: 5px;
+            position: absolute;
+            right: 10px;
+            top: 5px;
+        }
+
+        .gift-name {
+            margin: 15px 0;
+            font-weight: bold;
+        }
+
+        .price {
+            font-size: 12px;
+        }
+
+        /* 数量 */
+        .num-wrap {
+            border: 1px solid #ddd;
+            padding: 5px 10px;
+            box-sizing: border-box;
+            border-radius: 3px;
+            width: 50%;
+            margin: 15px 25%;
+            font-size: 12px;
+        }
+
+        .num-wrap .aui-icon-down {
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <div class="wrap-bg flex-c">
+            <div class="wrap">
+                <div class="top flex-c">
+                    <img class="top-bg" src="../../image/icon/ms_gift_open.png" alt="">
+                    <!-- <img class="gift-img" src="../../image/gift.png" alt=""> -->
+                    <img class="gift-img" :src="returnImg(ffInfo.cover)" onerror="this.src='../../image/error-img.png'" alt="">
+                    <i class="aui-iconfont aui-icon-close" onclick="api.closeFrame();"></i>
+                </div>
+                <p class="gift-name">{{ffInfo.name}}</p>
+                <div class="price flex-c">
+                    <i class="base-icon coin-icon"></i>
+                    <span style="margin-left: 5px;color: orange;">{{ffInfo.price*num}}金币<span style="color: #aaa;">(亲密度+{{ffInfo.price*num}}°C)</span></span>
+                </div>
+                <div class="num-wrap flex-bt" onclick="selectNum()">
+                    <i class="aui-iconfont aui-icon-down"></i>
+                    <span style="width: 70%;text-align: center;">送{{num}}个</span>
+                </div>
+                <div class="flex-c">
+                    <button class="new-btn" style="margin-bottom: 10px;" onclick="sendGift()">{{btn}}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {
+                price: 0
+            },
+            ios: 1, // 1上架 0非上架
+            touserid: '',
+            myid: 0,
+            num: 1,
+            fa: 0, // 聊天中点开 fa为原礼物的发送方
+            btn: '送出'
+        },
+        methods: {
+            // 跳转
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+        }
+    })
+    apiready = function() {
+        var data = api.pageParam['data'];
+        view.touserid = api.pageParam['touid']
+        view.fa = api.pageParam['fa'] || 0;
+
+        // 在他人详情页的礼物列表跳转至此处
+        if (api.pageParam['giftbox'] == 1) {
+            view.btn = '我也要送';
+        }
+
+        if (view.fa) {
+            view.btn = view.fa == view.touserid ? '回赠' : '继续送';
+            data.price = data.money / data.num;
+            data.gift_id = data.id;
+        }
+        if (!data.gift_id && data.id) {
+            data.gift_id = data.id;
+        }
+
+        data.price = parseInt(data.price);
+        view.ffInfo = data;
+        console.log(JSON.stringify(data))
+    }
+
+    // 选择数量
+    function selectNum() {
+        var buttons = ['1 (一心一意)', '10 (十全十美)', '30 (想你...)', '66 (一切顺利)', '188 (要抱抱)', '520 (我爱你)', '1314 (一生一世)', '其他数量'];
+        var numArr = [1, 10, 30, 66, 188, 520, 1314];
+        _action('选择数量', buttons, function(bIndex) {
+            if (bIndex != buttons.length + 1) {
+                if (bIndex == buttons.length) {
+                    // 其他数量
+                    inputOtherNum();
+                } else {
+                    view.num = numArr[bIndex - 1];
+                }
+            }
+        })
+    }
+
+
+    // 填写其他数量
+    function inputOtherNum() {
+        _prompt({
+            msg: '请输入数量',
+            type: 'number'
+        }, function(num) {
+            if (num != 0 && !isNaN(num)) {
+                view.num = num;
+            }
+        })
+    }
+
+
+    // 赠送礼物
+    function sendGift() {
+        _loading();
+        _ajax('home/Privatechat/addTalk', function(ret, err) {
+            _loadingClose();
+            if (ret && ret.code == 400) {
+                _msg(ret.msg);
+            } else {
+                _msg('赠送成功');
+                _send('updateGift');
+                setTimeout(function() {
+                    api.closeFrame();
+                }, 1000)
+            }
+        }, {
+            id: view.ffInfo.gift_id,
+            ways: 1,
+            type: 8,
+            userid: $api.getStorage('userid'),
+            touserid: view.touserid,
+            num: view.num
+        })
+    }
+</script>
+
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/aui_font.css">
+    <link rel="stylesheet" href="../../css/win.css">
+    <link rel="stylesheet" href="../../css/liao_win.css">
+
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <header>
+            <div class="head new-padding-10 flex-c">
+                <div class="back" tapmode onclick="_close()"></div>
+                <div class="title">@我的</div>
+            </div>
+        </header>
+        <!-- 聊天背景 -->
+        <div class="ltbg">
+            <img id="ltbg" :src="returnImg(head)" onerror="this.src='../../image/touxiang.png'" alt="">
+        </div>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+            head: '', // 头像
+            score: 0,
+            myHead: '',
+            title: '',
+            touserid: '',
+
+            qunType: 1, // 1 家乡 2 群聊
+        },
+        methods: {
+            // 跳转
+            _url: function(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg: function(url) {
+                return returnImg(url);
+            },
+            showDetail: function(url, data, topH, footerH) {
+                showDetail(url, data, topH, footerH);
+            },
+        }
+    })
+    var moreType = 0;
+    apiready = function() {
+        view.head = api.pageParam['bg'];
+        view.touserid = api.pageParam['touserid'];
+        $api.fixStatusBar($api.dom('header'));
+        api.pageParam.frmBg = 0; // frame背景设为透明
+
+        api.pageParam.qunType = api.pageParam['qunType'];
+        _openFrame('frame0/qunliao_findme', '', '1', api.pageParam);
+    }
+
+    // 关闭
+    function _close() {
+        _closeToWin();
+    }
+</script>
+
+</html>

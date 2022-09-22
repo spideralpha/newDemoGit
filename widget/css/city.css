@@ -1,0 +1,107 @@
+#city-view .bg {
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+#city-view .city-wrap {
+    background: #fff;
+    width: 100vw;
+    /* position: fixed;
+    bottom: 0;
+    left: 0; */
+}
+
+#city-view .city-wrap .li {
+    line-height: 20px;
+    border-bottom: 1px solid #eee;
+    padding: 10px;
+    font-size: 14px;
+    text-align: center;
+}
+
+#city-view .city-wrap ul .li:last-child {
+    border-bottom: 0;
+}
+
+#city-view .city-wrap .left {
+    width: 30vw;
+    overflow-y: auto;
+    height: 100vh;
+    border-right: 1px solid #eee;
+    box-sizing: border-box;
+}
+
+#city-view .city-wrap .left.padding {
+    padding-bottom: 60px;
+}
+
+#city-view .city-wrap .right {
+    width: 35vw;
+    overflow-y: auto;
+    height: 100vh;
+    box-sizing: border-box;
+}
+
+#city-view .city-wrap .right ul.padding {
+    padding-bottom: 60px;
+}
+
+#city-view .city-wrap ul .li.active {
+    color: #F46CEF;
+    /* font-weight: bold; */
+}
+
+#city-view .city-wrap .left .li.active {
+    background: #F46CEF;
+    color: #fff;
+}
+
+/* 按钮 */
+#city-view .btn-wrap {
+    border-bottom: 1px solid #eee;
+}
+
+#city-view .btn-wrap .btn {
+    color: #F46CEF;
+    font-size: 14px;
+}
+
+/* 选中的城市 */
+#city-view .select-wrap {
+    position: fixed;
+    bottom: 0;
+    width: 100vw;
+    z-index: 2;
+    background: #fff;
+    display: flex;
+    overflow-x: auto;
+}
+
+#city-view .select-wrap .tag {
+    border: 1px solid;
+    color: #fff;
+    background: #F46CEF;
+    font-size: 12px;
+    padding: 2px 10px;
+    border-radius: 5px;
+    margin: 10px 5px;
+    position: relative;
+    word-break: keep-all;
+}
+
+#city-view .select-wrap .tag::after {
+    display: inline-block;
+    content: '';
+    background-image: url('../image/icon/delete.png');
+    background-repeat: no-repeat;
+    width: 15px;
+    height: 15px;
+    background-size: 100%;
+    position: absolute;
+    top: -7px;
+    right: -7px;
+}

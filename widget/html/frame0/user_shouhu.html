@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>小火苗</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/aui_font.css">
+    <link rel="stylesheet" href="../../css/uinfo.css">
+    <style>
+        .wrap {
+            position: relative;
+        }
+
+        .bg-wrap {
+            width: 100vw;
+            position: fixed;
+            top: 0;
+            overflow: hidden;
+            left: 0;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .tx-bg {
+            width: 100vw;
+            filter: blur(10px);
+            transform: scale(1.5);
+            object-fit: none;
+        }
+
+        #fx-header .title {
+            opacity: 1;
+            color: #fff;
+            line-height: 45px;
+            font-size: 16px;
+        }
+
+        .top {
+            position: relative;
+            padding-top: 10vh;
+        }
+
+        .user-wrap {
+            text-align: center;
+        }
+
+        .shouhu-wrap {
+            position: static;
+        }
+
+        .username {
+            justify-content: center;
+            color: #fff;
+            font-size: 14px;
+            font-weight: normal;
+        }
+
+        .sh-btn {
+            text-align: center;
+            background: linear-gradient(to right, #F9D1A6, #f5bc7f);
+            color: #FF681C;
+            line-height: 2;
+            padding: 0 30px;
+            border-radius: 20px;
+            box-shadow: 0 2px 4px #000;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <div class="bg-wrap ">
+            <img class="tx-bg" src="../../image/test/03.jpg" alt="">
+        </div>
+        <div class="wrap">
+            <header id="fx-header">
+                <div class="head flex-c">
+                    <div class="back" tapmode onclick="_closeToWin()"><i class="aui-iconfont aui-icon-left"></i></div>
+                    <div class="title">守护</div>
+                    <div class="more" tapmode onclick="_more()"><i class="aui-iconfont aui-icon-question"></i></div>
+                </div>
+            </header>
+            <!-- 守护 弹窗-->
+            <div class="shouhumodal" v-show="showshouhu">
+                <div class="shouhubox">
+                    <div class="tx-wrap">
+                        <img :src="returnImg(data.head_portrait)" onerror="this.src='../../image/touxiang.png'" alt="">
+                        <img v-if="data.angel" class="sh-tx" :src="returnImg(data.angel_avatar)" onerror="this.src='../../image/touxiang.png'" alt="">
+                    </div>
+                    <div class="name">{{data.name}}</div>
+                    <div class="text">赠送{{data.angel_min}}金币以上的礼物，就能成为TA的守护天使</div>
+                    <div class="btn shouhu" @click="_url({touid: touserid}, 'frame0/gift_win')">立即守护TA</div>
+                    <div class="btn cancel" @click="showshouhu = false">默默离开</div>
+                </div>
+            </div>
+            <div class="top">
+                <div class="shouhu-wrap">
+                    <div class="sh-bg">
+                        <div class="tx">
+                            <img v-if="data.angel" :src="returnImg(data.angel_avatar)" onerror="this.src='../../image/touxiang.png'" alt="">
+                            <img v-else src="../../image/man/ms_details_angel_bj.png" alt="">
+                        </div>
+                        <div class="sh-bottom">
+                            <img src="../../image/man/ms_details_angel_label_level.png" alt="">
+                            <span v-if="data.angel">Lv{{data.angel_grade}} {{data.angel_name}}</span>
+                            <span v-else>守护TA</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="user-wrap">
+                    <div class="username">{{data.name}} <span class="boy-tag" :class="{'girl-tag':data.sex == '女'}">{{data.age}}</span> </div>
+                    <div class="username">已守护：3天 亲密度：17°C</div>
+                    <button class="sh-btn">换我来守护她</button>
+                </div>
+            </div>
+            <ul class="sh-ul">
+                <li class="list flex-bt" v-for="(m, index) in data.defends">
+                    <i class="angel-icon" v-if="index==0 && m.angel ==1"></i>
+                    <i class="angel-icon angel-orange-icon" v-if="index==0 && m.angel ==0"></i>
+                    <div class="user">
+                        <div class="tx">
+                            <img :src="returnImg(m.head_100)" onerror="this.src='../../image/touxiang.png'" alt="">
+                        </div>
+                        <div class="detail">
+                            <p class="name" style="margin-bottom:7px;">{{m.name}}</p>
+                            <div class="time"><span>亲密度：{{m.intimate}}°C</span><span v-if="m.days">已守护：{{m.days}}天</span>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script src="../../json/user.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+
+            data: userJson.result,
+            showshouhu: false,
+        },
+        methods: {
+            // 跳转
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+        }
+    })
+</script>
+
+</html>

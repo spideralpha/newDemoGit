@@ -1,0 +1,167 @@
+html,
+body {
+    background: transparent;
+}
+
+#view {
+    padding: 50px 20px;
+}
+
+.wrap {
+    background: #CD1757;
+    width: 100%;
+    border-radius: 20px;
+    overflow: hidden;
+    position: relative;
+}
+
+.img {
+    width: 100%;
+}
+
+.text {
+    color: #fdc946;
+}
+
+.top {
+    position: relative;
+}
+
+.top .text {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    bottom: 15px;
+    font-size: 14px;
+}
+
+.close-icon {
+    background-image: url('../image/zhibo/advert_window_close.png');
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 35px;
+    height: 35px;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    z-index: 1;
+}
+
+/* 排行榜列表 */
+.rank-ul {
+    margin: 0 10px;
+    background: #fff5ca;
+    border: #fdd846 solid 4px;
+    border-radius: 7px;
+}
+
+.rank-ul .list {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #dfce89;
+    margin: 0 10px;
+    padding: 10px 0;
+    position: relative;
+}
+
+.rank-ul .list:last-child {
+    border: none;
+}
+
+.rank-ul .list .content {
+    display: flex;
+    align-items: center;
+}
+
+.rank-ul .sort {
+    font-size: 14px;
+    color: #4b1074;
+    text-align: center;
+    background: #e5dcb5;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.rank-ul .sort-icon {
+    background-image: url('../image/zhibo/mvp_1.png');
+    background-position: center;
+    background-size: 100%;
+    background-repeat: no-repeat;
+    width: 20px;
+    height: 20px;
+}
+
+.rank-ul .sort-icon1 {
+    background-image: url('../image/zhibo/mvp_2.png');
+}
+
+.rank-ul .sort-icon2 {
+    background-image: url('../image/zhibo/mvp_3.png');
+}
+
+.rank-ul .tx {
+    border-radius: 50%;
+    margin: 0 10px;
+    width: 65px;
+    height: 65px;
+}
+
+.rank-ul .num {
+    color: #f64541;
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+
+.zhibo::after {
+    display: inline-block;
+    content: '';
+    background-image: url('../image/zhibo/mvp_live.png');
+    background-size: auto 100%;
+    width: 61px;
+    height: 20px;
+    position: absolute;
+    right: 0px;
+    top: 0;
+}
+
+/* mvp */
+.mvp-wrap {
+    position: relative;
+    margin-bottom: 50px;
+}
+
+.mvp-wrap .mvp-hat {
+    width: 80%;
+
+}
+
+.mvp-wrap .mvp-sort {
+    width: 50%;
+    margin-top: -40px;
+    z-index: 1;
+}
+
+.mvp-wrap .tx {
+    width: 128px;
+    height: 128px;
+    border-radius: 50%;
+    border: #fee341 solid 3px;
+    margin: 0;
+    position: absolute;
+
+}
+
+/* 规则 */
+.guize {
+    padding: 10px;
+}
+
+.guize * {
+    color: #fdc946;
+}

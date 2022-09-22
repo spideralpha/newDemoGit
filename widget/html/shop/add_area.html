@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <style>
+        .wrap .list {
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+            padding: 10px 0;
+            line-height: 30px;
+        }
+
+        .wrap .list input {
+            width: 100%;
+            outline: none;
+        }
+
+        .wrap .list .content {
+            width: 100%;
+            outline: none;
+            -webkit-user-select: text;
+            -webkit-touch-callout: default;
+            -webkit-user-select: text;
+            -khtml-user-select: text;
+            -moz-user-select: text;
+            -ms-user-select: text;
+            user-select: text;
+        }
+
+        .wrap .list .content .placeholder {
+            font-size: 14px;
+            color: #757575;
+        }
+
+        .wrap .list .default {
+            border: 1px solid #ddd;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+        }
+
+        .wrap .list .default.active {
+            background-image: url('../../image/select3.png');
+            background-repeat: no-repeat;
+            background-size: 20px 20px;
+            background-position: center center;
+        }
+
+        .submit {
+            width: 80vw;
+            line-height: 40px;
+            background: #d43d3d;
+            color: #fff;
+            border-radius: 20px;
+            margin: 20px 10vw;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+
+        <ul class="wrap new-margin-lr-10">
+            <li class="list receiver">
+                <input type="text" placeholder="填写收货人" v-model="ffInfo.receiver">
+            </li>
+            <li class="list mobile">
+                <input type="text" placeholder="填写联系方式" v-model="ffInfo.mobile">
+            </li>
+            <li class="list city" onclick="selectCity()">
+                <input type="text" placeholder="选择地区" readonly v-model="ffInfo.area">
+            </li>
+            <li class="list address" v-if="!ffInfo.address">
+                <div class="content" contenteditable="true">
+                    <span class="placeholder">填写详细地址</span>
+                </div>
+            </li>
+            <li class="list address" v-else>
+                <div class="content" contenteditable="true">{{ffInfo.address}}
+                </div>
+            </li>
+            <li class="list flex-bt" onclick="changeDefault();">
+                <span>设为默认地址</span>
+                <span class="default" :class="{'active': ffInfo.is_default==1}"></span>
+            </li>
+        </ul>
+        <button class="new-submit" tapmode onclick="submit()" v-if="!id">确定添加</button>
+        <button class="new-submit" tapmode onclick="submit()" v-else>确定修改</button>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/city.js"></script>
+<script src="../../script/vue.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            id: 0,
+        },
+        methods: {
+            _url(param, url) {
+                _url(param, url);
+            },
+        }
+    })
+    apiready = function () {
+        view.ffInfo = api.pageParam['data'] || {};
+        view.id = api.pageParam['id'];
+    }
+
+    // 设置默认地址
+    function changeDefault() {
+        $('.default').toggleClass('active');
+    }
+
+    // 隐藏 占位符
+    $('.content').on('click', function () {
+        $('.placeholder').remove();
+    })
+
+    // 提交
+    function submit() {
+        var receiver = $.trim($('.receiver input').val());
+        var mobile = $.trim($('.mobile input').val());
+        var city = $.trim($('.city input').val());
+        var address = $.trim($('.address .content').text());
+        var is_default = $('.default').hasClass('active') ? 1 : 0;
+        if (!receiver || !mobile || !city || $('.address .content .placeholder').length != 0 || !address) {
+            _msg('请填写所有信息');
+            return;
+        }
+        var obj = {
+            receiver: receiver,
+            mobile: mobile,
+            area: city,
+            address: address,
+            is_default: is_default,
+            uid: $api.getStorage('userid'),
+        }
+        if (view.id) {
+            obj.id = view.id;
+        }
+        _loading();
+        _ajax('api/mall.member/updateAddress', function (ret, err) {
+            console.log(JSON.stringify(ret))
+            console.log(JSON.stringify(err))
+            var msg = ret.ret ? ret.ret : ret.err;
+            _loadingClose();
+            _msg(msg);
+            if (ret.ret) {
+                timerWin();
+            }
+        }, obj)
+    }
+</script>
+
+</html>

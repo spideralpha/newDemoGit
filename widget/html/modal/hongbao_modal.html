@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>小火苗</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/modal.css">
+    <style>
+        .modal {
+            width: 60vw;
+            box-sizing: border-box;
+            background-color: #E03D35;
+            border-radius: 10px;
+            min-height: 80vw;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        .hb-btn {
+            width: 20%;
+            margin-top: -50px;
+        }
+
+        .name {
+            position: absolute;
+            color: orange;
+            top: 20%;
+            width: 100%;
+            text-align: center;
+        }
+
+        .money {
+            text-align: center;
+        }
+
+        .money .price {
+            color: #fff;
+            font-size: 40px;
+            font-weight: normal;
+        }
+
+        .money .danwei {
+            color: #fff;
+            font-size: 14px;
+        }
+
+        .money .tip {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 10px;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <div class="modal-bg" onclick="_close()">
+            <div class="modal" @click.stop @click="click=1">
+                <img class="img-bg" src="../../image/modal/ms_live_hongbao_bak_big.9.png" alt="">
+                <p class="name">{{ffInfo.title}}</p>
+                <img class="hb-btn" v-if="!click" src="../../image/modal/ms_live_hongbao_open_icon.png" alt="">
+                <div class="money" v-else>
+                    <h3 class="price">{{ffInfo.money}}</h3>
+                    <p class="danwei">金币</p>
+                    <p class="tip">{{ffInfo.msg}}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+            click: 1
+        },
+        methods: {
+            // 跳转
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+        }
+    })
+    apiready = function() {
+        view.ffInfo = api.pageParam;
+        // console.log(JSON.stringify(view.ffInfo))
+    }
+
+    // 
+    function _close() {
+        if (!view.click) {
+            _msg(view.ffInfo.msg);
+            setTimeout(function() {
+                api.closeFrame();
+            }, 500)
+        } else {
+            api.closeFrame();
+        }
+    }
+</script>
+
+</html>

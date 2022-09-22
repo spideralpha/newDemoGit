@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>小火苗</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/swiper.css">
+    <script src="../../script/swiper.js"></script>
+    <style>
+        html,
+        body {
+            background: #f3f3f3;
+        }
+
+        /* 轮播 */
+        .swiper-container {
+            overflow: hidden;
+        }
+
+        .swiper-slide img {
+            width: 100%;
+            height: 50vw;
+        }
+
+        /* 分页器 */
+        .swiper-pagination-fraction,
+        .swiper-pagination-custom,
+        .swiper-container-horizontal>.swiper-pagination-bullets {
+            position: absolute;
+            right: 10px;
+            width: auto;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            font-size: 12px;
+            justify-content: center;
+            bottom: 10px;
+            left: auto;
+        }
+
+        .swiper-pagination-bullet {
+            width: 4px;
+            height: 4px;
+        }
+
+        #fx-footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: #fff;
+            z-index: 2;
+        }
+
+        #fx-footer .footer img {
+            width: 30px;
+            margin: 0 10px;
+        }
+
+        #fx-footer .footer .new-btn {
+            margin: 0 10px;
+        }
+
+        /* 商品标题 */
+        .title-wrap {
+            /* padding: 20px 10px; */
+
+            /* margin-top: -20px; */
+            position: absolute;
+            width: 100%;
+            margin-top: -10px;
+            z-index: 2;
+            margin-bottom: 70px;
+
+        }
+
+        .title-wrap .price {
+            /* border-radius: 10px 10px 0 0; */
+            /* background: linear-gradient(to right, #FFEB3B, #FF5722); */
+            background: #ff4852;
+            padding: 20px 10px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .title-wrap .price del {
+            font-size: 15px;
+            font-weight: normal;
+            color: #ddd;
+        }
+
+        .title-wrap .title {
+            background: #fff;
+            padding: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            line-height: 1.5;
+        }
+
+        /* 商品详情 */
+        .title-wrap .name {
+            padding: 15px 0;
+            text-align: center;
+        }
+
+        .title-wrap .shop-detail {
+            background: #f3f3f3;
+        }
+
+        .title-wrap .shop-detail img {
+            width: 100%;
+        }
+
+        footer .btn {
+            width: 100%;
+            color: #fff;
+            background: #aaa;
+            line-height: 45px;
+        }
+
+        footer .buy-btn {
+            background: orangered;
+
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <div class="wrap">
+            <div class="m-swiper">
+                <div class="swiper-container">
+                    <div class="swiper-wrapper">
+                        <div class="swiper-slide" v-for="(m, index) in lbList">
+                            <img :src="m">
+                        </div>
+                        <!-- <div class="swiper-slide">
+                            <img src="../../image/test/01.png">
+                        </div> -->
+                    </div>
+                    <!-- Add Pagination -->
+                    <div class="swiper-pagination"></div>
+                    <!-- Initialize Swiper -->
+                </div>
+            </div>
+            <div class="title-wrap">
+                <div class="price">{{ gList.price }}积分
+                    <!--<del>￥{{ g.price }}</del>-->
+                </div>
+                <div class="title">
+                    {{ gList.name }}</div>
+                <div class="shop-detail">
+                    <div class="name">商品详情</div>
+                    <div class="img-wrap" v-html="gList.detail">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer id="fx-footer">
+            <div class="footer flex">
+                <!-- <button class="btn" onclick="addCart()">加入购物车</button> -->
+                <button class="btn buy-btn" onclick="submit()">立即购买</button>
+                <!-- <button class="btn buy-btn">立即购买</button> -->
+            </div>
+        </footer>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            lbList: [], // 轮播列表
+            gList: {}, // 商品详情
+            id: 0, // 商品id
+            ios: 1, // 1上架 0非上架
+        },
+        methods: {
+            _url(param, url, login) {
+                _url(param, url, login);
+            },
+            
+        }
+    })
+
+    apiready = function() {
+        view.ios = $api.getStorage('shang');
+        view.id = api.pageParam['id'];
+        $api.fixTabBar($api.byId('fx-footer'));
+        getgoods()
+    }
+
+    // 获取商品详情
+    function getgoods() {
+        _ajax('api/mall.goods/goodsDetail', function(ret, err) {
+            console.log(JSON.stringify(ret))
+            console.log(JSON.stringify(err))
+            if (ret && ret.ret) {
+                ret = ret.ret;
+                var reg = new RegExp('/public/uploads', 'ig');
+                if (ret.detail) {
+                    ret.detail = ret.detail.replace(reg, imgurl + '/public/uploads');
+                    // ret.detail = ret.detail.replace(reg, 'http://www.youdingb.com/public/uploads');
+                }
+                view.gList = ret;
+                console.log(ret.detail)
+                if (ret.slider_image) {
+                    // var arr = JSON.parse(ret.slider_image);
+                    // var brr = [];
+                    // for (var i = 0, len = arr.length; i < len; i++) {
+                    //     brr.push(imgurl + arr[i]);
+                    // }
+                    view.lbList = ret.slider_image;
+                } else {
+                    view.lbList = [ret.image];
+                }
+
+                setTimeout(function() {
+                    var swiper = new Swiper('.swiper-container', {
+                        loop: true,
+                        pagination: {
+                            el: '.swiper-pagination',
+                            clickable: true,
+                        },
+                        autoplay: {
+                            delay: 3000,
+                            stopOnLastSlide: false,
+                            disableOnInteraction: true,
+                        },
+                    });
+                }, 1000)
+            }
+        }, {
+            goods_id: view.id
+        })
+    }
+
+    // 联系客服
+    function openService() {
+        _ajax('api/config/index/title/id', function(ret, err) {
+            if (ret && ret.data && ret.data.id) {
+                _url({
+                    touserid: ret.data.id,
+                    title: '与客服的聊天',
+                    moreType: 1,
+                }, 'frame0/liaotian_win')
+            } else {
+                _msg('暂无法联系客服');
+            }
+        })
+    }
+
+    // 添加购物车
+    function addCart() {
+        if (!$api.getStorage('userid')) {
+            _login();
+            return;
+        }
+        _ajax('api/mall.member/addCart', function(ret, err) {
+            console.log(JSON.stringify(ret))
+            console.log(JSON.stringify(err))
+            var msg = ret.ret ? ret.ret : ret.err;
+            _msg(msg);
+        }, {
+            goods_id: view.id,
+            uid: $api.getStorage('userid'),
+            num: 1
+        })
+    }
+
+    function submit() {
+        var toid = api.pageParam['toid'];
+        if (!toid) {
+            _url({
+                url: 'shop/pay',
+                title: '确认订单',
+                id: view.id
+            }, '', true)
+        } else {
+            var obj = {
+                msg: '该礼物将赠送给ID为' + toid + '的用户',
+                btn: ['确定购买'],
+            }
+            _confirm(obj, function(bIndex) {
+                if (bIndex == 1) {
+                    var obj = {
+                        goods_id: view.id,
+                        num: 1,
+                        gateway: 1,
+                        uid: $api.getStorage('userid'),
+                        to_user: toid
+                    }
+                    console.log(JSON.stringify(obj))
+                    _loading();
+                    _ajax('api/mall.goods/directCreateOrder', function(ret, err) {
+                        console.log(JSON.stringify(ret))
+                        console.log(JSON.stringify(err))
+                        var msg = ret.ret ? '购买成功' : ret.err;
+                        _loadingClose();
+                        _msg(msg);
+                        if (ret && ret.ret) {
+                            timerWin();
+                        }
+                    }, obj)
+                }
+            })
+        }
+    }
+</script>
+
+</html>

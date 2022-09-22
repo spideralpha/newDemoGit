@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>小火苗</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <style>
+        #fx-footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: #fff;
+        }
+
+        #fx-footer .area {
+            margin: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- <footer id="fx-footer">
+        <div class="area"> </div>
+    </footer> -->
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/map.js"></script>
+<script>
+    var map;
+    apiready = function() {
+        var content = api.pageParam['area'];
+        // var content = '113.370223,23.024604';
+        console.log(content);
+        content = content.split(',');
+        var data = {
+            lon: content[0],
+            lat: content[1]
+        };
+        map = new Map();
+        map.getAddress(data.lon, data.lat, function(ret, err) {
+            console.log(JSON.stringify(ret))
+            console.log(JSON.stringify(err))
+            // var area = ret.province + '/' + ret.city
+            // $('.area').text(area);
+        })
+        map.open(data, function(rets) {
+            map.point(data)
+        });
+
+    }
+</script>
+
+</html>

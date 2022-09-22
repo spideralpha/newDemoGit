@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/aui_font.css">
+    <link rel="stylesheet" href="../../css/base_icon.css">
+    <style>
+        html,body{
+            margin: 0;
+            background-color: rgb(250, 250, 250);
+        }
+        header{
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            width: 100vw;
+            padding: 0 8vw;
+            box-sizing: border-box;
+            position: sticky;
+            top:0;
+            background-color: rgb(250, 250, 250);
+            z-index: 1;
+        }
+        header .hitem{
+            width: 46%;
+            text-align: center;
+            color: #B3B3B3;
+            font-weight: 500;
+            position: relative;
+            padding: 16px 0;
+        }
+        header .hitem span{
+            color: #B3B3B3;
+            font-size: 12px;
+        }
+        header .hitem.active{
+            color: #333;
+        }
+        header .hitem.active span{
+            color: #333;
+        }
+        header .hitem.active::after{
+            content:'';
+            width: 30px;
+            height: 4px;
+            background: linear-gradient(-25deg, #FA97F9, #FF9BBE);
+            border-radius: 4px;
+            position: absolute;
+            left: calc(50% - 15px);
+            bottom: 8px;
+        }
+        .list{
+            padding: 10px 16px;
+        }
+        .list .item{
+            padding: 8px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .list .item .left{
+            display: flex;
+            align-items: center;
+        }
+        .list .item .left .image{
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin-right: 10px;
+        }
+        .list .item .left .image img{
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .list .item .left .image img.filter{
+            filter: blur(10px);
+        }
+        .list .item .left .info{}
+        .list .item .left .info .title{
+            font-weight: 500;
+            color: #333333;
+            font-size: 14px;
+        }
+        .list .item .left .info .time{
+            font-weight: 500;
+            color: #999999;
+            font-size: 12px;
+            margin-top: 6px;
+        }
+        .list .item .right{
+            font-size: 12px;
+            font-weight: 500;
+            color: #333333;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <header>
+            <div class="hitem" @click="hindex = 0" :class="{active: hindex == 0}">谁看过我<span>（26）</span></div>
+            <div class="hitem" @click="hindex = 1" :class="{active: hindex == 1}">我看过谁</div>
+        </header>
+        <div class="list">
+            <div class="item" v-for="(item, index) in 20">
+                <div class="left">
+                    <div class="image">
+                        <img class="filter" src="../../image/touxiang.png" alt="">
+                    </div>
+                    <div class="info">
+                        <div class="title">一位90后的女生</div>
+                        <div class="time">最近访问：9分钟前</div>
+                    </div>
+                </div>
+                <div class="right">1次</div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            hindex: 0,
+            imgurl: imgurl,
+            ffList: [],
+            ios: 1, // 1上架 0非上架
+        },
+        methods: {
+            // 跳转 查看用户详情
+            goUserInfo(data) {
+                go_userInfo(data.user_id, data.user_name, data.user_sex)
+            },
+            // 更多
+            _more(index) {
+                var _this = this;
+                var buttons = ['清除全部'];
+                _action('', buttons, function (bIndex) {
+                    if(bIndex!=buttons.length+1){
+                    }
+                })
+            },
+            _url(param, url) {
+                _url(param, url);
+            },
+            
+        }
+    })
+
+    apiready = function () {
+        view.ios = $api.getStorage('shang');
+        isVip();
+        var param = {
+            user_id: $api.getStorage('userid')
+        };
+        // _shangla(function () {
+        //     _lists('home/Dymanic/myattention', 1, 1, param);
+        // })
+
+        // _scrollToBottom(function () {
+        //     if (heigutgao == 1) {
+        //         pagenum++;
+        //         _lists('home/Dymanic/myattention', pagenum, '', param);
+        //     }
+        // })
+
+    }
+</script>
+
+</html>

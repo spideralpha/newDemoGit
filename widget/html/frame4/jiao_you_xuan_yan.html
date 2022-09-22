@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>小火苗</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/aui_font.css">
+    <style>
+        html,
+        body {
+            background: #f3f3f3;
+        }
+
+        .container {
+            padding: 15px;
+            margin: 15px;
+            border-radius: 10px;
+            background: #fff;
+            font-size: 14px;
+        }
+
+        .container .title {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .change-wrap i {
+            font-weight: bold;
+            color: #000;
+            margin-right: 5px;
+            font-weight: 16px;
+        }
+
+        .base-icon {
+            width: 65px;
+            height: 65px;
+            display: inline-block;
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+        }
+
+        .start-icon {
+            background-image: url('../../image/icon/icon_voice_start.png');
+        }
+
+        .stop-icon {
+            background-image: url('../../image/icon/icon_voice_stop.png');
+        }
+
+        .play-icon {
+            background-image: url('../../image/icon/icon_voice_play.png');
+        }
+
+        .pause-icon {
+            background-image: url('../../image/icon/icon_voice_pause.png');
+        }
+
+        .ok-icon {
+            background-image: url('../../image/icon/icon_voice_done.png');
+        }
+
+        .reload-icon {
+            background-image: url('../../image/icon/icon_voice_reload.png');
+        }
+
+        .luyin-wrap {
+            margin-top: 50px;
+        }
+
+        .tip {
+            font-size: 14px;
+            text-align: center;
+            color: #757575;
+            margin-top: 50px;
+        }
+
+        .luyin-container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+        }
+
+        .reload {
+            margin: 0 30px;
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            justify-content: center;
+            font-size: 12px;
+
+        }
+
+        .reload span {
+            color: #757575;
+        }
+
+        .reload i {
+            width: 30px;
+            height: 30px;
+            margin-bottom: 5px;
+        }
+
+        .time-wrap {
+            margin-bottom: 20px;
+        }
+
+        .time-wrap .time {
+            margin: 0 10px;
+            color: #F46CEF;
+            background: #f3f3f3;
+        }
+
+        .time-wrap img {
+            height: 14px;
+        }
+
+        .time-wrap img.reserve {
+            transform: rotateY(180deg);
+        }
+
+        .audio-bg {
+            height: 17px;
+            width: 80px;
+        }
+
+        .tip-content {
+            font-family: -apple-system, BlinkMacSystemFont, 微软雅黑, "PingFang SC", Helvetica, Arial, "Hiragino Sans GB", "Microsoft YaHei", SimSun, 宋体, Heiti, 黑体, sans-serif;
+            font-size: 11px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <div class="wrap">
+            <div class="container">
+                <p class="title" v-if="ffInfo.channel==1">读一段话</p>
+                <p class="title" v-else>唱一段歌词</p>
+                <div class="text" v-html="ffInfo.content">
+                    <!-- 总有一个人<br>
+                    老是跟你过不去<br>
+                    你却很想跟他过下去<br> -->
+                </div>
+                <div class="change-wrap flex-c" style="margin-top: 80px;" onclick="changeIndex()">
+                    <i class="aui-iconfont aui-icon-refresh"></i>
+                    <span>换一个</span>
+                </div>
+            </div>
+
+            <div style="margin: 30px 0 10px 50px;">
+                <p class="tip-content" style="font-weight: bold">录制要求：</p>
+                <p class="tip-content">1、需录制本人的声音</p>
+                <p class="tip-content">2、在安静的环境下录制，声音清晰悦耳</p>
+            </div>
+
+            <div class="luyin-wrap">
+                <div class="time-wrap flex-c" :class="{'new-invisible':(luyin!=1 && luyin!=3)}">
+                    <div class="audio-bg " id="audio-left"> </div>
+                    <span class="time" v-if="luyin==3">{{returnTime(pTime)}}</span>
+                    <span class="time" v-else>{{returnTime(time)}}</span>
+                    <div class="audio-bg " style=" transform: rotateY(180deg);" id="audio-right"> </div>
+                </div>
+                <!-- <div class="time-wrap flex-c" :class="{'new-invisible':(luyin!=1 && luyin!=3)}">
+                   <img src="../../image/icon/audio_play_placeholder.png" alt="">
+                    <span class="time">{{returnTime(time)}}</span>
+                    <img class="reserve" src="../../image/icon/audio_play_placeholder.png" alt="">
+                </div> -->
+                <div class="luyin-container">
+                    <span class="reload" v-if="luyin==2" @click="luyin=0;">
+                        <i class="base-icon reload-icon"></i>
+                        <span>重录</span>
+                    </span>
+                    <i class="base-icon start-icon" @click="changeLuyin()" :class="{'stop-icon':luyin==1,'play-icon ':luyin==2,'pause-icon':luyin==3 }"></i>
+                    <span class="reload" v-if="luyin==2" onclick="submit()">
+                        <i class="base-icon ok-icon"></i>
+                        <span>发布</span>
+                    </span>
+                </div>
+                <p class="tip" v-if="ffInfo.channel==1">点击开始朗读或者自由发挥</p>
+                <p class="tip" v-else>点击开始演唱或者自由发挥</p>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script src="../../script/audio.js"></script>
+<script src="../../script/svga.js"></script>
+<script>
+    setTimeout(function() {
+        var player = new SVGA.Player('#audio-left');
+        var parser = new SVGA.Parser('#audio-left');
+        parser.load('../../image/voice/voice.svga', function(videoItem) {
+            player.setVideoItem(videoItem);
+            player.startAnimation();
+        })
+        var player2 = new SVGA.Player('#audio-right');
+        var parser2 = new SVGA.Parser('#audio-right');
+        parser2.load('../../image/voice/voice.svga', function(videoItem) {
+            player2.setVideoItem(videoItem);
+            player2.startAnimation();
+        })
+    }, 1000)
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+            luyin: 0, // 0开始 1录制 2完成 3播放
+            time: 0,
+            voice: '',
+            voicePlay: 0, // 录音是否播放中 0未播放 1播放中
+
+            pTime: 0,
+
+        },
+        methods: {
+            returnTime(time) {
+                return returnTime(time);
+            },
+            // 
+            changeLuyin() {
+                var _this = this;
+                changeLuyin()
+            },
+            // 跳转
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+        }
+    })
+    var recMp3, audio;
+    var time, playTime, playTime2;
+    apiready = function() {
+        recMp3 = api.require('recMp3');
+        audio = new Audio();
+        changeIndex();
+    }
+
+    function changeLuyin() {
+        var _this = view;
+
+        clearTimeout(playTime);
+        clearInterval(playTime2);
+        getPermission(['microphone'], function(code) {
+            if (code != 0) {
+                _msg('请先开启相关权限');
+            } else {
+                if (_this.luyin == 3) {
+                    _this.luyin = 2;
+                } else {
+                    _this.luyin++;
+                }
+                if (_this.luyin == 1) {
+                    // 录制中
+                    startTime();
+                } else if (_this.luyin == 2) {
+                    if (_this.voicePlay == 0) {
+                        endTime();
+                    } else {
+                        _this.voicePlay = 0;
+                        audio.stop();
+                    }
+                } else if (_this.luyin == 3) {
+                    view.pTime = view.time;
+                    _this.voicePlay = 1;
+                    audio.play({
+                        url: returnImg(_this.voice)
+                    }, function(ret) {
+                        console.log(view.time)
+                        if (ret.status) {
+                            playTime2 = setInterval(function() {
+                                view.pTime--;
+                                if (view.pTime == 0) {
+                                    clearInterval(playTime2);
+                                }
+                            }, 1000)
+                            console.log(new Date().getSeconds())
+                            playTime = setTimeout(function() {
+                                console.log(new Date().getSeconds())
+                                clearTimeout(playTime);
+                                _this.luyin = 2;
+                                _this.voicePlay = 0;
+                                audio.stop();
+                            }, view.time * 1000)
+                        } else {
+                            _this.luyin = 2;
+                            _this.voicePlay = 0;
+                            audio.stop();
+                        }
+                    })
+                }
+            }
+        })
+    }
+
+    // 开始录制
+    function startTime() {
+        recMp3.start();
+        view.time = 0;
+        time = setInterval(function() {
+            view.time++;
+        }, 1000)
+    }
+    // 停止录制
+    function endTime() {
+        clearInterval(time);
+        recMp3.stop(function(ret) {
+            console.log(JSON.stringify(ret))
+            if (ret && ret.status) {
+                if (ret.duration) {
+                    view.time = ret.duration;
+
+                    var path = ret.path;
+                    path = path.replace('fs://', api.fsDir + '/');
+                    view.voice = path;
+
+                } else {
+                    _msg('录音时间太短');
+                    view.time = 0;
+                    view.luyin == 0;
+                }
+            }
+        });
+    }
+
+    // 发布交友宣言
+    function submit() {
+        _loading();
+        pushVideo(view.voice, function(v) {
+            _ajax('api/user/editInfo', function(ret, err) {
+                console.log(JSON.stringify(ret))
+                console.log(JSON.stringify(err))
+                _loadingClose();
+                _msg(ret.msg);
+                if (ret && ret.code == 200) {
+                    timerWin();
+                }
+            }, {
+                user_id: $api.getStorage('userid'),
+                voice: v,
+                voice_time: view.time
+            })
+        })
+    }
+
+    // 修改
+    function changeIndex() {
+        var types = $api.getStorage('sex') == '女' ? 2 : 1;
+        _ajax('api/Tpl/slogan', function(ret, err) {
+            if (ret && ret.code == 200) {
+                view.ffInfo = ret.data;
+            }
+        }, {
+            types: types
+        })
+    }
+</script>
+
+</html>

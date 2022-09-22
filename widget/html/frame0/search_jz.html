@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/base_icon.css">
+    <link rel="stylesheet" href="../../css/jiazu.css">
+    <title>Document</title>
+
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <div class="list">
+            <div class="item" v-for="(m, index) in ffList" @click="openQun(m.id,m.name)">
+                <div class="qun-img">
+                    <img class="avatar" :src="returnImg(m.logo)" onerror="this.src='../../image/touxiang.png'" alt="">
+                    <!-- <div class="tx">
+                        <img src="../../image/test/03.jpg" alt="">
+                    </div> -->
+                </div>
+                <div class="content">
+                    <div class="name">{{m.name}}</div>
+                    <div class="desc aui-ellipsis-1">{{m.description}}</div>
+                    <div class="footer">
+                        <span class="num">{{m.count}}</span>
+                        <button class="btn">未加入</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/api.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+        },
+        methods: {
+            openQun(id, name, type) {
+                openQun(id, name, type)
+            },
+            // 跳转
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+        }
+    })
+    apiready = function() {
+        view.ios = $api.getStorage('shang');
+        view.myuserid = $api.getStorage('userid');
+
+        _shangla(function() {
+            getData(1);
+        })
+        _scrollToBottom(function() {
+            if (heigutgao == 1) {
+                pagenum++;
+                getData(pagenum)
+            }
+        })
+
+        _listener('viewappear', function() {
+            _heibai(1)
+        })
+    }
+
+    // 获取数据
+    function getData(page) {
+        var param = api.pageParam;
+        param.user_id = $api.getStorage('userid');
+        console.log(JSON.stringify(param))
+        var loading = page == 1 ? 1 : 0;
+        _lists('api/family/lists', page, loading, param)
+    }
+</script>
+
+</html>

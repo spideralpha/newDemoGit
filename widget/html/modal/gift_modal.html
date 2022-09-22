@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>小火苗</title>
+    <link rel="stylesheet" href="../../css/aui.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/gift.css">
+    <link rel="stylesheet" href="../../css/swiper.css">
+    <style>
+        html,
+        body {
+            background: transparent !important;
+        }
+
+        .giftmodal {
+            position: fixed;
+            width: 100vw;
+            height: 100vh;
+            top: 0;
+            left: 0;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .gift-wrap {
+            background: #fff;
+            width: 100%;
+            position: fixed;
+            bottom: 0;
+        }
+
+        /* 轮播 */
+        .gift-swiper {
+            min-height: 250px;
+        }
+
+        .swiper-container {
+            padding-bottom: 30px;
+        }
+
+        .swiper-pagination-bullet {
+            width: 4px;
+            height: 4px;
+        }
+
+        .swiper-pagination-bullet-active {
+            background: #777;
+        }
+
+        .swiper-slide img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+        }
+
+        .box-wrap .box {
+            width: calc(100% / 4);
+            box-sizing: border-box;
+            padding: 10px 0;
+            border: 1px solid #fff;
+            text-align: center;
+            border-radius: 5px;
+        }
+
+        .box-wrap .box.active {
+            border: 1px solid red;
+
+        }
+
+        .base-icon {
+            width: 10px;
+            height: 10px;
+            display: inline-block;
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+        }
+
+        .jinbi-icon {
+            background-image: url('../../image/icon/m6.png');
+            margin-left: 3px;
+        }
+
+        .name {
+            font-size: 10px;
+        }
+
+        .price {
+            font-size: 10px;
+            color: #757575;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* 用户 */
+        .user-wrap {
+            text-align: center;
+            width: 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-left: 10px;
+            margin-bottom: 10px;
+            position: absolute;
+            bottom: 40px;
+        }
+
+        .user-ul {
+            width: 200px;
+            overflow-y: auto;
+            max-height: 65vh;
+            bottom: 60px;
+            z-index: 1;
+            background: #f3f3f3;
+            border-radius: 3px;
+        }
+
+        .tri {
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-top: 15px solid #f3f3f3;
+            display: inline-block;
+            content: '';
+        }
+
+        .user-wrap .list {
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            padding: 10px;
+            align-items: center;
+        }
+
+        .user-wrap .list:last-child {
+            border-bottom: 0;
+        }
+
+        .user-wrap .tx {
+            width: 35px;
+            height: 35px;
+            margin-right: 7px;
+        }
+
+
+        #fx-footer .footer {
+            padding: 10px;
+        }
+
+        #fx-footer .box {
+            font-size: 13px;
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            display: inline-block;
+
+        }
+
+        #fx-footer .box span {
+            margin-right: 15px;
+            min-width: 100px;
+        }
+
+        /* 礼物数量 */
+        .num-footer {
+            text-align: right;
+        }
+
+        .num-footer .user-wrap {
+            right: 10px;
+            width: auto;
+        }
+
+        #fx-footer .num-footer .box span {
+            min-width: auto;
+            margin-right: 10px;
+        }
+
+        .num-footer .tri {
+            /* border-color: #f3f3f3; */
+            border-top: 15px solid #fbfbfb;
+        }
+
+        .num-footer .user-ul {
+            width: auto;
+            background: #fbfbfb;
+        }
+
+        .num-footer .user-wrap .list {
+            font-size: 14px;
+            color: #aaa;
+        }
+
+        .num-footer .user-wrap .list .name {
+            color: #7338d8;
+            width: 45px;
+            font-size: 14px;
+        }
+
+        .num-footer .box-wrap .box {
+            width: auto;
+        }
+
+        .num-footer .send-btn {
+            color: #fff;
+            background: linear-gradient(to right, #CD7DFE, #7338d8);
+            border-radius: 5px;
+            line-height: 1.5;
+            padding: 0 7px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 礼物 -->
+    <div id="view" v-cloak class="giftmodal" onclick="_close()">
+        <div class="gift-wrap" @click.stop>
+            <header class="mainbox" id="fx-header">
+                <div class="head flex-bt" @click.stop>
+                    <div class="left">
+                        <div class="item" :class="{'active': aIndex==0}" @click="changeType(0)">礼物</div>
+                        <div class="item" v-if="ffInfo.is_show_noble_gift == 1" :class="{'active': aIndex==1}" @click="changeType(1)">贵族</div>
+                    </div>
+                    <div class="right">
+                        <div class="left">
+                            <img src="../../image/icon/m6.png" alt=""><span>可用余额：{{ffInfo.volley}}</span>
+                        </div>
+                        <div class="right" onclick="_url({url:'frame4/chongzhicenter',title:'充值中心', moreTitle: '账单'})">充值</div>
+                    </div>
+                </div>
+            </header>
+            <div class="gift-swiper">
+                <div class="swiper-container">
+                    <div class="swiper-wrapper">
+                        <div class="swiper-slide" v-for="(s, sindex) in ffList">
+                            <div class="box-wrap flex-w">
+                                <div class="box" :class="{'active':giftId == m.id}" v-for="(m, index) in s" 　@click="giftId = m.id">
+                                    <img :src="returnImg(m.preview)" onerror="this.src='../../image/error-img.png'" alt="">
+                                    <p class="name">{{m.name}}</p>
+                                    <p class="price">{{m.price}}<i class="base-icon jinbi-icon"></i></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="swiper-pagination"></div>
+                </div>
+            </div>
+            <footer id="fx-footer">
+                <div class="footer">
+                    <div class="user-wrap" @click.stop v-if="user.show==1">
+                        <ul class="user-ul">
+                            <li class="list" v-for="(m, index) in userList" @click="selectUser(m)" v-if="m.id != myid">
+                                <img class="tx" :src="returnImg(m.avatar)" onerror="this.src='../../image/touxiang.png'" alt="">
+                                <span class="name">{{m.name}}</span>
+                            </li>
+                        </ul>
+                        <div class="tri"></div>
+                    </div>
+                    <div class="num-footer">
+                        <div class="user-wrap" v-if="numshow==1">
+                            <ul class="user-ul">
+                                <li class="list" onclick="inputOtherNum()" style="justify-content: center;">其他数量</li>
+                                <li class="list" v-for="(m, index) in numList" @click="num=m.num;numshow=0;"><span class="name">{{m.num}}</span> {{m.name}}</li>
+                            </ul>
+                            <div class="tri"></div>
+                        </div>
+                        <div class="box-wrap">
+                            <div class="box" style="float: left;" @click.stop="user.show=1">
+                                <span v-if="!user.id">选择赠送的对象</span>
+                                <span v-else>{{user.name}}</span>
+                                <i class="aui-iconfont aui-icon-right"></i>
+                            </div>
+                            <div class="box" @click.stop="numshow=1">
+                                <span>{{num}}个</span>
+                                <i class="aui-iconfont aui-icon-right"></i>
+                            </div>
+                            <button class="send-btn" onclick="submit()">赠送</button>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script src="../../script/swiper.js"></script>
+<script>
+    var numList = [{
+        id: 1,
+        num: 1,
+        name: '一心一意'
+    }, {
+        id: 2,
+        num: 10,
+        name: '十全十美'
+    }, {
+        id: 3,
+        num: 30,
+        name: '想你...'
+    }, {
+        id: 4,
+        num: 66,
+        name: '一切顺利'
+    }, {
+        id: 5,
+        num: 188,
+        name: '要抱抱'
+    }, {
+        id: 6,
+        num: 520,
+        name: '我爱你'
+    }, {
+        id: 7,
+        num: 1314,
+        name: '一生一世'
+    }, {
+        id: 8,
+        num: 3344,
+        name: '生生世世'
+    }];
+    numList = numList.reverse();
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            giftData: {
+                0: [],
+                1: []
+            },
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+            qunType: 0,
+            user: {
+                id: '',
+                name: '',
+                show: 0
+            },
+            userList: [], // 成员列表
+            touserid: 0, // 群id || 用户id
+            myid: '',
+            aIndex: 0,
+            giftId: 0,
+            bottom: 0, //　成员列表是否还可以加载下一页
+            page: 1,
+            numList: numList,
+            num: 1,
+            numshow: 0,
+            zb: 0, // 是否在直播间赠送礼物 1是 0否
+        },
+        methods: {
+            changeType(index) {
+                var _this = this;
+                _this.aIndex = index;
+                if (_this.giftData[index].length == 0) {
+                    getData(1);
+                } else {
+                    _this.ffList = dealData(_this.giftData[index]);
+                }
+            },
+            // 选择用户
+            selectUser(data) {
+                var _this = this;
+                _this.user = {
+                    id: data.id,
+                    name: data.name,
+                    show: 0
+                }
+            },
+            // 跳转
+            _url: function(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg: function(url) {
+                return returnImg(url);
+            },
+        }
+    })
+    apiready = function() {
+        view.myid = $api.getStorage('userid');
+        view.touserid = api.pageParam['uid'];
+        if (api.pageParam['qunType']) {
+            view.qunType = api.pageParam['qunType'];
+        }
+        if (api.pageParam['zb']) {
+            view.zb = api.pageParam['zb'];
+        }
+        _getUser(function(ret) {
+            view.ffInfo = ret.result;
+        })
+        initData();
+        if (view.qunType != 0) {
+            getMen(1);
+            goBottom()
+        }
+    }
+
+    // 初始化数据
+    function initData() {
+        getData(1, function() {
+            setTimeout(function() {
+                var mySwiper = new Swiper('.swiper-container', {
+                    autoplay: false, //可选选项，自动滑动
+                    pagination: {
+                        el: '.swiper-pagination',
+                        clickable: true,
+                    },
+                    observer: true, //轮播元素为内部动态添加必须加此 修改swiper自己或子元素时，自动初始化swiper
+                    observeParents: true, //轮播元素为内部动态添加必须加此 修改swiper的父元素时，自动初始化swiper
+                    on: {
+                        slideChange: function() {
+                            var len = view.giftData[view.aIndex].length;
+                            // 无法整除 故已为最后一页 无需再加载下一页
+                            if (len % 10 != 0) return;
+                            var page = Math.ceil(len / 10);
+                            if (this.activeIndex == view.ffList.length - 1) {
+                                getData(page + 1)
+                            }
+                        },
+                    },
+                })
+            }, 500)
+        });
+    }
+
+    // 获取数据
+    function getData(page, callback) {
+        var types = view.aIndex;
+        _ajax('api/Gift/lists', function(ret, err) {
+            if (ret && ret.code == 200) {
+                if (!page || page == 1) {
+                    view.giftData[types] = [];
+                    view.ffList = [];
+                }
+                if (ret.data.length > 0) {
+                    view.giftData[types] = view.giftData[types].concat(ret.data);
+                    view.ffList = dealData(view.giftData[types]);
+                }
+                if (typeof callback == 'function') {
+                    callback();
+                }
+            }
+        }, {
+            types: types + 1,
+            page: page
+        })
+    }
+
+
+    // 处理数据
+    function dealData(arr) {
+        if (!arr || arr.length == 0) return [];
+        arr = JSON.parse(JSON.stringify(arr));
+        var brr = [];
+        while (arr.length > 0) {
+            brr.push(arr.splice(0, 8));
+        }
+        return brr;
+    }
+
+
+    // 获取家族成员
+    function getMen() {
+        _ajax('api/cluster/users', function(ret, err) {
+            if (ret && ret.code == 200) {
+                view.userList = [];
+                if (ret.data.length == 0) {
+                    veiw.bottom = 1;
+                } else {
+                    view.userList = view.userList.concat(ret.data);
+                }
+            }
+        }, {
+            id: view.touserid,
+            page: view.page
+        })
+    }
+
+    function goBottom() {
+        var dom = '.user-ul';
+        $(dom).on('scroll', function(e) {
+            var st = $(dom).scrollTop();
+            var h = $(dom).height();
+            var sh = $(dom)[0].scrollHeight;
+            if (st >= (sh - h - 10) && veiw.bottom == 0) {
+                setTimeout(function() {
+                    view.page++;
+                    getMen()
+                }, 1000);
+            }
+        })
+    }
+
+    // 关闭
+    function _close() {
+        api.closeFrame();
+    }
+    // 填写其他数量
+    function inputOtherNum() {
+        _prompt({
+            msg: '请输入数量',
+            type: 'number'
+        }, function(num) {
+            if (num != 0 && !isNaN(num)) {
+                view.num = num;
+                view.numshow = 0;
+
+            }
+        })
+    }
+    // 赠送
+    function submit() {
+        if (view.giftId == 0) {
+            _msg('请选择要赠送的礼物');
+            return;
+        }
+        if (view.qunType != 0 && !view.user.id) {
+            _msg('请选择接受方');
+            return;
+        }
+        _loading();
+        var obj = {
+            id: view.giftId,
+            ways: 1,
+            type: 8,
+            userid: $api.getStorage('userid'),
+            touserid: view.touserid,
+            num: view.num
+        }
+        var url = 'home/Privatechat/addTalk';
+        if (view.qunType != 0) {
+            obj.touserid = view.user.id;
+            obj.cluster_id = view.touserid;
+            obj.user_id = $api.getStorage('userid');
+            url = 'api/cluster/addtalk';
+        }
+        if (view.zb != 0) {
+            var obj = {
+                gift_id: view.giftId,
+                live_id: api.pageParam['live_id'],
+                user_id: $api.getStorage('userid'),
+                ways: 1,
+                type: 8,
+                num: view.num
+            }
+            url = 'api/live/comment';
+        }
+        _ajax(url, function(ret, err) {
+            _loadingClose();
+            if (ret && ret.code != 200) {
+                _msg(ret.msg);
+            } else {
+                // _send('updateGiftMoney');
+                _msg('赠送成功');
+                _close();
+            }
+        }, obj)
+    }
+</script>
+
+</html>

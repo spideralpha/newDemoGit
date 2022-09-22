@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../css/aui_font.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" type="text/css" href="../../css/frame3.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/win.css" />
+    <title>Document</title>
+    <style>
+        html,
+        body {
+            background-color: #fff;
+        }
+
+        header {
+            line-height: 50px;
+            font-size: 14px;
+            background-color: #fff;
+        }
+
+        .aui-iconfont {
+            font-size: 14px;
+        }
+
+        .btn {
+            padding: 10px 30px;
+            background-color: rgb(146, 75, 255);
+            border-radius: 6px;
+            color: #fff;
+        }
+
+        .field input {
+            height: 40px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            width: 50%;
+            padding: 0 10px;
+        }
+
+        .btns {
+            position: fixed;
+            bottom: 50px;
+            width: calc(100% - 40px);
+            padding: 0 20px;
+        }
+
+        .btns .btn {
+            width: 24%;
+            text-align: center;
+        }
+
+        .btns .btn.reset {
+            background: #fff;
+            box-shadow: 0 0 4px #ccc;
+            color: #787878;
+        }
+
+        /* 搜索栏 */
+        header .title {
+            background: #F5F5F5;
+            border-radius: 20px;
+            font-size: 14px;
+            padding: 7px 10px;
+            width: 70%;
+            margin-right: 10px;
+        }
+
+        header .title img {
+            width: 15px;
+        }
+
+        header .title input {
+            font-size: 14px;
+        }
+
+        header .more {
+            color: #333;
+            font-size: 16px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <!-- <header class="new-padding-10 flex-bt">
+            <span class="aui-iconfont aui-icon-close" onclick="_closeToWin()"></span>
+            <span>搜索</span>
+            <span class="aui-iconfont aui-icon-close new-invisible"></span>
+        </header>
+        <div class="new-padding-10 field flex-c flex-bt">
+            <input type="text" placeholder="按UID搜索用户" v-model="uid">
+            <div class="btn search" @click="go_userInfo(uid)">搜索</div>
+        </div> -->
+        <header>
+            <div class="head new-padding-10 flex-c">
+                <div class="back new-back" tapmode onclick="_closeToWin()"></div>
+                <div class="title flex">
+                    <img src="../../image/icon/ic_navi_search.png" alt="">
+                    <input type="search" placeholder="输入小火苗ID" v-model="uid" style="width: 100%;">
+                </div>
+                <div class="more" tapmode onclick="submit()">搜索</div>
+            </div>
+        </header>
+        <ul class="item">
+<!--            <li class="item_li" @click="set_sex">-->
+            <li class="item_li">
+                <div class="lt">性别</div>
+                <div class="rt">
+                    {{sex}}
+                    <span class="aui-iconfont aui-icon-right"></span>
+                </div>
+            </li>
+            <li class="item_li" v-if="!ios" @click="set_rz">
+                <div class="lt">认证状态</div>
+                <div class="rt">
+                    {{rzstate?rzstate:'不限'}}
+                    <span class="aui-iconfont aui-icon-right"></span>
+                </div>
+            </li>
+            <li class="item_li" onclick="selectCity('area')">
+                <div class="lt">所在地</div>
+                <div class="rt">
+                    {{area?area:'不限'}}
+                    <span class="aui-iconfont aui-icon-right"></span>
+                </div>
+            </li>
+            <li class="item_li" onclick="selectFilter('age')">
+                <div class="lt">年龄</div>
+                <div class="rt">
+                    {{ dealUserData(age, '岁') || '不限'}}
+                    <span class="aui-iconfont aui-icon-right"></span>
+                </div>
+            </li>
+            <li class="item_li" onclick="selectFilter('stature')">
+                <div class="lt">身高</div>
+                <div class="rt">
+                    {{dealUserData(stature, '厘米') || '不限' }}
+                    <span class="aui-iconfont aui-icon-right"></span>
+                </div>
+            </li>
+            <!-- <li class="item_li" onclick="selectFilter('emotion')">
+                <div class="lt">情感状态</div>
+                <div class="rt">
+                    {{emotion?emotion:'不限'}}
+                    <span class="aui-iconfont aui-icon-right"></span>
+                </div>
+            </li>
+            <li class="item_li" onclick="selectFilter('education_background')">
+                <div class="lt">学历</div>
+                <div class="rt">
+                    {{education_background?education_background:'不限'}}
+                    <span class="aui-iconfont aui-icon-right"></span>
+                </div>
+            </li>
+            <li class="item_li" onclick="selectFilter('monthly_salary')">
+                <div class="lt">年收入</div>
+                <div class="rt">
+                    {{monthly_salary?monthly_salary:'不限'}}
+                    <span class="aui-iconfont aui-icon-right"></span>
+                </div>
+            </li> -->
+            <!-- <li class="item_li" onclick="selectCity('jiaxiang')">
+                <div class="lt">家乡</div>
+                <div class="rt">
+                    {{jiaxiang?jiaxiang:'不限'}}
+                    <span class="aui-iconfont aui-icon-right"></span>
+                </div>
+            </li> -->
+        </ul>
+        <!-- <div class="btns flex-bt">
+            <div class="btn reset" onclick="reset();">重置</div>
+            <div class="btn" onclick="submit()">完成</div>
+        </div> -->
+    </div>
+    <script src="../../script/api.js"></script>
+    <script src="../../script/vue.js"></script>
+    <script src="../../script/ffkj.js"></script>
+    <script src="../../script/select_json.js"></script>
+    <script src="../../script/search_data.js"></script>
+    <script>
+        var view = new Vue({
+            el: '#view',
+            data: {
+                ios: 1,
+                sex: '',
+                rzstate: '真人认证',
+                area: '',
+                age: '',
+                stature: '',
+                education_background: '',
+                monthly_salary: '',
+                emotion: '',
+
+                uid: ''
+            },
+            methods: {
+                go_userInfo(id, name, sex) {
+                    if (!id) {
+                        _msg('请输入搜索的用户id');
+                        return;
+                    }
+                    go_userInfo(id, name, sex)
+                },
+                set_sex() {
+                    var _this = this
+                    _action('', ['男', '女'], function(index) {
+                        if (index != 3) {
+                            _this.sex = index == 1 ? '男' : '女'
+                        }
+                    })
+                },
+                set_rz() {
+                    var _this = this
+                    _action('', ['全部', '真人认证'], function(index) {
+                        if (index != 3) {
+                            _this.rzstate = index == 1 ? '全部' : '真人认证'
+                        }
+                    })
+                },
+                set_xueli() {
+                    var _this = this
+                    var option = ['不限', '初中及以上', '中专及以上', '高中及以上', '大专及以上', '本科及以上', '双学士及以上', '硕士及以上', '博士']
+                    _action('', option, function(index) {
+                        if (index != option.length + 1) {
+                            _this.xueli = option[index - 1]
+                        }
+                    })
+                },
+                set_nianshouru() {
+                    var _this = this
+                    var option = ['不限', '5万以上', '10万以上', '20万以上', '30万以上', '50万以上', '100万以上']
+                    _action('', option, function(index) {
+                        if (index != option.length + 1) {
+                            _this.nianshouru = option[index - 1]
+                        }
+                    })
+                },
+                // 传入数据如：300,500 返回300-500
+                dealUserData(str, danwei) {
+                    return dealUserData(str, danwei);
+                },
+                // 传入数据如：300-500 返回300,500
+                returnUserData(str, danwei) {
+                    return returnUserData(str, danwei);
+                },
+
+            }
+        })
+
+        apiready = function() {
+            view.ios = $api.getStorage('shang');
+            $api.fixStatusBar($api.dom('header'));
+            view.sex = $api.getStorage('sex') == '女' ? '男' : '女';
+        }
+
+        // 得到选中的数据
+        function getUserFilter(key, val) {
+            var obj = {
+                age: '岁',
+                stature: '厘米',
+                weight: 'kg',
+            }
+            // 使选中的数据与后端需要的数据格式一致
+            if (obj[key]) {
+                view[key] = returnUserData(val, obj[key]);
+            } else {
+                view[key] = val;
+            }
+        }
+
+        // 重置
+        function reset() {
+            view.sex = $api.getStorage('sex') == '女' ? '男' : '女';
+            view.rzstate = '真人认证';
+            view.area = '';
+            view.age = '';
+            view.stature = '';
+            view.education_background = '';
+            view.monthly_salary = '';
+            view.emotion = '';
+        }
+
+        // 确定
+        function submit() {
+            var obj = {
+                sex: view.sex,
+                is_identity_authentication: view.rzstate,
+                city: view.area,
+                age: view.age,
+                stature: view.stature,
+                emotion: view.emotion,
+                education_background: view.education_background,
+                monthly_salary: view.monthly_salary
+            }
+            console.log(view.uid);
+            if (view.uid && !isNaN(view.uid)) {
+
+                go_userInfo(view.uid);
+                return;
+            }
+            _url({
+                filter: obj,
+                url: 'frame0/search',
+                title: '搜索结果'
+            })
+        }
+    </script>
+</body>
+
+</html>

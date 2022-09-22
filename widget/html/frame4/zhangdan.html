@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>title</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/news.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/tuiguang.css" />
+
+
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <ul class="ul-wrap">
+            <li class="list" v-for="(i, index) in ffList">
+                <div class="content">{{i.content}}</div>
+                <div class="time-wrap">
+                    <p class="price jian" v-if="i.types==0"><span class="money">-{{ i.money }}</span></p>
+                    <p class="price" v-else><span class="money">+{{ i.money }}</span></p>
+                    <p class="time">{{ i.time }}</p>
+                </div>
+            </li>
+            <!-- <li class="list">
+				<div class="content">给测试女(3287)发消息扣金币</div>
+				<div class="time-wrap">
+					<p class="price"><span class="money">+10</span></p>
+					<p class="time">01-01 08:00:00</p>
+				</div>
+			</li>
+			<li class="list">
+				<div class="content">给测试女(3287)发消息扣金币</div>
+				<div class="time-wrap">
+					<p class="price jian"><span class="money">-10</span></p>
+					<p class="time">01-01 08:00:00</p>
+				</div>
+			</li> -->
+        </ul>
+    </div>
+    <div id="no_more">没有更多了</div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/vue.js"></script>
+<script type="text/javascript" src="../../script/ffkj.js"></script>
+<script type="text/javascript" src="../../script/jquery.js"></script>
+<script type="text/javascript">
+    var view = new Vue({
+        el: '#view',
+        data: {
+            ffList: [],
+        }
+    });
+    apiready = function() {
+        var param = {
+            user_id: $api.getStorage('userid')
+        };
+        _shangla(function() {
+            _lists('api/user/volleyLists', 1, 1, param);
+        })
+
+        _scrollToBottom(function() {
+            if (heigutgao == 1) {
+                pagenum++;
+                _lists('api/user/volleyLists', pagenum, '', param);
+            }
+        })
+
+    }
+</script>
+
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>小火苗</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/beizhu.css">
+    <style>
+       
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <div class="wrap">
+            <div class="container">
+                <p class="name">备注名</p>
+                <textarea name="" id="" placeholder="设置备注名" v-model="remark"></textarea>
+            </div>
+            <button class="new-submit" onclick="submit()">确定</button>
+        </div>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            touserid: 0,
+            name: '',
+            remark: ''
+        },
+        methods: {
+
+        }
+    })
+    apiready = function () {
+        view.touserid = api.pageParam['uid'];
+        if (api.pageParam['remark']) {
+            view.remark = api.pageParam['remark'];
+        } else {
+            view.remark = api.pageParam['name'];
+        }
+    }
+    // 确定
+    function submit() {
+        _loading();
+        _ajax('api/member/remark', function (ret, err) {
+            console.log(JSON.stringify(ret))
+            console.log(JSON.stringify(err))
+            _loadingClose();
+            _msg(ret.msg);
+            if (ret && ret.code == 200) {
+                var name = view.remark ? view.remark : api.pageParam['name'];
+                api.execScript({
+                    name: 'frame0/liaotian_win',
+                    script: 'changeTitle("和' + name + '的聊天")'
+                })
+                timerWin();
+            }
+        }, {
+            user_id: $api.getStorage('userid'),
+            to_user: view.touserid,
+            name: view.remark
+        })
+    }
+</script>
+
+</html>

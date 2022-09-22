@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>小火苗</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/win.css">
+    <link rel="stylesheet" href="../../css/video.css">
+    <style>
+        html,
+        body {
+            background: transparent;
+        }
+
+        .back {
+            position: relative;
+            left: 0;
+        }
+
+        #fx-header {
+            background: transparent;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap " id="view" v-cloak>
+        <header id="fx-header">
+            <div class="head new-padding-10">
+                <div class="back" tapmode onclick="exitRoom()"> </div>
+            </div>
+        </header>
+        <!-- 工具 -->
+        <div class="footer">
+            <div class="tool-wrap">
+                <ul class="tool-ul" @click.stop>
+                    <li class="list">
+                        <span>磨皮</span>
+                        <input type="range" v-model="mp" @input="setLevel('mp')" name="" max="9" id="">
+                    </li>
+                    <li class="list">
+                        <span>美白</span>
+                        <input type="range" v-model="mb" @input="setLevel('mb')" name="" max="9" id="">
+                    </li>
+                    <li class="list">
+                        <span>红润</span>
+                        <input type="range" v-model="hr" @input="setLevel('hr')" name="" max="9" id="">
+                    </li>
+                    <li class="list">
+                        <span>滤镜</span>
+                        <input type="range" v-model="lj" @input="setLevel('lj')" name="" max="9" id="">
+                    </li>
+                </ul>
+            </div>
+            <div class="tool-footer">
+                <div class="t-wrap">
+                    <ul class="t-ul">
+                        <li class="list" :class="{'active':index==toolSelect}" @click="setEffect(index)" v-for="(m, index) in ffList">
+                            <img :src="returnImg(m.cover)" onerror="this.src='../../image/error-img.png'" alt="">
+                            <span>{{m.name}}</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script src="../../json/lvjing.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+            sex: '',
+
+            toolSelect: -1,
+
+            mp: 0,
+            mb: 0,
+            hr: 0,
+            lj: 0,
+
+        },
+        methods: {
+            // 美颜等级选择
+            setLevel(type) {
+                var _this = this;
+                api.execScript({
+                    name: 'frame4/meiyan_win',
+                    frameName: 'frame4/meiyan_frm',
+                    script: 'setLevel("' + type + '",' + _this[type] + ')'
+                })
+            },
+            // 美颜 当前类型的效果选择
+            setEffect(index) {
+                var _this = this;
+                _this.toolSelect = index;
+                api.execScript({
+                    name: 'frame4/meiyan_win',
+                    frameName: 'frame4/meiyan_frm',
+                    script: 'setEffect(' + index + ')'
+                })
+            },
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 图片
+            returnImg(url) {
+                return returnImg(url);
+            },
+        }
+    })
+    apiready = function() {
+        api.bringFrameToFront({
+            from: api.frameName,
+        });
+        getData();
+        $api.fixStatusBar($api.byId('fx-header'));
+        $api.fixTabBar($api.dom('.footer'));
+
+        getBeauty(function(obj) {
+            if (obj.mp) {
+                view.mp = obj.mp;
+            }
+            if (obj.mb) {
+                view.mb = obj.mb;
+            }
+            if (obj.hr) {
+                view.hr = obj.hr;
+            }
+            if (obj.lj) {
+                view.lj = obj.lj;
+            }
+        })
+    }
+
+    // 获取滤镜列表
+    function getData() {
+        _ajax('api/user/beautyImages', function(ret, err) {
+            if (ret && ret.code == 200) {
+                var data = ret.data;
+                view.ffList = data;
+
+                var obj = $api.getStorage('meiyan');
+                if (obj.img) {
+                    for (var i = 0, len = data.length; i < len; i++) {
+                        if (data[i].id == obj.id) {
+                            view.toolSelect = i;
+                            break
+                        }
+                    }
+
+                }
+            }
+        }, {
+            user_id: $api.getStorage('userid'),
+        })
+    }
+
+
+    // 离开房间
+    function exitRoom() {
+        api.execScript({
+            name: 'frame4/meiyan_win',
+            frameName: 'frame4/meiyan_frm',
+            script: 'exitRoom()'
+        })
+    }
+
+    // 切换摄像头
+    function switchCamera() {
+        api.execScript({
+            name: 'frame4/meiyan_win',
+            frameName: 'frame4/meiyan_frm',
+            script: 'switchCamera()'
+        })
+    }
+</script>
+
+</html>

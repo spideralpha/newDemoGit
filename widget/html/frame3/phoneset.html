@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <style>
+        .lists {}
+
+        .lists .item {
+            width: 50%;
+            margin: 10px 0;
+        }
+
+        .lists .item img {
+            width: 100px;
+        }
+
+        .lists .item .name {
+            font-size: 12px;
+            color: #787878;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <div class="lists flex-c flex-w flex-bt">
+            <div class="item flex-col flex-c" onclick="_url({url:'frame3/phoneset_frm', types: 1, title:'vivo手机指南'})">
+                <img src="../../image/phoneset/phone_vivo.png" alt="">
+                <div class="name">vivo手机</div>
+            </div>
+            <div class="item flex-col flex-c" onclick="_url({url:'frame3/phoneset_frm', types: 2, title:'魅族手机指南'})">
+                <img src="../../image/phoneset/phone_meizu.png" alt="">
+                <div class="name">魅族手机</div>
+            </div>
+            <div class="item flex-col flex-c" onclick="_url({url:'frame3/phoneset_frm', types: 3, title:'华为手机指南'})">
+                <img src="../../image/phoneset/phone_huawei.png" alt="">
+                <div class="name">华为手机</div>
+            </div>
+            <div class="item flex-col flex-c" onclick="_url({url:'frame3/phoneset_frm', types: 4, title:'小米手机指南'})">
+                <img src="../../image/phoneset/phone_xiaomi.png" alt="">
+                <div class="name">小米手机</div>
+            </div>
+            <div class="item flex-col flex-c" onclick="_url({url:'frame3/phoneset_frm', types: 5, title:'oppo手机指南'})">
+                <img src="../../image/phoneset/phone_oppo.png" alt="">
+                <div class="name">oppo手机</div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {}
+    })
+</script>
+
+</html>

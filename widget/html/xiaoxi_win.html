@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Document</title>
+    <link rel="stylesheet" href="../css/api.css">
+    <link rel="stylesheet" href="../css/news.css">
+    <link rel="stylesheet" href="../css/aui_font.css">
+    <link rel="stylesheet" href="../css/base_icon.css">
+    <link rel="stylesheet" href="../css/footer.css">
+    <style>
+        /*  header {
+            display: flex;
+            padding: 0 10px;
+            height: 50px;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        header * {
+            font-size: 14px;
+            position: sticky;
+            top: 0;
+        }
+
+        header .left {
+            font-weight: bold;
+        }
+
+        header .left span.clear-btn {
+            color: rgb(75, 187, 231);
+            font-weight: 400;
+        }
+
+        header .aui-icon-my {
+            font-size: 15px;
+        } */
+
+        .header {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            justify-content: space-between;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <!-- <header>
+            <div class="left">消息（<span class="msg-num">0</span>）<span class="clear-btn" onClick="clearmsg()">清空</span>
+            </div>
+            <span class="aui-iconfont aui-icon-my" onClick="_url({},'frame2/tongxunlu')"></span>
+        </header> -->
+        <header>
+            <div class="header">
+                <div class="new-nav">
+                    <div class="n-list" :class="{'active':index==0}" onclick="randomSwitchBtn(0)">消息<span class="num new-hide" id="js-cnum"></span></div>
+                    <div class="n-list" :class="{'active':index==1}" onclick="randomSwitchBtn(1)">好友</div>
+                </div>
+            </div>
+        </header>
+        <!-- 脚部 -->
+        <footer>
+            <ul class="f-wrap flex">
+                <li class="f-list " onclick="_index(0)">
+                    <img src="../image/index_images/button1.png" alt="">
+                    <span>缘分</span>
+                </li>
+                <li class="f-list" onclick="_index(1)">
+                    <img src="../image/index_images/button2.png" alt="">
+                    <span>动态</span>
+                </li>
+                <li class="f-list active">
+                    <img src="../image/index_images/button03.png" alt="">
+                    <span>聊天</span>
+                    <span class="num new-hide"></span>
+                </li>
+                <li class="f-list" onclick="_index(4)">
+                    <img src="../image/index_images/button5.png" alt="">
+                    <span>我的</span>
+                </li>
+            </ul>
+        </footer>
+    </div>
+</body>
+<script src="../script/jquery.js"></script>
+<script src="../script/api.js"></script>
+<script src="../script/ffkj.js"></script>
+<script src="../script/group.js"></script>
+<script src="../script/vue.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            ios: 1, // 1上架 0非上架
+            index: 0,
+        },
+        watch: {
+            index: function(n, o) {
+                changeWin();
+            }
+        }
+    })
+    apiready = function() {
+        view.ios = $api.getStorage('shang');
+        $api.fixStatusBar($api.dom('header'));
+        $api.fixTabBar($api.dom('footer'));
+        _heibai(1)
+        keyback();
+        var h = $api.offset($api.dom('header')).h;
+        var fh = $api.offset($api.dom('footer')).h;
+        var frameArr = ['frame2/frame2_1', 'frame2/tongxunlu'];
+        var pageParam = [{
+            index: 0
+        }, {
+            t: h,
+            f: fh
+        }];
+        groupInit('tri', frameArr, h, fh, 0, '.new-nav .n-list', pageParam, {
+            scrollEnabled: false
+        }, function(i) {
+            view.index = i;
+        });
+        // 监听消息数量
+        _listener('msgNum', function(ret) {
+            if (ret && ret.value) {
+                var result = ret.value;
+                changeMsgNum(result)
+            }
+        })
+        changeMsgNum();
+    }
+
+    // 点击分类栏目时，设置 frame 组当前可见 frame
+    function randomSwitchBtn(index) {
+        view.index = index;
+        api.setFrameGroupIndex({
+            name: 'tri',
+            index: index,
+            scroll: true, //是否平滑滚动至目标窗口，即是否带有动画
+            reload: false, // 刷新
+        });
+    }
+
+    function changeWin() {
+        if (view.index == 0) {
+            api.setFrameGroupAttr({
+                name: 'collect',
+                hidden: true
+            });
+            api.setFrameAttr({
+                name: 'frame2/frame2_1',
+                hidden: false
+            });
+        } else {
+            api.setFrameAttr({
+                name: 'frame2/frame2_1',
+                hidden: true
+            });
+            api.setFrameGroupAttr({
+                name: 'collect',
+                hidden: false
+            });
+        }
+    }
+
+
+    // 清空消息
+    function clearmsg() {
+        api.execScript({
+            frameName: 'frame2/frame2_1',
+            script: 'clearmsg()'
+        })
+    }
+</script>
+
+</html>

@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/login.css">
+    <style>
+        .login-bg {
+            padding: 10px 0;
+            width: 100vw;
+            background-color: #ffffff;
+        }
+
+        .wrap {
+            margin: 80px 20px 0 20px;
+        }
+
+        .head {
+            padding: 40px 4px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #333333;
+        }
+
+        .li {
+            margin-top: 10px;
+            padding: 12px 0 !important;
+        }
+
+        .li.phone .name {
+            display: flex;
+            align-items: center;
+            width: 60px;
+            justify-content: space-around;
+        }
+
+        .li.phone .name img {
+            width: 14px;
+        }
+
+        .after {
+            width: 0;
+            height: 0;
+            border-left: 3px solid transparent;
+            border-right: 3px solid transparent;
+            border-top: 6px solid rgb(0, 0, 0);
+        }
+
+        .new-btn {
+            margin: 0;
+            width: 100%;
+            margin-top: 50px;
+            background: linear-gradient(-4deg, #E63BE4, #FF82CC);
+        }
+
+        .xieyi {
+            margin-top: 14px;
+            color: #B3B3B3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .xieyi img {
+            width: 16px;
+            height: 16px;
+            margin-right: 4px;
+        }
+
+        .xieyi span {
+            color: #F14CB5;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-bg" id="view" v-cloak>
+        <div class="wrap">
+            <div class="input-wrap w-bg">
+                <div class="head">登录</div>
+                <div class="li phone">
+                    <div class="name">
+                        <img src="../../image/phone.png" alt="">
+                        +86
+                        <div class="after"></div>
+                    </div>
+                    <input type="number" placeholder="请输入手机号" v-model="phone">
+                </div>
+                <div class="li pwd" v-if="process!=1">
+                    <input type="number" placeholder="请输入短信验证码" v-model="code">
+                </div>
+            </div>
+            <button class="new-btn" onclick="check()" v-if="process==1">获取验证码</button>
+            <button class="new-btn" onclick="submit()" v-else>确定</button>
+            <div class="xieyi" @click="agree = !agree" v-if="process==1">
+                <img src="../../image/radio_select.png" v-if="agree" alt=""><img src="../../image/radio.png" v-else alt=""> 我已阅读并同意<span @click.stop="openPage(2)">用户协议</span>和<span @click.stop="openPage(3)">隐私政策</span>
+            </div>
+            <div class="xieyi" v-else-if="process==2"><span id="code">60</span>S后重新获取验证码</div>
+            <div class="xieyi" v-else-if="process==-1" onclick="getcode()">重新获取验证码</div>
+        </div>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/login.js"></script>
+<script src="../../script/keyboard.js"></script>
+<script src="../../script/vue.js"></script>
+<script>
+    var codedesc = 60
+    var interval
+    var view = new Vue({
+        el: '#view',
+        data: {
+            ios: 1, // 1上架 0非上架
+            agree: true,
+            process: 1,
+            phone: '',
+            code: '',
+        },
+        methods: {
+            openPage(val) {
+                openPage(val)
+            }
+        }
+    })
+    apiready = function() {
+        view.ios = $api.getStorage('shang');
+        api.addEventListener({
+            name: 'keyback'
+        }, function(ret, err) {
+            if (view.process == 1) {
+                api.closeWin();
+            } else {
+                view.process = 1
+                clearInterval(interval)
+                codedesc = 60
+                $('#code').text(codedesc)
+            }
+        });
+    }
+
+    function check() {
+        if (!view.agree) {
+            return alert('请阅读并勾选用户协议和隐私政策')
+        }
+        getcode();
+    }
+
+    // 发送验证码
+    function getcode() {
+
+        if (!checkMobile(view.phone)) {
+            _msg('请输入正确的手机号码');
+            return;
+        }
+        // 发验证码
+        // $api.toast('发送中')
+        _ajax('api/code/sms', function(rets, errs) {
+            _msg(rets.msg);
+            if (rets && rets.code == 200) {
+                // 发送成功后
+                view.process = 2;
+                setCodeDesc()
+            }
+        }, {
+            phone: view.phone,
+            deviceId: api.deviceId,
+        })
+
+    }
+
+    function setCodeDesc() {
+        interval = setInterval(() => {
+            if (codedesc == 0) {
+                clearInterval(interval)
+                codedesc = 60
+                view.process = -1
+                return $('#code').text(codedesc)
+            }
+            codedesc--
+            $('#code').text(codedesc)
+        }, 1000)
+    }
+
+    // 登录
+    function submit() {
+        var phone = view.phone;
+        if (!checkMobile(phone)) {
+            _msg('请输入正确的手机号');
+            return;
+        }
+        if (!phone) {
+            _msg('手机号未填写');
+            return;
+        }
+        if (!view.code) {
+            _msg('请输入验证码');
+            return;
+        }
+        _loading();
+        _ajax('api/login/codeLogin', function(ret, err) {
+            _loadingClose();
+            if (ret && ret.code == 200) {
+                _msg('登录成功');
+                $api.setStorage('userid', ret.result.id);
+                $api.setStorage('sex', ret.result.sex);
+                loginToUpdate(ret.result.id)
+                _home();
+            } else if (ret && ret.code == 300) {
+                // _msg('该账号还没为注册');
+                var info = {
+                    phone: phone,
+                    code: view.code
+                }
+                _url({
+                    info: info
+                }, 'frame0/she_zhi_ji_ben_zi_liao_frame');
+            } else {
+                _msg(ret.msg);
+            }
+        }, {
+            phone: phone,
+            code: view.code,
+            device_id: api.deviceId
+        })
+    }
+</script>
+
+</html>

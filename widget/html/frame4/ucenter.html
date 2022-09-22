@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/aui_font.css">
+    <link rel="stylesheet" href="../../css/base_icon.css">
+    <link rel="stylesheet" href="../../css/swiper.css">
+    <link rel="stylesheet" href="../../css/uinfo.css">
+    <script src="../../script/swiper.js"></script>
+    <style>
+        header .more {
+            top: 15px;
+            padding: 0;
+            right: 10px;
+        }
+
+        .edit-icon {
+            display: inline-block;
+            content: '';
+            width: 20px;
+            height: 20px;
+            background-image: url('../../image/man/edit.png');
+            background-size: 100%;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        .edits-icon {
+            background-image: url('../../image/man/edits.png');
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <header id="fx-header">
+            <div class="head flex-c">
+                <div class="back" tapmode onclick="_closeToWin()"><i class="aui-iconfont aui-icon-left"></i></div>
+                <div class="title">
+                    <p class="name" style="line-height: 50px;">{{data.name}}</p>
+                    <!-- <p class="area flex-c" ><i class="base-icon area-icon"></i>{{data.distance}}</p> -->
+                </div>
+                <div class="more" style="text-align: right;" onclick="_url({url:'frame4/user', title:'编辑资料', moreTitle: '保存'})">
+                    <span class="edit-icon"></span>
+                    <!-- <i class="aui-iconfont aui-icon-left"></i> -->
+                    <div class="hb-wrap" v-if="data.task && Object.keys(data.task).length>0 && !ios">
+                        <img style="height: 30px;" src="../../image/man/edit_prompt_icon.png" alt="">
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- 头部轮播 -->
+        <div class="header" v-if="data.id">
+            <div class="swiper-container" v-if="data.photo_show && data.photo_show.length>0">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide" v-for="(m ,sindex) in data.photo_show">
+                        <img @click="_url({uid:touserid, iIndex:sindex, showZan:1, slide:1}, 'frame0/img_win')" :src="returnImg(m)" onerror="this.src='../../image/touxiang.png'" alt="">
+                    </div>
+                </div>
+            </div>
+            <img class="big-tx" v-else :src="returnImg(data.head_portrait)" onerror="this.src='../../image/touxiang.png'" alt="">
+            <!-- 语音 -->
+            <div class="voice-wrap" v-if="data.voice">
+                <i class="voice-play-icon" :class="{'voice-icon':vplay==1}" onclick="playVoice()"></i>
+                <div class="voice-content">
+                    <p class="voice-time">{{data.voice_time}}''</p>
+                    <p class="voice-zan flex">
+                        <i class="voice-zan-icon" :class="{'voice-zans-icon':data.had_voice_zan==1}"></i>
+                        <span>({{data.voice_zan}})</span>
+                    </p>
+                </div>
+            </div>
+            <div class="voice-wrap" v-else>
+                <i class="voice-play-icon" v-if="data.voice_auth==1"></i>
+                <i class="voice-play-icon" onclick="_url({url:'frame4/jiao_you_xuan_yan',title:'语音签名'})"  v-if="data.voice_auth!=1"></i>
+                <div class="voice-content">
+                    <p class="voice-zan flex" v-if="data.voice_auth==1">
+                        <span>审核中</span>
+                    </p>
+                    <p onclick="_url({url:'frame4/jiao_you_xuan_yan',title:'语音签名'})" class="voice-zan flex" v-else>
+                        <span>去录制</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- 守护 -->
+            <div class="shouhu-wrap" v-if="!ios">
+                <div class="sh-bg">
+                    <div class="tx">
+                        <img v-if="data.angel" :src="returnImg(data.angel_avatar)" onerror="this.src='../../image/touxiang.png'" alt="">
+                        <img v-else src="../../image/man/ms_details_angel_bj.png" alt="">
+                    </div>
+                    <div class="sh-bottom">
+                        <img src="../../image/man/ms_details_angel_label_level.png" alt="">
+                        <span v-if="data.angel">Lv{{data.angel_grade}} {{data.angel_name}}</span>
+                        <span v-else>守护TA</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="user-wrap">
+                <div class="username">{{data.name}}
+                    <span class="boy-tag" :class="{'girl-tag':data.sex == '女'}">{{data.age}}</span>
+                    <span class="new-fuhao" @click="showDetail('modal/user_fuhao', {data:data})" v-if="data.tycoonGrade && data.tycoonIcon && !ios"><img :src="returnImg(data.tycoonIcon)" onerror="this.src='../../image/error-img.png'" alt=""></span>
+                    <span class="new-fuhao" @click="showDetail('modal/user_meili', {data:data})" v-if="data.charmGrade && data.charmIcon && !ios"><img :src="returnImg(data.charmIcon)" onerror="this.src='../../image/error-img.png'" alt=""></span>
+                    <img class="new-noble" v-if="data.is_noble && data.noble && !ios" :src="returnImg(data.noble.icon)" onerror="this.src='../../image/error-img.png'" alt="">
+                    <!-- <button onclick="guanzhu()" class="gz-btn" v-if="!data.love">+ 关注</button> -->
+                </div>
+                <div class="account" @click="copyTxt(data.id)" v-if="!ios">ID:{{data.id}} · 被心动{{data.heart}}</div>
+            </div>
+            <div class="tab">
+                <div class="titem" v-if="!ios">
+                    <div class="left flex-bt" onclick="openDY(-1)">
+                        <div class="label">最新动态</div>
+                        <span class="aui-iconfont aui-icon-right"></span>
+                    </div>
+                    <div class="dt-wrap" id="js-dt">
+                        <img src="../../image/icon/btn_addphoto.png" alt="" onclick="openDY(0)">
+                        <img v-for="(m, index) in dyList" :src="returnImg(m)" onclick="openDY(1)" onerror="this.src='../../image/error-img.png'" alt="">
+                    </div>
+                </div>
+                <div class="titem" onclick="_url({url:'frame4/xiangce', title:'我的相册'})">
+                    <div class="left flex-bt">
+                        <div class="label">个人相册({{photo.length}})</div>
+                        <span class="aui-iconfont aui-icon-right"></span>
+                    </div>
+                    <div class="dt-wrap">
+                        <img src="../../image/icon/btn_addphoto.png" alt="">
+                        <img @click.stop="_url({showZan:1, iIndex:index}, 'frame0/img_win')" v-for="(m, index) in photo" :src="returnImg(m)" onerror="this.src='../../image/error-img.png'" alt="">
+                    </div>
+                </div>
+                <div class="titem" v-if="!ios">
+                    <div class="left flex-bt" onclick="_url({url:'rz/rzcenter', title:'认证'})">
+                        <div class="label">认证信息</div>
+                        <span class="aui-iconfont aui-icon-right"></span>
+                    </div>
+                    <ul class="flex-w rz-wrap">
+                        <li class="list" @click="openRZWin('real_auth')" v-if="rzInfo.real_auth" :class="{'ready': rzInfo.real_auth.status==2}">
+                            <i class="rz-icon rz-man"></i>
+                            <p class="text">真人{{rzInfo.real_auth.status==2?'已':'未'}}认证</p>
+                        </li>
+                        <li class="list" @click="openRZWin('name_auth')" v-if="rzInfo.name_auth" :class="{'ready': rzInfo.name_auth.status==2}">
+                            <i class="rz-icon rz-name"></i>
+                            <p class="text">实名{{rzInfo.name_auth.status==2?'已':'未'}}认证</p>
+                        </li>
+                        <li class="list" @click="openRZWin('phone_auth')" v-if="rzInfo.phone_auth" :class="{'ready': rzInfo.phone_auth.status==2}">
+                            <i class="rz-icon rz-phone"></i>
+                            <p class="text">手机{{rzInfo.phone_auth.status==2?'已':'未'}}认证</p>
+                        </li>
+                        <li class="list" @click="openRZWin('education_auth')" v-if="rzInfo.education_auth" :class="{'ready': rzInfo.education_auth.status==2}">
+                            <i class="rz-icon rz-edu"></i>
+                            <p class="text">学历{{rzInfo.education_auth.status==2?'已':'未'}}认证</p>
+                        </li>
+                        <li class="list" @click="openRZWin('car_auth')" v-if="rzInfo.car_auth" :class="{'ready': rzInfo.car_auth.status==2}">
+                            <i class="rz-icon rz-car"></i>
+                            <p class="text">车辆{{rzInfo.car_auth.status==2?'已':'未'}}认证</p>
+                        </li>
+                        <li class="list" @click="openRZWin('house_auth')" v-if="rzInfo.house_auth" :class="{'ready': rzInfo.house_auth.status==2}">
+                            <i class="rz-icon rz-house"></i>
+                            <p class="text">房产{{rzInfo.house_auth.status==2?'已':'未'}}认证</p>
+                        </li>
+                    </ul>
+                </div>
+                <div class="titem" onclick="_url({url:'frame4/user', title:'编辑资料', moreTitle: '保存'})">
+                    <div class="left flex-bt">
+                        <div class="label">基本资料</div>
+                        <span class="aui-iconfont aui-icon-right"></span>
+                    </div>
+                    <div class="flex-w">
+                        <div class="jbitem" v-if="data.age"><span class="text">{{ data.sex }} {{ data.age }}岁</span> </div>
+                        <div class="jbitem" v-if="data.emotion"><span class="text">{{ data.emotion }}</span></div>
+                        <div class="jbitem" v-if="data.stature"><span class="text">{{ data.stature }}cm</span></div>
+                        <div class="jbitem" v-if="data.weight"><span class="text">{{ data.weight }}kg</span></div>
+                        <div class="jbitem" v-if="data.city"><span class="text">所在地：{{ data.city }}</span></div>
+                        <div class="jbitem" v-if="data.education_background"><span class="text">{{ data.education_background }}</span></div>
+                        <div class="jbitem" v-if="data.monthly_salary">年收入：<span class="text">{{ data.monthly_salary }}</span></div>
+                        <div class="jbitem" v-if="data.occupation"><span class="text">{{ data.occupation }}</span></div>
+                        <div class="jbitem" v-if="data.school_of_graduation"><span class="text">{{ data.school_of_graduation }}</span></div>
+                        <div class="jbitem" v-if="data.through_membership">家乡：<span class="text">{{ data.through_membership }}</span></div>
+                        <div class="jbitem" v-if="data.live_status"><span class="text">{{ data.live_status }}</span> </div>
+                        <div class="jbitem" v-if="data.is_house_purchase"><span class="text">{{ data.is_house_purchase }}</span></div>
+                        <div class="jbitem" v-if="data.is_car_purchase"><span class="text">{{ data.is_car_purchase }}</span></div>
+                    </div>
+                </div>
+                <div class="titem " onclick="_url({url:'frame4/jieshao', title:'自我介绍'})">
+                    <div class="left flex-bt">
+                        <div class="label">自我介绍</div>
+                        <span class="aui-iconfont aui-icon-right"></span>
+                    </div>
+                    <div class="txt" v-if="data.self_slogan" v-html="data.self_slogan"></div>
+                    <div class="txt" v-else>添加自我介绍，更容易获得别人关注哦~</div>
+                    <div class="slogan-img" v-for="(m, index) in data.self_images">
+                        <img :src="returnImg(m)" alt="" @click="_url({imgArr:data.self_images, iIndex:index}, 'frame1/dy_img_win')">
+                    </div>
+                </div>
+                <div v-if="!ios">
+                    <div class="titem" v-if="data.is_noble" onclick="openVIP()">
+                        <div class="left flex-bt">
+                            <div class="label">贵族</div>
+                            <div class="right flex">
+                                <img style="height: 25px;" :src="returnImg(data.noble.icon)" onerror="this.src='../../image/touxiang.png'" alt="">
+                                <span class="aui-iconfont aui-icon-right"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="titem" v-else onclick="openVIP()">
+                        <div class="left flex-bt">
+                            <div class="label">贵族</div>
+                            <div class="flex-bt" style="width: 80%;">
+                                <span class="txt">未开通</span>
+                                <div class="right">
+                                    <span class="txt">现在开通</span>
+                                    <span class="aui-iconfont aui-icon-right"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div v-if="!ios">
+                    <div class="titem" v-if="data.cluster && data.cluster.id" onclick="openQun(view.data.cluster.id, view.data.cluster.name)">
+                        <div class="left flex-bt">
+                            <div class="label">家族</div>
+                            <div class="right">
+                                <img class="jiazu-icon" :src="returnImg(data.cluster.logo)" onerror="this.src='../../image/touxiang.png'" alt="">
+                                <span class="aui-iconfont aui-icon-right"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="titem" v-else onclick="_url({},'jiazu_win')">
+                        <div class="left flex-bt">
+                            <div class="label">家族</div>
+                            <div class="flex-bt" style="width: 80%;">
+                                <span class="txt">未加入</span>
+                                <div class="right">
+                                    <span class="aui-iconfont aui-icon-right"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="titem" v-if="data.tags && data.tags.length>0">
+                    <div class="left flex-bt">
+                        <div class="label">我的标签</div>
+                    </div>
+                    <div class="tag-ul flex-w">
+                        <span class="tag" v-for="(m, index) in data.tags">{{m}}</span>
+                    </div>
+                </div>
+                <div class="titem" v-else>
+                    <div class="left flex-bt">
+                        <div class="label">我的标签</div>
+                        <div class="flex-bt" style="width: 80%;">
+                            <span class="txt">未设置</span>
+                            <span class="aui-iconfont aui-icon-right"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="titem" onclick="_url({url:'frame4/qianming', title:'个性签名'})">
+                    <div class="left flex-bt">
+                        <div class="label">个性签名</div>
+                    </div>
+                    <div class="txt" v-if="data.slogan" v-html="data.slogan"></div>
+                    <div class="txt" v-else>添加个性签名，交友成功率提高两倍</div>
+                </div>
+                <div class="titem" v-if="!ios">
+                    <div class="left flex-bt">
+                        <div class="label">收到的礼物</div>
+                        <span class="aui-iconfont aui-icon-right"></span>
+                    </div>
+                </div>
+                <div class="glist" v-if="!ios">
+                    <div class="gitem" v-for="(item, index) in data.gift">
+                        <img :src="returnImg(item.preview)" onerror="this.src='../../image/error-img.png'">
+                        <div class="gname">{{item.name}}</div>
+                        <div class="gnum">X{{item.num}}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div v-if="!ios">
+            <img class="car" v-if="car" :src="returnImg(car)" onerror="this.src='../../image/error-img.png'" alt="" onclick="_url({},'frame4/car')">
+            <img class="car" v-else src="../../image/man/car.png" alt="" onclick="_url({},'frame4/car')">
+        </div>
+        <!-- <img class="car" v-else src="../../image/test/car1.png" alt=""> -->
+
+        <div class="loading-bg"></div>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/limitchat.js"></script>
+<script src="../../script/vue.js"></script>
+<script src="../../script/swiper.js"></script>
+<script src="../../script/uinfo.js"></script>
+<script src="../../script/audio.js"></script>
+<script src="../../script/rzcenter.js"></script>
+
+<script src="../../json/user.js"></script>
+<script src="../../json/frame1.js"></script>
+<script>
+    var myuserid = $api.getStorage('userid');
+    var touserid;
+    var audio;
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            // data: userJson.result,
+            data: {},
+            touserid: '',
+            myuserid: $api.getStorage('userid'),
+            isVip: $api.getStorage('isVip'),
+            showshouhu: false,
+            car: '',
+            ios: 1, // 1上架 0非上架
+            myInfo: {}, // 获取自己用户资料
+            vplay: 0, // 0 未播放 1播放中
+            configInfo: {},
+            dyLit: [],
+            dyObj: {
+                page: 0,
+                last: 0
+            },
+            rzInfo: [], // 认证情况
+            dyList: [],
+            photo: []
+        },
+        methods: {
+            // 认证
+            openRZWin(key) {
+                judgeRZ(view.rzInfo[key]);
+            },
+            // 举报
+            more(index) {
+                more(index)
+            },
+            // 约会报名
+            joinEnroll(id, index) {
+                joinEnroll(id, index)
+            },
+            // 点赞
+            zan(id, index, type) {
+                zan(id, index, type)
+            },
+            // 评论
+            addComment(dy_id, uid) {
+                addComment(dy_id, uid)
+            },
+            // 发布评论
+            send() {
+                send()
+            },
+            openLM() {
+                openLM(touserid);
+            },
+            openVideoChat() {
+                openVideoChat(touserid);
+            },
+            copyTxt(text) {
+                copyTxt(text)
+            },
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+
+            showDetail(url, data, topH, footerH) {
+                showDetail(url, data, topH, footerH)
+            },
+
+        }
+    })
+    apiready = function() {
+        audio = new Audio();
+        $api.fixStatusBar($api.dom('header'));
+        view.ios = $api.getStorage('shang');
+
+        touserid = $api.getStorage('userid');
+        view.touserid = $api.getStorage('userid');
+        getInfo()
+        _heibai(1);
+        _listener('newmsg', function(ret) {
+            showMsgFrm(ret.value.data)
+        })
+
+        _listener('viewappear', function() {
+            getInfo()
+        })
+
+        getDY(0);
+        $('#js-dt').on('scroll', function() {
+            var w = $('#js-dt').innerWidth();
+            var l = $('#js-dt').scrollLeft();
+            if (l + 20 > w && view.dyObj.last == 0) {
+                view.dyObj.page++;
+                getIndex(view.dyObj.page);
+            }
+        })
+
+        $(window).on('scroll', function() {
+            topNavScroll();
+        });
+    }
+
+    // 发动态 -1表示依据动态数量跳转，0：发动态 1动态列表
+    function openDY(type) {
+        if (type == -1) {
+            type = view.dyList.length > 0 ? 1 : 0;
+        }
+        if (type == 1) {
+            _url({
+                url: 'frame4/broadcast_frame',
+                title: view.data.name + '的动态',
+                uid: view.data.id
+            })
+        } else {
+            _url({
+                type: 0,
+            }, 'frame1/fa_dong_tai')
+        }
+    }
+</script>
+
+</html>

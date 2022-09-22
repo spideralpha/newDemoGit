@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>小火苗</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/beizhu.css">
+    <style>
+
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <div class="wrap">
+            <div class="container">
+                <textarea name="" id="" placeholder="编辑您的个性签名" v-model="slogan"></textarea>
+            </div>
+            <button class="new-submit" onclick="submit()">确定</button>
+        </div>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            touserid: 0,
+            slogan: ''
+        },
+        methods: {
+
+        }
+    })
+    apiready = function () {
+        _getUser(function (ret) {
+            view.slogan = ret.result.slogan;
+        })
+    }
+    // 确定
+    function submit() {
+        if (!view.slogan) {
+            _msg('请输入交友宣言');
+            return;
+        }
+        _loading();
+
+        _ajax('api/user/editInfo', function (ret, err) {
+            _msg(ret.msg);
+            if (ret && ret.code == 200) {
+                timerWin();
+            }
+        }, {
+            user_id: $api.getStorage('userid'),
+            slogan: view.slogan,
+        })
+    }
+</script>
+
+</html>

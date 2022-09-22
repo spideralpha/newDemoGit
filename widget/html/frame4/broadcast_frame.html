@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/aui_font.css">
+    <link rel="stylesheet" href="../../css/base_icon.css">
+    <link rel="stylesheet" href="../../css/frame1.css">
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <!-- 个人广播 -->
+        <ul class="dylist-wrap">
+            <li class="list" v-for="(m, index) in ffList" @click="_url({id:m.dy_id, url:'frame1/dy_detail', title:'详情'})">
+                <div class="list-container">
+                    <div class="tx img-h" :class="{'xinren':m.is_new==1}" @click.stop @click="go_userInfo(m.id, m.name, m.sex)">
+                        <img :src="returnImg(m.head_100)" onerror="this.src='../../image/touxiang.png'" alt="">
+                    </div>
+                    <div class="left">
+                        <div class="name-wrap">
+                            <span class="name" :class="{'vip-name':m.noble_grade>0}">{{m.name}}</span>
+                            <span class="boy-tag" :class="{'girl-tag':m.sex == '女'}">{{m.age}}</span>
+                            <span class="new-tag man-ntag" :class="{'woman-ntag':m.sex=='女'}" v-if="m.realname_auth==2 && !ios"></span>
+                            <span class="new-tag rz-tag" v-if="m.is_identity_authentication==2 && !ios"></span>
+                            <span class="dy-more" @click.stop="more(index)"></span>
+                        </div>
+                        <div class="dy-content-wrap">
+                            <div class="dy-content">{{m.content}}</div>
+                            <div class="img-wrap" :class="{moreimg: m.sumbImage.length>1}" v-if="m.sumbImage && m.sumbImage.length > 0 && m.sumbImage[0]">
+                                <div class="img img-h" v-for="(s, sindex) in m.sumbImage" @click.stop="_url({imgArr:m.masterimg, iIndex:sindex}, 'frame1/dy_img_win')">
+                                    <img :src="returnImg(s)" onerror="this.src='../../image/error-img.png'" alt="">
+                                </div>
+                            </div>
+                            <div class="img-wrap dy-video" v-if="m.video">
+                                <div class="img img-h" @click.stop="_url({ video: m.video, cover: m.cover, animationType: 0 }, 'frame0/liaotian_video')">
+                                    <img :src="returnImg(m.cover)" onerror="this.src='../../image/error-img.png'" alt="">
+                                </div>
+                            </div>
+                        </div>
+                        <p class="time-wrap">
+                            <span class="time">{{m.addtime}}</span>
+                            <span class="time">浏览{{m.visit}}次</span>
+                            <span class="area" v-if="m.citys">{{m.citys}}</span>
+                        </p>
+                        <div class="footer" v-if="!ios">
+                            <div class="ul flex-bt">
+                                <div class="left flex">
+                                    <div class="li" @click.stop @click="zan(m.dy_id, index)">
+                                        <i class="base-icon dy-nozan-icon" :class="{'dy-zan-icon':m.isthumbsup == 1}"></i>
+                                        <span>{{m.num}}</span>
+                                    </div>
+                                    <div class="li">
+                                        <i class="base-icon dy-comment-icon"></i>
+                                        <span>{{m.comments ? m.comments : '评论'}}</span>
+                                    </div>
+                                    <div class="li" v-if="m.id != myuserid && !ios" @click.stop="shareDY(index)">
+                                        <i class="base-icon dy-share-icon"></i>
+                                        <span>转发</span>
+                                    </div>
+                                </div>
+                                <div class="hi-tag" :class="{'hi-tags':m.dashan==1}" v-if="m.id != myuserid && !ios" @click.stop="dashan(index, $event)">心动</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script src="../../script/frame1.js"></script>
+<script src="../../json/frame1.js"></script>
+<script>
+    var filterCity;
+    var filterSex = 0; // 0 不限 1男 2女
+    var filterNew = 1;
+    var filterRecently = 0;
+    var category_id = 0;
+    var view = new Vue({
+        el: '#view',
+        data: {
+            myuserid: $api.getStorage('userid'),
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            themeObj: {}, // 主题对象
+            inputObj: {
+                id: 0,
+                uid: 0
+            }, // 评论 广播id
+            ios: 1, // 1上架 0非上架
+            my: ''
+        },
+        methods: {
+            shareDY(index) {
+                shareDY(view.ffList[index]);
+            },
+            // 心动
+            dashan(index, event) {
+                var e = event.currentTarget;
+                _dashan(index, e);
+
+            },
+            // 举报
+            more(index) {
+                more(index)
+            },
+            // 约会报名
+            joinEnroll(id, index) {
+                joinEnroll(id, index)
+            },
+            // 点赞
+            zan(id, index, type) {
+                zan(id, index, type)
+            },
+            // 评论
+            addComment(dy_id, uid) {
+                addComment(dy_id, uid)
+            },
+            // 发布评论
+            send() {
+                send()
+            },
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+            // 查看用户资料
+            go_userInfo(id, name, sex) {
+                go_userInfo(id, name, sex)
+            },
+            // 清除html
+            clearHtml(s) {
+                return clearHtml(s);
+            }
+
+        }
+    })
+    apiready = function() {
+        view.ios = $api.getStorage('shang');
+        view.my = api.pageParam['my'] || 0;
+        returnTheme(function(obj) {
+            view.themeObj = obj;
+        })
+        _shangla(function() {
+            getData(0);
+        })
+
+        _scrollToBottom(function() {
+            if (heigutgao == 1) {
+                pagenum++;
+                getData(pagenum)
+            }
+        })
+    }
+
+    // 隐藏输入框
+    $('.input-bg input').on('blur', function() {
+        $('.input-bg').addClass('new-hide');
+    })
+
+    // 获取数据
+    function getData(page) {
+        var userid = api.pageParam['uid'];
+        console.log(userid)
+        var url = userid ? 'home/Dymanic/otherlist' : 'home/Dymanic/selflist';
+        userid = userid ? userid : $api.getStorage('userid');
+        var param = {
+            userid: $api.getStorage('userid'),
+            to_user: userid,
+            type: 0
+        }
+        console.log(JSON.stringify(param));
+        var loading = page == 0 ? 1 : 0;
+        _lists(url, page, loading, param)
+    }
+</script>
+
+</html>

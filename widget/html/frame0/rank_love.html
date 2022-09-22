@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>小火苗</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/rank.css">
+    <style></style>
+</head>
+
+<body>
+    <div class="paihang" id="view" v-cloak>
+        <div class="pmainbox" @click.stop>
+            <!--恩爱榜-->
+            <div class="back double">
+                <div class="top" :class="{'flex-c': !ffList[1]}">
+                    <div class="arrow" v-if="ffList[1]">
+                        <div class="head">
+                            <img class="avatar" @click="go_userInfo(ffList[1].user1_id, ffList[1].user1_name)" :src="returnImg(ffList[1].user1_avatar)" onerror="this.src='../../image/touxiang.png'">
+                            <img class="avatar" @click="go_userInfo(ffList[1].user2_id, ffList[1].user2_name)" :src="returnImg(ffList[1].user2_avatar)" onerror="this.src='../../image/touxiang.png'">
+                            <img src="../../image/index/family_love_list_two.png">
+                        </div>
+                        <div>{{ffList[1].user1_name}}</div>
+                        <div>{{ffList[1].user2_name}}</div>
+                        <div>{{ffList[1].intimate}}亲密度</div>
+                    </div>
+                    <div class="arrow middle" v-if="ffList[0]">
+                        <div class="head">
+                            <img class="avatar" @click="go_userInfo(ffList[0].user1_id, ffList[0].user1_name)" :src="returnImg(ffList[0].user1_avatar)" onerror="this.src='../../image/touxiang.png'">
+                            <img class="avatar" @click="go_userInfo(ffList[0].user2_id, ffList[0].user2_name)" :src="returnImg(ffList[0].user2_avatar)" onerror="this.src='../../image/touxiang.png'">
+                            <img src="../../image/index/family_love_list_one.png">
+                        </div>
+                        <div>{{ffList[0].user1_name}}</div>
+                        <div>{{ffList[0].user2_name}}</div>
+                        <div>{{ffList[0].intimate}}亲密度</div>
+                    </div>
+                    <div class="arrow" v-if="ffList[2]">
+                        <div class="head">
+                            <img class="avatar" @click="go_userInfo(ffList[2].user1_id, ffList[2].user1_name)" :src="returnImg(ffList[2].user1_avatar)" onerror="this.src='../../image/touxiang.png'">
+                            <img class="avatar" @click="go_userInfo(ffList[2].user2_id, ffList[2].user2_name)" :src="returnImg(ffList[2].user2_avatar)" onerror="this.src='../../image/touxiang.png'">
+                            <img src="../../image/index/family_love_list_three.png">
+                        </div>
+                        <div>{{ffList[2].user1_name}}</div>
+                        <div>{{ffList[2].user2_name}}</div>
+                        <div>{{ffList[2].intimate}}亲密度</div>
+                    </div>
+                </div>
+                <div class="list">
+                    <div class="item" v-for="(m, index) in ffList" v-if="index>2">
+                        <div class="index">{{index+1}}</div>
+                        <div class="info">
+                            <div class="left">
+                                <img class="avatar" @click="go_userInfo(m.user1_id, m.user1_name)" :src="returnImg(m.user1_avatar)" onerror="this.src='../../image/touxiang.png'">
+                                <img class="avatar" @click="go_userInfo(m.user2_id, m.user2_name)" :src="returnImg(m.user2_avatar)" onerror="this.src='../../image/touxiang.png'">
+                                <div class="name">
+                                    <div>{{m.user1_name}}</div>
+                                    <div>{{m.user2_name}}</div>
+                                </div>
+                            </div>
+                            <div class="right">{{m.intimate}}亲密度</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+            types: 0
+        },
+        methods: {
+            // 跳转 查看用户详情
+            go_userInfo(data) {
+                go_userInfo(data.user_id, data.user_name, data.user_sex)
+            },
+            // 跳转
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+        }
+    })
+    apiready = function() {
+        view.types = api.pageParam['index'];
+        view.id = api.pageParam['id'];
+        getData();
+    }
+
+
+    function getData() {
+        _ajax('api/cluster/ranking', function(ret, err) {
+            if (ret && ret.code == 200) {
+                view.ffList = ret.data;
+            }
+        }, {
+            id: view.id,
+            types: view.types,
+        })
+    }
+</script>
+
+</html>

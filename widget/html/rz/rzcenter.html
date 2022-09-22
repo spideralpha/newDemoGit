@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>小火苗</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <style>
+        html,
+        body {
+            background: #FAFAFA;
+        }
+
+        .rz-ul .list {
+            background: #FFFFFF;
+            box-shadow: 0px 1px 4px 0px rgba(179, 179, 179, 0.07);
+            border-radius: 10px;
+            margin: 15px;
+            padding: 19px 16px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .rz-ul .list .left {
+
+            display: flex;
+            align-items: center;
+        }
+
+        .rz-ul .list img {
+            width: 43px;
+            margin-right: 10px;
+        }
+
+        .rz-ul .list .name {
+            font-size: 14px;
+            font-family: PingFang SC;
+            font-weight: 500;
+            color: #333333;
+        }
+
+        .rz-ul .list .money {
+            font-size: 10px;
+            font-family: PingFang SC;
+            color: #F0963D;
+        }
+
+        .rz-ul .new-btn {
+            margin: 0;
+            width: 66px;
+            line-height: 24px;
+            background: linear-gradient(-14deg, #F97FF8, #FAB0CA);
+            border-radius: 12px;
+        }
+
+        .tip-wrap {
+            margin: 15px;
+        }
+
+        .tip-wrap .top {
+            font-weight: bold;
+        }
+
+        .tip-wrap img {
+            width: 12px;
+            margin-right: 5px;
+        }
+
+        .tip-wrap p {
+            color: #757575;
+            font-size: 12px;
+            line-height: 2;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <div class="tip-wrap">
+            <p class="top flex"><img src="../../image/icon/my_authentication_tips.png" alt="">小贴士：</p>
+            <p v-html="txt"></p>
+        </div>
+        <ul class="rz-ul">
+            <li class="list" v-for="(m, index) in ffList">
+                <div class="left">
+                    <img :src="returnImg(m.icon)" alt="">
+                    <div class="content">
+                        <p class="name">{{m.title}}</p>
+                        <span class="money" v-if="m.reward">赠送{{m.reward}}金币</span>
+                    </div>
+                </div>
+                <button v-if="m.status == 0" class="new-btn" @click="openRZWin(m)">去完成</button>
+                <button v-else-if="m.status == 1" class="new-btn" style="background: #aaa;">审核中</button>
+                <button v-else-if="m.status == 3" class="new-btn" @click="openRZWin(m)">审核未通过</button>
+                <img v-else src="../../image/member/my_authentication_certified.png" alt="">
+            </li>
+            <!-- <li class="list">
+                <div class="left">
+                    <img src="../../image/member/rz_voice.png" alt="">
+                    <div class="content">
+                        <p class="name">语音签名</p>
+                        <span class="money">赠送10金币</span>
+                    </div>
+                </div>
+                <button class="new-btn" v-if="!ffInfo.voice"
+                    onclick="_url({url:'frame4/jiao_you_xuan_yan',title:'语音签名'})">去录制</button>
+                <img v-else src="../../image/member/my_authentication_certified.png" alt="">
+            </li>
+            <li class="list">
+                <div class="left">
+                    <img src="../../image/member/rz_name.png" alt="">
+                    <div class="content">
+                        <p class="name">实名认证</p>
+                        <!-- <span class="money">赠送10金币</span> -->
+            <!--   </div>
+                </div>
+                <img v-if="ffInfo.realname_auth==2" src="../../image/member/my_authentication_certified.png" alt="">
+                <!-- <button class="new-btn"  onclick="_msg('您已完成实名认证')">已认证</button> -->
+            <!--  <button class="new-btn" v-else-if="ffInfo.realname_auth==1" onclick="_msg('审核中')">审核中</button>
+                <button class="new-btn" v-else onclick="_url({ url: 'rz/rz_sfz', title: '实名认证' })">去认证</button>
+            </li>
+            <li class="list">
+                <div class="left">
+                    <img src="../../image/member/rz_phone.png" alt="">
+                    <div class="content">
+                        <p class="name">手机认证</p>
+                        <span class="money">赠送10金币</span>
+                    </div>
+                </div>
+                <button class="new-btn" v-if="!ffInfo.phone"
+                    onclick="_url({url:'frame4/bang_ding_shou_ji_frm', title:'手机认证'})">去认证</button>
+                <img v-else src="../../image/member/my_authentication_certified.png" alt="">
+            </li>
+            <li class="list">
+                <div class="left">
+                    <img src="../../image/member/rz_edu.png" alt="">
+                    <div class="content">
+                        <p class="name">学历认证</p>
+                        <span class="money">赠送10金币</span>
+                    </div>
+                </div>
+                <img v-if="ffInfo.is_education_authentication==2"
+                    src="../../image/member/my_authentication_certified.png" alt="">
+                <button v-else-if="ffInfo.is_education_authentication==1" class="new-btn">审核中</button>
+                <button v-else class="new-btn" onclick="_url({ url: 'rz/rz_edu', title: '学历认证' })">去认证</button>
+            </li>
+            <li class="list">
+                <div class="left">
+                    <img src="../../image/member/rz_car.png" alt="">
+                    <div class="content">
+                        <p class="name">车辆认证</p>
+                        <span class="money">赠送10金币</span>
+                    </div>
+                </div>
+                <img v-if="ffInfo.is_car_authentication==2" src="../../image/member/my_authentication_certified.png"
+                    alt="">
+                <button v-else-if="ffInfo.is_car_authentication==1" class="new-btn">审核中</button>
+                <button v-else class="new-btn" onclick="_url({ url: 'rz/rz_car', title: '车辆认证' })">去认证</button>
+            </li>
+            <li class="list">
+                <div class="left">
+                    <img src="../../image/member/rz_house.png" alt="">
+                    <div class="content">
+                        <p class="name">房产认证</p>
+                        <span class="money">赠送10金币</span>
+                    </div>
+                </div>
+                <img v-if="ffInfo.is_house_authentication==2" src="../../image/member/my_authentication_certified.png"
+                    alt="">
+                <button v-else-if="ffInfo.is_house_authentication==1" class="new-btn">审核中</button>
+                <button v-else class="new-btn" onclick="_url({ url: 'rz/rz_house', title: '房产认证' })">去认证</button>
+            </li> -->
+        </ul>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script src="../../script/rzcenter.js"></script>
+<script src="../../json/rz.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+
+            txt: ''
+        },
+        methods: {
+            // 跳转
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+            openRZWin(m) {
+                judgeRZ(m)
+            }
+        }
+    })
+
+    apiready = function() {
+        getPageContent(12, function(data) {
+            view.txt = data.body;
+        })
+        _listener('viewappear', function() {
+            getData();
+        })
+        getData();
+    }
+
+    function getData() {
+        _ajax('api/auth/lists', function(ret, err) {
+            if (ret && ret.code == 200) {
+                view.ffList = ret.data;
+            }
+        }, {
+            user_id: $api.getStorage('userid')
+        })
+    }
+</script>
+
+</html>

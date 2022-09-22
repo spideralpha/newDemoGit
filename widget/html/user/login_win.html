@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/aui_font.css">
+    <link rel="stylesheet" href="../../css/login.css">
+    <style>
+        .login-bg {
+            background-image: url('../../image/start_login_bg.png');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            width: 100vw;
+
+            box-sizing: border-box;
+            padding: 0;
+
+            /* -webkit-animation: slideop 5s linear infinite; */
+            /* animation: slideop 5s linear infinite; */
+        }
+
+        @keyframes slideop {
+            0% {
+                background-position: 0;
+            }
+
+            100% {
+                background-position: 0 bottom;
+            }
+        }
+
+        .new-btn {
+            background: linear-gradient(-41deg, #9F31D0, #E936BA);
+
+            /* color: #663dfb; */
+            font-size: 16px;
+            font-weight: bold;
+            line-height: 45px;
+            width: calc(100% - 40px);
+            margin: 15px 20px;
+            /* border: 2px solid; */
+            border-radius: 48px;
+            padding: 1px;
+        }
+
+        .btn-container {
+            border-radius: 48px;
+            background: linear-gradient(-25deg, #210433, #180433);
+        }
+
+        .new-btn span {
+            background: linear-gradient(-25deg, #C244DD 0%, #DC55B7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .reg-btn {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        .line-wrap .tip {
+            padding: 0 5px;
+        }
+
+        .line {
+            width: 15px;
+            height: 1px;
+            background: #fff;
+        }
+
+        .line-wrap .tip,
+        .xieyi,
+        .xieyi p,
+        .xieyi a {
+            color: rgba(255, 255, 255, 0.699);
+        }
+
+        .login-img img {
+            width: 35px;
+        }
+
+        .check-box {
+            border: 1px solid #ddd;
+            width: 20px;
+            height: 20px;
+            margin-right: 5px;
+        }
+
+        .check-box.active {
+            background-image: url('../../image/select.png');
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+
+        }
+
+        .op {
+            width: 100px;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.712);
+            font-size: 11px;
+        }
+
+        .lines {
+            color: rgba(250, 250, 250, 0.473);
+            font-size: 11px;
+        }
+
+        /* 其他登录 */
+        .other-login {
+            position: fixed;
+            width: 100vw;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-bg" id="view" v-cloak>
+        <div class="wrap" :class="{'new-invisible':login ==1}">
+            <div class="logo flex-c flex-col" style="padding-top: 16vh;">
+                <!-- <img id="js-logo" style="width: 75px;" src="../../image/logo.png" alt=""> -->
+                <!-- <span style="font-size:13px;color: #fff;">SHOWME</span>
+                <span id="phone" style="margin-top: 14px;font-size: 20px;color: #fff;">199****8888</span>
+                <span id="yys" style="margin-top: 10px;font-size: 12px;color: rgba(250, 250, 250, 0.719);">中国移动提供认证服务</span> -->
+            </div>
+            <div class="other-login">
+                <button style="visibility: visible;" class="new-btn login-btn" tapmode onclick="judgeXY(2)">
+                    <div class="btn-container"><span :class="{'new-invisible':login ==1}">手机登录</span></div>
+                </button>
+                <!-- <button class="new-btn login-btn" tapmode onclick="judgeXY(2)">
+                    <div class="btn-container"><span>手机登录</span></div>
+                </button> -->
+
+                <div id="js-other-btn" style="color:#FFFFFF;margin-bottom: 40px;" class="flex-c new-invisible">其他手机号登录
+                    <i style="color:#FFFFFF;" class="aui-iconfont aui-icon-right"></i></div>
+                <div class="line-wrap flex-c">
+                    <div class="op" onclick="judgeXY(4)"><span style="visibility: hidden;">？</span>其他方式</div>
+                    <div class="lines">|</div>
+                    <div class="op" onclick="_url({url:'about', title:'遇到问题', id:10 })">遇到问题？</div>
+                </div>
+                <div class="flex-c" :class="{'new-invisible':ios}">
+                    <div class="login-img"> 
+                        <img onclick="judgeXY(0)" src="../../image/wx@2x.png" alt="">
+                    </div>
+                    <div class="login-img" v-if="SHOWQQ">
+                        <img onclick="judgeXY(1)" src="../../image/qq@2x.png" alt="">
+                    </div>
+                </div>
+                <div class="xieyi flex-c">
+                    <img src="../../image/radio.png" style="width: 16px;height: 16px;margin-right: 8px;" @click="xieyi = 1" v-if="xieyi==0" alt="">
+                    <img src="../../image/radio_select.png" style="width: 16px;height: 16px;margin-right: 8px;" @click="xieyi = 0" v-if="xieyi==1" alt="">
+                    <p id="js-xieyi"> 我已阅读并同意<a href="javascript:;" onclick="openPage(2)">《用户协议》</a>和<a href="javascript:;" onclick="openPage(3)">《隐私政策》</a> </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/login.js"></script>
+<script src="../../script/vue.js"></script>
+<script src="../../script/update.js"></script>
+<script src="../../script/shanyan.js"></script>
+<script src="../../json/login.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            xieyi: 0,
+            ios: 1, // 1上架 0非上架
+            login: 0, // 是否允许一键登录 1允许 0不允许
+            SHOWQQ: SHOWQQ
+        }
+    })
+    var shanyan;
+    apiready = function() {
+        view.ios = $api.getStorage('shang');
+        keyback()
+
+        _heibai(1);
+        $api.rmStorage('userid');
+        $api.rmStorage('sex');
+        api.setAppIconBadge({ //桌面红点
+            badge: 0,
+        });
+
+        updateVision(2, function(type) {
+            if (type == 0) {
+                initModal();
+            }
+        });
+
+        _listener('indexXY', function() {
+            initModal();
+        })
+
+        _listener('viewappear', function() {
+            updateVision(2, function(type) {
+                if (type == 0) {
+                    initModal();
+                }
+            });
+        })
+    }
+
+    function initModal() {
+        var indexXY = $api.getStorage('indexXY');
+        if (indexXY != 1) return;
+
+        view.xieyi = 1;
+
+        if (!$api.getStorage('shang')) {
+            shanyan = new SHANYAN(1);
+            fastLoginInit();
+        }
+    }
+
+    // 初始化 闪验
+    function fastLoginInit() {
+        if (api.systemType == 'ios') {
+            var appid = $api.getStorage('config').shanyan_appid_ios;
+        } else {
+            var appid = $api.getStorage('config').shanyan_appid_android;
+        }
+        if (appid) {
+            shanyan.init(appid, function(code, result) {
+                if (code == 200) {
+                    view.login = 1;
+                    shanyan.login(function(token) {
+                        fastLogin(token);
+                    })
+                }
+            });
+        }
+    }
+
+    // 一键登录
+    function fastLogin(token) {
+        var method = api.systemType == 'ios' ? 1 : 0;
+        _loading();
+        _ajax('api/login/fast', function(ret) {
+            _loadingClose();
+            if (ret && ret.code == 200) {
+                // 已注册
+                _msg('登录成功');
+                $api.setStorage('userid', ret.result.id);
+                $api.setStorage('sex', ret.result.sex);
+                loginToUpdate(ret.result.id)
+                _home();
+            } else if (ret && ret.code == 300) {
+                var info = {
+                    phone: ret.msg,
+                    token: token,
+                }
+                // 未注册
+                _url({
+                    info: info
+                }, 'frame0/she_zhi_ji_ben_zi_liao_frame');
+            } else {
+                _msg(ret.msg);
+            }
+        }, {
+            token: token,
+            method: method,
+            device_id: api.deviceId
+        })
+    }
+
+    // 判断是否有勾选协议
+    function judgeXY(index) {
+        if (view.xieyi == 0) {
+            _msg('请先查看协议并勾选协议');
+            return;
+        }
+        if (index == 0) {
+            login(0)
+            return;
+        }
+        if (index == 1) {
+            login(1)
+            return;
+        }
+        if (index == 2) {
+            _url({
+                url: 'user/login'
+            });
+
+            return;
+        }
+        if (index == 3) {
+            _url({
+                url: 'user/reg',
+                title: '注册'
+            });
+            return;
+        }
+        if (index == 4) {
+            _url({
+                url: 'user/loginpwd',
+                title: '登录'
+            });
+            return;
+        }
+    }
+</script>
+
+</html>

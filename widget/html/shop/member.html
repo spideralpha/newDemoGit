@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>title</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui_font.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/news.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/base_icon.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/frame3.css" />
+    <link rel="stylesheet" href="../../css/iconfont/iconfont.css">
+    <style>
+        .name-wrap .tag {
+            font-size: 10px;
+            color: #fff;
+            border-radius: 2px;
+            height: 16px;
+            width: 25px;
+            background: #F46CEF;
+            margin-right: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-size: 100%;
+            background-repeat: no-repeat;
+        }
+
+        .name-wrap .tag.girl-tag {
+            /* background: linear-gradient(24deg, #F46CEF, #ffeb3b, #F46CEF); */
+            background-image: url('../../image/icon/girl.png');
+            background-color: transparent;
+            width: 32px;
+            height: 14px;
+        }
+
+        .name-wrap .tag.real-tag {
+            /* background: linear-gradient(24deg, #4caf50, #ffeb3b, #4caf50); */
+            background-image: url('../../image/man/ms_yourself_certificate_ok.png');
+            background-color: transparent;
+            width: 32px;
+            height: 14px;
+        }
+
+        .my-data {
+            width: 80vw;
+            margin-top: 10px;
+        }
+
+        .my-data .base-icon {
+            width: 50px;
+            height: 50px;
+        }
+
+        .my-data .li {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .my-data span {
+            color: #333333;
+            font-size: 12px;
+        }
+
+        /* ios 上架 */
+        .shang .item_li {
+            padding: 15px;
+            line-height: 1;
+            justify-content: flex-start;
+        }
+
+        .shang .item_li img {
+            width: 25px;
+            height: 25px;
+        }
+
+        .shang .item_li .lt {
+            font-weight: normal;
+            /* margin-top: 15px; */
+        }
+
+        .shang .item_li .iconfont {
+            font-size: 25px;
+            margin-right: 10px;
+        }
+
+        .tx-wrap {
+            background-image: url('../../image/bg1.jpg');
+            background-size: 100%;
+            padding: 40px 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <section class="m-frame">
+            <div class="tx-wrap flex-c flex-col w-bg new-padding-10">
+                <div class="tx img-h" onclick="changeHeader()" style="margin-right: 0">
+                    <img :src="imgUrl+listData.head_portrait" onerror="this.src='../../image/touxiang.png'" alt="">
+                </div>
+                <div class="tag-wrap new-margin-tb-10 flex-w">{{listData.name}} </div>
+            </div>
+            <ul class="item shang">
+                <li class="item_li" onclick="_url({url:'shang/info', title:'我的资料'})">
+                    <i class="iconfont icon-ziliao-miaobian"></i>
+                    <span class="lt">我的资料</span>
+                </li>
+                <li class="item_li" onclick="_url({url:'shop/area', title: '地址管理', moreTitle: '添加地址'})">
+                    <i class="iconfont icon-dizhi"></i>
+                    <span class="lt">我的地址</span>
+                </li>
+                <li class="item_li" onclick="_url({url: 'shang/xieyi', title: '协议与政策'})">
+                    <i class=" iconfont icon-xieyixiangqing"></i>
+                    <span class="lt">协议与政策</span>
+                </li>
+                <li class="item_li" onclick="openPhone()">
+                    <i class="iconfont icon-kefu"></i>
+                    <span class="lt">联系客服</span>
+                </li>
+                <li class="item_li" onclick="clear_huncun()">
+                    <i class="iconfont icon-qinglihuancun"></i>
+                    <span class="lt">清除缓存</span>
+                </li>
+                <li class="item_li">
+                    <i class="iconfont icon-banben"></i>
+                    <span class="lt">版本 {{version}}</span>
+                </li>
+                <li class="item_li" onclick="_url({url:'shang/sz', title:'设置'})">
+                    <i class="iconfont icon-shezhi"></i>
+                    <span class="lt">系统设置</span>
+                </li>
+                <li class="item_li" onclick="_url({url:'frame4/yi_jian_fan_kui_frame', title:'意见反馈'})">
+                    <i class="iconfont icon-yijianfankui"></i>
+                    <span class="lt">意见反馈</span>
+                </li>
+                <li class="item_li" onclick="_login()">
+                    <i class="iconfont icon-tuichu"></i>
+                    <span class="lt">退出系统</span>
+                </li>
+            </ul>
+        </section>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/jquery.js"></script>
+<script type="text/javascript" src="../../script/vue.js"></script>
+<script type="text/javascript" src="../../script/ffkj.js"></script>
+<script type="text/javascript">
+    var userid;
+    var closeid;
+    var imgurls = [];
+    var showList = new Vue({
+        el: '#view',
+        data: {
+            listData: {},
+            imgUrl: imgurl,
+            imgList: [],
+            bigImgList: [],
+            upType: 0, // 0图片 1视频
+            ios: 1, // 1上架 0非上架
+            version: '',
+        },
+        methods: {
+            _url(param, url) {
+                _url(param, url);
+            },
+            
+        }
+    });
+    apiready = function() {
+        showList.ios = $api.getStorage('shang');
+        userid = $api.getStorage('userid');
+        if (api.systemType == 'ios') {
+            userid = $api.getStorage('userid');
+            getUserInfo();
+            _heibai(1);
+        }
+
+        _listener('viewappear', function() {
+            userid = $api.getStorage('userid');
+            getUserInfo();
+            _heibai(1);
+        })
+
+        _shangla(function() {
+            userid = $api.getStorage('userid');
+            getUserInfo();
+            _heibai(1);
+        }, 1)
+        showList.version = api.appVersion;
+
+    };
+
+
+    // 获取用户信息
+    function getUserInfo() {
+        _getUser(function(ret) {
+            showList.listData = ret.result;
+            showList.$forceUpdate();
+        })
+    }
+    // 修改头像
+    function changeHeader() {
+        openPic(function(ret) {
+            _loading();
+            console.log(ret.data);
+            _upImg({
+                image: ret.data
+            }, function(u) {
+                _ajax('change_head.php', function(rets, errs) {
+                    console.log(JSON.stringify(rets))
+                    console.log(JSON.stringify(errs))
+                    _loadingClose();
+                    if (rets && rets.code == 200) {
+                        _msg('修改成功');
+                        getUserInfo();
+                    }
+                }, {
+                    user_id: $api.getStorage('userid'),
+                    head: u
+                })
+            })
+        })
+    }
+    //清除缓存
+    function clear_huncun() {
+        api.clearCache(function() {
+            _msg('清除完成');
+        });
+    }
+
+    function openPhone() {
+        var number = '020-31136216';
+        var obj = {
+            msg: '拨打' + number + ', 联系客服',
+        };
+        _confirm(obj, function(bIndex) {
+            if (bIndex == 1) {
+                api.call({
+                    type: 'tel',
+                    number: number,
+                });
+            }
+        })
+    }
+</script>
+
+</html>

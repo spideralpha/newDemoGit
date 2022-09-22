@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="../../css/liaotian/mui.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/liaotian/app.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/liaotian/main.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/liaotian/reset.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/news.css">
+    <link rel="stylesheet" type="text/css" href="../../css/liaotian1.css">
+    <style>
+        .ban-chat {
+            padding: 15px 0;
+            font-size: 14px;
+            text-align: center;
+            background: #eee;
+            color: #555;
+        }
+
+        .find-man {
+            color: #2196f3 !important;
+        }
+
+        /* @我的 */
+        .findme {
+            position: fixed;
+            right: 0px;
+            bottom: 50vh;
+            background: #fff;
+            border-radius: 15px 0 0 15px;
+            padding: 5px 10px;
+            z-index: 1;
+        }
+
+        .findme .num {
+            position: absolute;
+            left: 10px;
+            top: -10px;
+            background: red;
+            color: #fff;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 12px;
+            text-align: center;
+            line-height: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <!-- 录音提示 -->
+        <div id="sound-alert" class="rprogress" v-if="record==1">
+            <div class="rschedule"></div>
+            <div class="r-sigh">!</div>
+            <div id="audio_tips" class="rsalert">{{recordTxt}}</div>
+        </div>
+        <!-- 座驾 -->
+        <!-- <div class="car-wrap">
+            <img src="../../image/more/10-32-06.png" alt="">
+        </div> -->
+        <!-- @我的 -->
+        <div class="findme" v-if="findmeNum" onclick="goFindMe(view.userid)">
+            <span class="num">{{findmeNum}}</span>
+            <span class="btn">@我的</span>
+        </div>
+        <!-- 聊天列表 -->
+        <div class="mui-content">
+            <div class="tips">请文明聊天，严禁低俗、涉黄、欺诈行为</div>
+            <div class="loadmore" v-if="loadmore==1"></div>
+            <div id="msg-list">
+                <div class="msg-wrap" :class="{'topmsg':compareTime(item)!=0}" v-for="(item, index) in ffList" :id="'id'+item.id">
+                    <div class="time" v-if="item.showtime"><span>{{item.time}}</span></div>
+                    <div class="recall" v-if="item['status'] == 3"><span>该消息已被撤回</span></div>
+                    <div v-else>
+                        <li :class="{'msg-item-self':item.self==1, 'red-envelope':item.type==5||item.type==7, 'money':item.type==7, 'read-burn':Number(item.is_burn)!=0, 'msg-area':item.type==6}" class="msg-item">
+                            <div class="msg-user">
+                                <img class="msg-user-tx" @click="goUserInfo(item.userid, item.name);" :id="item.userid" :src="returnImg(item.head_portrait)" onerror="this.src='../../image/touxiang.png'" />
+                                <img :src="returnImg(item.noble_circle)" v-if="item.noble_circle && item.is_noble && !ios" class="tx_cover" alt="">
+                                <!-- <img src="../../image/test/icon_gold_medal_bg.png" class="tx_cover" alt=""> -->
+                            </div>
+                            <div class="msg-container">
+                                <div class="name-wrap flex">
+                                    <p class="user-name">{{item.name}}</p>
+                                    <div class="tag-wrap flex-c">
+                                        <span class="boy-tag" :class="{'girl-tag':item.sex == '女'}">{{item.age}}</span>
+                                        <img class="new-noble" v-if="item.noble_icon && item.is_noble && !ios" :src="returnImg(item.noble_icon)" onerror="this.src='../../image/error-img.png'" alt="">
+                                        <!-- <img class="new-noble" src="../../image/test/vip.png" onerror="this.src='../../image/error-img.png'" alt=""> -->
+                                    </div>
+                                </div>
+                                <div class="msg-content" @touchstart="touchstartF(index);" @touchend="touchendF(index);">
+                                    <div class="msg-content-inner" style="word-break: break-word;">
+                                        <div v-if="item.type==0" v-html="getMesge(item.content,item)"></div>
+                                        <div v-else-if="item.type==1">
+                                            <img v-if="Number(item.is_burn)==0" @click.stop @click="_url({imgArr:[item.content], iIndex:0}, 'frame1/dy_img_win')" class="msg-content-image load" :src="returnImg(item.content)" onerror="this.src='../../image/error-img.png'" style="max-width: 100px;" />
+                                            <div v-else @click="openBurn(index)" class="burn-msg" :class="{'burn':item.is_burn==-1}"></div>
+                                        </div>
+                                        <div v-else-if="item.type==2" @click.stop @click="audioPlay(index)">
+                                            <span class="play-state" style="margin-top:3px;">
+                                                <span class="audio" :class="{'aplaying':audio.id==item.id && audio.play==1}"></span>
+                                            </span>
+                                        </div>
+                                        <div v-else-if="item.type==3" class="msg-video" @click="openVideo(index)">
+                                            <img :src="returnImg(item.data.cover)" onerror="this.src='../../image/error-img.png'" alt="">
+                                            <!-- <img src="../../image/shop/01.jpg" alt=""> -->
+                                            <i class="video-icon"></i>
+                                        </div>
+                                        <div class="red-wrap" @click.stop @click="openRed(index)" v-else-if="item.type==5||item.type==7">
+                                            <div class="red-img" :class="{'red-img-no':item.state==1}"></div>
+                                            <div class="game">
+                                                <p class="red-game-text">{{item.content}}</p>
+                                                <p class="red-game" v-if="item.state==0">等待领取</p>
+                                                <p class="red-game" v-else-if="item.state==1">已领取</p>
+                                                <p class="red-game" v-else-if="item.state==2">已过期</p>
+                                            </div>
+                                        </div>
+                                        <div class="msg-video" v-else-if="item.type==6" @click="openArea(index)">
+                                            <img src="../../image/icon/nim_location_bk.png" alt="">
+                                        </div>
+                                        <div class="gift-wrap" v-if="item.type==8">
+                                            <img class="g-img" :src="returnImg(item.data.cover)" onerror="this.src='../../image/error-img.png'" alt="">
+                                            <div class="g-content">
+                                                <h3 @click.stop="goUserInfo(item.data.to_user, item.data.to_user_name);">送给{{item.data.to_user_name}}</h3>
+                                                <p>{{item.data.name}}x{{item.data.num}}</p>
+                                                <!-- <span class="price"><i class="jinbi-icon"></i>{{item.data.money}}金币</span> -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="msg-content-arrow"></div>
+                                </div>
+                            </div>
+                            <div class="timeSec">
+                                <div v-if="item.self == 1" style="line-height:50px;float:right;font-size:14px;color:#999;">
+                                    <span v-if="item.type==2">{{item.second}}s"</span>
+                                </div>
+                                <div v-else style="line-height:50px;font-size:14px;color:#999;">
+                                    <span v-if="item.type==2">{{item.second}}s"</span>
+                                </div>
+                            </div>
+                            <div class="mui-item-clear"></div>
+                        </li>
+                    </div>
+                </div>
+                <div id="msg-bottom"></div>
+            </div>
+        </div>
+        <footer v-if="showInput==1">
+            <div class="ban-chat" v-if="otherInfo.ban_chat==1">您已被禁言</div>
+            <div class="footer" v-else>
+                <div class="input">
+                    <!-- 录音键 -->
+                    <img class="tool-img" @click="clickRecord(0)" v-if="recordBtn==1" src="../../image/chat/chat_voice_icon_n.png" alt="">
+                    <img class="tool-img" @click="clickRecord(1)" v-else src="../../image/chat/chat_keyboard_icon_n.png" alt="">
+                    <!-- 录音时输入框禁止状态 -->
+                    <div class="input-wrap" :class="{'new-hide':recordBtn==1}">
+                        <div id="js-input2" style="width: 100%;" contenteditable="false" class="css-input" @touchstart="recordBegin($event);" @touchmove="recordCancel($event);" @touchend="recordEnd($event);">{{recordBtnTxt}}</div>
+                    </div>
+                    <!-- 输入框 -->
+                    <div class="input-wrap" :class="{'new-hide':recordBtn==0}">
+                        <i class="set-top-icon" :class="{'active':isTop}" @click.stop="isTop=!isTop"></i>
+                        <div id="js-input" class="css-input" :class="{'istop':isTop}" contenteditable="true" @click="inputClick()" @input="handleSelection"></div>
+                    </div>
+                    <button class="send-btn" onclick="sendTxt()">发送</button>
+                </div>
+                <!-- 聊天操作 -->
+                <div class="moreoptions">
+                    <!-- <div class="op" onclick="dashan()"><img src="../../image/icon/hi.png" alt=""></div> -->
+                    <div class="op" v-if="recordEmo==1" @click="clickEmo(0)"><img src="../../image/chat/chat_expression_icon_h.png" alt=""> </div>
+                    <div class="op" v-else @click="clickEmo(1)"><img src="../../image/chat/chat_expression_icon_n.png" alt=""> </div>
+                    <div class="op" v-if="!ios" onclick="showDetail('modal/gift_modal',{uid: view.touserid, qunType:view.qunType})"><img src="../../image/chat/chat_gift_icon_n.png" alt=""></div>
+                    <div class="op" v-if="!ios" @click="_url({ touserid: touserid }, 'frame0/qun_hong_bao')"><img src="../../image/chat/ms_redpacket.png" alt=""></div>
+                    <div class="op" v-if="extra==0" @click="clickExtra(1)"><img src="../../image/chat/chat_add_icon_n.png" alt=""></div>
+                    <div class="op" v-else @click="clickExtra(0)"><img src="../../image/chat/chat_add_icon_h.png" alt=""></div>
+                </div>
+                <!-- 表情 -->
+                <div class="emo-wrap" :class="{'new-hide':recordEmo!=0}">
+                    <img v-for="(m, index) in emotionArr" :src="'../../res/img/emotion/'+m.name+'.png'" alt="" @click="handleTag(m.name)">
+                    <!-- <img class="del-btn" src="../../res/img/emotion/delete.png" alt="" @click="delEmo()"> -->
+                </div>
+                <!-- 附加面板 -->
+                <ul class="extra-wrap flex-w" :class="{'new-hide':extra!=0}">
+                    <li class="list" onclick="uiboxClick('图片')">
+                        <img src="../../image/chat/chat_add_picture_icon_n.png" alt="">
+                        <p>图片</p>
+                    </li>
+                    <!-- <li class="list" @click="_url({ touserid: touserid }, 'frame0/qun_hong_bao')">
+                        <img src="../../image/chat/hongbao.png" alt="">
+                        <p>红包</p>
+                    </li> -->
+                    <!-- <li class="list" onclick="uiboxClick('视频')">
+                        <img src="../../image/chat/chat_add_video_icon_n.png" alt="">
+                        <p>小视频</p>
+                    </li> -->
+                    <!-- <li class="list" onclick="uiboxClick('位置')">
+                        <img src="../../image/chat/chat_add_position_icon_n.png" alt="">
+                        <p>位置</p>
+                    </li> -->
+                </ul>
+            </div>
+        </footer>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/emotion.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/qunliao.js"></script>
+<script src="../../script/map.js"></script>
+<script src="../../script/audio.js"></script>
+<script src="../../script/input.js"></script>
+<script src="../../script/uibutton.js"></script>
+<script src="../../script/vue.js"></script>
+<script src="../../json/qunliao.js"></script>
+<script type="text/javascript" charset="utf-8">
+    heigutgao = 1; // 默认允许加载
+    pagenum = 1;
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ios: 1, // 1上架 0非上架
+            ffList: [], // 消息列表
+            ffInfo: {},
+
+            userid: 0,
+            userInfo: {}, // 我的
+            touserid: 0,
+            otherInfo: {}, // 对方的
+
+            qunType: 0,
+            emotionArr: emotionUrl,
+
+            isResume: 1, // 是否切换为前台
+            loadmore: 0, // 1加载中 0隐藏
+            panelHeight: 0, // 面板高度
+            inputBarHeight: 0, // 输入框高度
+            panStatus: 0, // 面板是否有开启
+            panNum: { // 统计次数
+                input: 0, // 面板高度变化的次数
+                ext: 0, // 控件面板是第几次打开
+                emo: 0, // 表情面板是第几次打开
+            },
+            nowH: 0, // 当前列表的高度
+
+            audio: {
+                id: 0, // 消息id
+                play: 0 // 状态 1播放 0未播放
+            },
+            recordPoi: { // 记录按下的位置 避免轻微移动导致录音失败
+                x: 0,
+                y: 0
+            },
+            recordBtnTxt: '按住说话',
+            recordBtn: 1, // 录音按钮是否显示 1显示(即为非录音状态) 0隐藏(切换为可录音状态)
+            record: 0, // 1 录音中 0未录音
+            recordTxt: '手指上划，取消发送', // 录音提示文本
+            frameH: 0, // frame 原始高度
+            extra: 1, // 附加面板 1隐藏 0显示
+
+            // 表情输入
+            selection: '',
+            range: '',
+            textNode: '',
+            rangeStartOffset: '',
+
+            recordEmo: 1, // 表情面板 1隐藏 0显示
+            showInput: 0, // 是否显示自定义输入框 1显示 0不显示
+            inputLimit: 1, // 是否允许输入 1允许 0禁止
+            isTop: 0, // 设置消息置顶
+            topTime: 60, // 置顶消息可停留多少s
+
+            valObj: {
+                val: '',
+                arr: []
+            },
+
+            findmeNum: 0,
+            scroll: 0
+        },
+        methods: {
+            // 时间对比
+            compareTime(data) {
+                var _this = this;
+                if (data.is_top == 0) return 0;
+                if (data.type != 0) return 0;
+
+                var ntime = new Date().getTime();
+                var ctime = data.addtime;
+                var c = _this.topTime - (Math.ceil(ntime / 1000) - ctime);
+                if (c < 1) {
+                    return 0;
+                } else {
+                    var show = data.showtime;
+                    var self = data.self;
+                    data.showtime = true;
+                    data.self = 0;
+                    setTimeout(function() {
+                        data.self = self;
+                        data.showtime = show;
+                        data.is_top = 0;
+                    }, c * 1000)
+                    return 1;
+                }
+            },
+            // 输入框点击
+            inputClick() {
+                handleSelection();
+                view.recordEmo = 1;
+                view.extra = 1;
+
+            },
+            handleTag(imgname) {
+                handleTag(imgname);
+                getInputVal();
+            },
+            // 记录光标位置等 （debounce防抖提升性能）
+            handleSelection() {
+                handleSelection();
+                getInputVal();
+            },
+            // 点击表情按钮
+            clickEmo(type) {
+                view.recordBtn = 1;
+                view.recordEmo = type;
+                view.extra = 1;
+            },
+            // 点击附加面板
+            clickExtra(type) {
+                view.recordBtn = 1;
+                view.recordEmo = 1;
+                view.extra = type;
+            },
+            // 点击录音按钮
+            clickRecord(type) {
+                view.recordEmo = 1;
+                view.extra = 1;
+                view.recordBtn = type;
+            },
+            // 开始录音
+            recordBegin(e) {
+                var x = e.changedTouches[0].pageX;
+                var y = e.changedTouches[0].pageY;
+                view.recordPoi = {
+                    x: x,
+                    y: y
+                }
+                // console.log('===开始====：x=' + x + ',' + 'y=' + y);
+                recordBegin();
+            },
+            // 录音取消
+            recordCancel(e) {
+                var x = e.changedTouches[0].pageX;
+                var y = e.changedTouches[0].pageY;
+                if (Math.abs(y - view.recordPoi.y) < 50) return;
+                // console.log('===取消====：x=' + x + ',' + 'y=' + y);
+                recordCancel();
+            },
+            // 录音结束
+            recordEnd(e) {
+                recordEnd()
+            },
+
+            // 视频
+            openVideoChat(type) {
+                openVideoChat(view.touserid, 'frame0/liaotian_win', type)
+            },
+            // 连麦
+            openLM(type) {
+                openLM(view.touserid, 'frame0/liaotian_win', type)
+            },
+
+            touchstartF(index) {
+                // var e = event.currentTarget;
+                touchstartF(index);
+            },
+            touchendF(index) {
+                // var e = event.currentTarget;
+                touchendF(index);
+            },
+            getMesge(s, data) {
+                if (data && data.data && data.data[0] && data.data[0].relates) {
+                    var find = data.data;
+                    if (typeof find == 'string') {
+                        find = JSON.parse(find);
+                    }
+                    return getMesge(s, find);
+                } else {
+                    return getMesge(s);
+                }
+            },
+            _url(param, url) {
+                _url(param, url);
+            },
+            showDetail(url, data, topH, footerH) {
+                showDetail(url, data, topH, footerH)
+            },
+            // 打开音频
+            audioPlay(index) {
+                var _this = this;
+                var data = _this.ffList[index];
+                if (_this.audio.id == data.id) {
+                    _this.audio.play = _this.audio.play == 0 ? 1 : 0;
+                } else {
+                    _this.audio.id = data.id;
+                    _this.audio.play = 1;
+                }
+                if (_this.audio.play == 1) {
+                    audio.play({
+                        url: returnImg(data.content)
+                    })
+                    setTimeout(function() {
+                        _this.audio.play = 0;
+                        audio.stop();
+                    }, data.second * 1000)
+                } else {
+                    audio.stop();
+                }
+            },
+            // 打开红包详情
+            openRed(index) {
+                openRed(index)
+            },
+            // 打开红包详情
+            openRedDetail(id, type) {
+                if (type == 5) {
+                    // 平台币
+                    _url({
+                        id: id
+                    }, 'frame0/hong_bao_detail');
+                } else {
+                    // 现金
+                    _url({
+                        id: id
+                    }, 'frame0/money_detail');
+                }
+            },
+            // 跳转 查看用户详情
+            goUserInfo(id, name) {
+                go_userInfo(id, name)
+            },
+            // 打开阅后即焚的详情
+            openBurn(index) {
+                openBurn(index);
+            },
+            // 打开视频
+            openVideo(index) {
+                openVideo(index)
+            },
+            // 打开地址
+            openArea(index) {
+                openArea(index)
+            },
+            // 图片
+            returnImg(url) {
+                return returnImg(url);
+            },
+        }
+    })
+    var recMp3, map, audio;
+    apiready = function() {
+        view.frameH = api.frameHeight;
+        view.ios = $api.getStorage('shang');
+        view.userid = $api.getStorage('userid');
+        view.touserid = api.pageParam['touserid'];
+        view.qunType = api.pageParam['qunType'];
+        view.otherInfo = api.pageParam['info'];
+        view.panelHeight = api.safeArea.bottom;
+
+        // var btnObj = returnButton(['图片', '视频']);
+        // editor(btnObj);
+
+        view.showInput = 1;
+
+        // 加载消息列表
+        getMsgList(1);
+
+        // 家族或群聊
+        setQunStatus(1);
+
+        // 群聊消息
+        _listener('qun_newmsg', function(ret) {
+            var result = ret.value.result;
+            var useObj = result.users;
+            if (!useObj || useObj.cluster_id != view.touserid) return;
+            if (result.new && result.new.length > 0) {
+                view.ffList = view.ffList.concat(result.new);
+                setRead();
+            }
+            if (result.recall && result.recall.length > 0) {
+                recallCss(result.recall[0])
+            }
+            goBottom();
+        })
+
+        // 监听领取情况
+        _listener('updateHB', function(ret) {
+            var result = ret.value;
+            updateHongbao(result.id, 1)
+        })
+        recMp3 = api.require('recMp3');
+        map = new Map();
+        audio = new Audio();
+
+        getFindMe();
+        _listener('clearFindMe', function() {
+            view.findmeNum = 0;
+        })
+    }
+
+    // 判断输入
+    function getInputVal() {
+        var value = $('#js-input').html();
+        if (view.qunType != 0) {
+            var oldV = view.valObj.val.match(/@/ig);
+            var newV = value.match(/@/ig);
+            if (newV && (!oldV || newV.length > oldV.length)) {
+                showDetail('frame3/man_list', {
+                    animation: 'push',
+                    id: view.touserid
+                })
+                view.valObj.val += '@';
+                console.log(view.valObj.val);
+            } else {
+                view.valObj.val = value;
+            }
+        }
+    }
+    // @人
+    function findMan(id, name) {
+        var obj = {
+            id: id,
+            name: name
+        }
+        view.valObj.val = view.valObj.val + name + ' ';
+        view.valObj.arr.push(obj);
+        $('#js-input').html(view.valObj.val);
+        api.closeFrame({
+            name: 'frame3/man_list'
+        })
+    }
+
+    // 跳转到@我的列表
+    function goFindMe(id) {
+        if (id != $api.getStorage('userid')) return;
+        _url({
+            touserid: view.touserid,
+            bg: view.otherInfo.logo,
+            qunType: view.qunType
+        }, 'frame0/qunliao_findme_win')
+    }
+
+    // 统计找我的数量
+    function getFindMe() {
+        _ajax('api/cluster/relateCount', function(ret, err) {
+            if (ret && ret.code == 200) {
+                view.findmeNum = ret.data.count;
+            } else {
+                view.findmeNum = 0;
+            }
+        }, {
+            user_id: $api.getStorage('userid'),
+            cluster_id: view.touserid
+        })
+    }
+
+
+    setTimeout(function() {
+        $('#msg-list').scroll(function() {
+            var $msg = $('#msg-list');
+            var liaoH = $msg[0].scrollHeight; // 实际高度
+            var viewH = $msg.height(); // 显示的高度
+            var toTop = $msg.scrollTop(); // 滚动条移动的距离
+            if (view.scroll == 1) return;
+            if (toTop < 20) {
+                if (heigutgao == 1) {
+                    view.scroll = 1;
+                    pagenum++;
+                    getMsgList(pagenum);
+                }
+            }
+        })
+    }, 1000)
+
+    // 加载上一页
+    function getMsgList(page) {
+        view.loadmore = 1;
+        view.nowH = $('#msg-list').height();
+
+        _ajax('api/cluster/getMsgList', function(ret, err) {
+            console.log(JSON.stringify(ret))
+            console.log(JSON.stringify(err))
+            if (ret.code == 200) {
+                if (ret.data && ret.data.length > 0) {
+                    view.scroll = 0;
+                }
+                view.ffList = ret.data.concat(view.ffList);
+            } else if (ret.code == 201) {
+                heigutgao = 0;
+            }
+            view.loadmore = 0;
+            if (page == 1) {
+                setTimeout(function() {
+                    goBottom();
+                }, 400)
+            }
+        }, {
+            user_id: view.userid,
+            cluster_id: view.touserid,
+            page: page,
+        })
+    }
+
+    // 进入 | 离开 群聊  0离开聊天窗口|1进入聊天窗口
+    function setQunStatus(status) {
+        if (view.qunType != 2) return;
+        _ajax('api/Cluster/status', function(ret, err) {
+
+        }, {
+            id: view.touserid,
+            user_id: $api.getStorage('userid'),
+            status: status,
+        })
+    }
+
+
+    $(window).on('resize', function() {
+        goBottom();
+    })
+    $('#js-input').on('click', function() {
+        $('#js-input').focus();
+    })
+
+    // 发送
+    function sendTxt() {
+        var content = $('#js-input').html();
+        content = replaceEmotion(content);
+        content = clearHtml(content);
+        content = htmlRestore(content);
+        if (!$api.trim(content)) {
+            _msg('内容不能为空');
+            return
+        }
+        $('#js-input').html('');
+        sendMsg({
+            type: 0,
+            content: content,
+        })
+    }
+
+    // 修改frame高度
+    function changeFH(h) {
+        api.setFrameAttr({
+            name: api.frameName,
+            rect: {
+                h: h
+            }
+        });
+    }
+
+    // 录音开始
+    function recordBegin() {
+        if (view.record != 0) return;
+        console.log('=======录音开始==========')
+        var micResult = api.hasPermission({
+            list: ['microphone', 'storage']
+        });
+        if (!micResult[0].granted) {
+            getPermission(['microphone', 'storage'], function(code) {
+                if (code != 0) {
+                    _msg('请先开启相关权限');
+                }
+            })
+        } else {
+            view.recordTxt = '手指上划，取消发送';
+            view.recordBtnTxt = '松开结束';
+            view.record = 1;
+            recMp3.start();
+        }
+    }
+    // 录音取消
+    function recordCancel() {
+        if (view.record != 1) return;
+        console.log('=======录音取消==========')
+        view.recordTxt = '已取消';
+        view.recordBtnTxt = '按住说话';
+        view.record = 0;
+        setTimeout(function() {
+            recMp3.stop();
+        }, 500)
+    }
+    // 录音结束
+    function recordEnd() {
+        if (view.record != 1) return;
+        console.log('=======录音结束==========')
+        setTimeout(function() {
+            view.recordBtnTxt = '按住说话';
+            recMp3.stop(function(ret) {
+                console.log(JSON.stringify(ret))
+                if (ret && ret.status) {
+                    if (ret.duration) {
+                        if (ret.duration < 1) {
+                            view.recordTxt = '录音时间太短';
+                            setTimeout(function() {
+                                view.record = 0;
+                            }, 500)
+                        } else {
+                            view.record = 0;
+                            var path = ret.path;
+                            path = path.replace('fs://', api.fsDir + '/');
+                            sendMsg({
+                                type: 2,
+                                second: ret.duration,
+                                content: ret.path
+                            })
+                        }
+                    } else {
+                        view.recordTxt = '录音时间太短';
+                        setTimeout(function() {
+                            view.record = 0;
+                        }, 500)
+                    }
+                }
+            });
+        }, 500)
+    }
+</script>
+
+</html>

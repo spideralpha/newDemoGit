@@ -1,0 +1,1 @@
+var GONGHUI = ''; // 公会

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>小火苗</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <style>
+        html,
+        body {
+            background: transparent;
+        }
+
+        .msg-bg {
+            /* background-image: url('../../image/modal/car_enter_animation_40_bj.9.png');
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            background-position: center;
+            margin: 30px; */
+
+            margin: 30px 15px;
+            /* box-sizing: border-box; */
+            padding: 5px 0;
+            border-image-width: 40px 150px 40px 40px;
+            border-image-source: url(../../image/modal/car_enter_animation_40_bj.9.png);
+            border-image-slice: 40 150 40 40 fill;
+            justify-content: flex-start;
+            opacity: 0.9
+        }
+
+        .tx {
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            margin-left: 20px;
+        }
+
+        .msg-bg .text {
+            color: #fff;
+            font-size: 14px;
+            width: calc(100% - 100px);
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <div class="msg-bg flex-c" onclick="openMsg()">
+            <img class="tx" :src="returnImg(ffInfo.head_portrait)" alt="">
+            <p class="text aui-ellipsis-1">{{ffInfo.content}}</p>
+        </div>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+            content: '',
+        },
+        methods: {
+            // 跳转
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+        }
+    })
+    apiready = function() {
+        var data = api.pageParam['data'];
+        switch (Number(data.type)) {
+            case 1:
+                data.content = '[图片]';
+                break;
+            case 2:
+                data.content = '[语音]';
+                break;
+            case 3:
+                data.content = '[视频]';
+                break;
+            case 6:
+                data.content = '[位置]';
+                break;
+        }
+        // console.log(JSON.stringify(data));
+        view.ffInfo = data;
+        setTimeout(function() {
+            _close();
+        }, 2000)
+    }
+
+    // 
+    function _close() {
+        api.closeFrame();
+    }
+
+    function openMsg() {
+        var data = view.ffInfo;
+        _url({
+            touserid: data.userid,
+            title: '与' + data.name + '的聊天',
+            moreType: 1,
+        }, 'frame0/liaotian_win')
+    }
+</script>
+
+</html>

@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/aui_font.css">
+    <link rel="stylesheet" href="../../css/frame3.css" />
+    <link rel="stylesheet" href="../../css/user.css">
+    <link rel="stylesheet" href="../../css/mobile_select.css">
+    <style>
+        .rw-tip {
+            background: rgba(255, 96, 152, 0.2);
+            color: rgba(255, 96, 152);
+            font-size: 10px;
+            padding: 2px 5px;
+            margin-left: 5px;
+            word-break: keep-all;
+            line-height: 1;
+        }
+
+        /* 声音 */
+        .voice-w {
+            display: flex;
+            align-items: center;
+            width: calc(100% - 60px);
+            justify-content: flex-end;
+        }
+
+        .voice-w .v-bg {
+            width: 50%;
+            background: rgba(115, 56, 216, 0.2);
+            height: 3px;
+            position: relative;
+            margin-right: 5px;
+            overflow: hidden;
+        }
+
+        .voice-w .v-bg .v-line {
+            position: absolute;
+            background: #7338d8;
+            height: 3px;
+            width: 0;
+        }
+
+        .voice-w .time {
+            font-size: 12px;
+            color: #757575;
+            margin-right: 5px;
+        }
+
+        /* 播放 */
+        .voice-w .voice-play-icon {
+            margin: 0 10px;
+            width: 30px;
+            height: 30px;
+            display: inline-block;
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            background-image: url('../../image/voice/ms_play_icon.png');
+        }
+
+        .voice-w .voice-play-icon.pause-icon {
+            background-image: url('../../image/voice/pause.png');
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap" id="view" v-cloak>
+        <ul class="ul w-bg">
+            <li class="li" onclick="changeHeader()">
+                <div class="content">
+                    <div class="title"><b>头像</b><span class="rw-tip" v-if="taskData.avatar && !ios">{{taskData.avatar.title}}+{{taskData.avatar.reward}}金币</span> </div>
+                    <div class="tx img-h">
+                        <img :src="returnImg(head)" onerror="this.src='../../image/touxiang.png'" alt="">
+                    </div>
+                </div>
+            </li>
+            <li class="li no-go">
+                <div class="content">
+                    <div class="title"><b>语音签名</b><span class="rw-tip" v-if="taskData.voice && !ios">{{taskData.voice.title}}+{{taskData.voice.reward}}金币</span> </div>
+                    <!-- <span class="tip" v-if="listData.voice">重新录音</span> -->
+                    <div class="voice-w" v-if="data.voice">
+                        <span class="v-bg">
+                            <span class="v-line" :style="'width:'+vbg+'%;'"></span>
+                        </span>
+                        <span class="time">{{returnTime(data.voice_time)}}</span>
+                        <span class="voice-play-icon" :class="{'pause-icon':vplay==1}" onclick="playVoice()"></span>
+                        <img style="width: 30px;" onclick="openVoice()" src="../../image/voice/ms_again_icon_small_normal.png" alt="">
+                    </div>
+                    <span class="tip" v-else onclick="openVoice()">{{data.voice_auth==1?'审核中':'去录音'}}</span>
+                </div>
+            </li>
+        </ul>
+        <ul class="ul w-bg">
+            <li class="li no-go">
+                <div class="content nborder">
+                    <div class="title"><b>基本资料</b><span class="rw-tip" v-if="taskData.info  && !ios">{{taskData.info.title}}+{{taskData.info.reward}}金币</span></div>
+                </div>
+            </li>
+            <li class="li">
+                <div class="content">
+                    <div class="title">昵称</div>
+                    <input type="text" placeholder="未填写" v-model="listData.name">
+                </div>
+            </li>
+            <li class="li">
+                <div class="content">
+                    <div class="title">性别</div>
+                    <input type="text" placeholder="未填写" readonly v-model="listData.sex">
+                </div>
+            </li>
+            <li class="li" id="select_2">
+                <div class="content">
+                    <div class="title">生日</div>
+                    <input type="text" placeholder="请选择生日" readonly v-model="listData.birthday">
+                </div>
+            </li>
+            <div v-if="listData.sex=='女' && !ios">
+                <!-- <li class="li">
+                    <div class="content">
+                        <div class="title flex">{{escape_w}}</div>
+                        <input type="text" placeholder="未填写" v-model="listData.wxcount">
+                    </div>
+                </li> -->
+                <!-- <li class="li">
+                    <div class="content">
+                        <div class="title flex">{{escape_w}}解锁金额</div>
+                        <input type="text" placeholder="未填写" v-model="listData.line_price">
+                    </div>
+                </li> -->
+                <!-- <li class="li">
+                    <div class="content"> -->
+                        <!-- <div class="title flex">QQ<span class="rw-tip" v-if="!Number(listData.qq)">他人解锁可得奖励</span></div> -->
+                        <!-- <div class="title flex">QQ</div>
+                        <input type="text" placeholder="未填写" v-model="listData.qq">
+                    </div>
+                </li> -->
+                <!-- <li class="li">
+                    <div class="content">
+                        <div class="title flex">QQ解锁金额</div>
+                        <input type="text" placeholder="未填写" v-model="listData.qq_price">
+                    </div>
+                </li> -->
+                <!-- <li class="li" >
+                    <div class="content">
+                        <div class="title flex">手机解锁金额</div>
+                        <input type="text" placeholder="未填写" v-model="listData.phone_price">
+                    </div>
+                </li> -->
+            </div>
+            <li class="li no-go" onclick="updateArea()">
+                <div class="content">
+                    <div class="title">所在地</div>
+                    <input type="text" placeholder="待完善" v-model="listData.city" readonly>
+                </div>
+            </li>
+            <li class="li" onclick="myScroll('stature', 1, '身高', [140, 220])">
+                <div class="content">
+                    <div class="title">身高</div>
+                    <input type="text" placeholder="待完善" readonly v-model="listData.stature">
+                </div>
+            </li>
+            <li class="li" v-if="!ios" onclick="myScroll('emotion', 0, '情感状态')">
+                <div class="content">
+                    <div class="title">情感状态</div>
+                    <input type="text" placeholder="待完善" readonly v-model="listData.emotion">
+                </div>
+            </li>
+            <li class="li" onclick="myScroll('education_background', 0, '学历')">
+                <div class="content">
+                    <div class="title">学历</div>
+                    <input type="text" placeholder="待完善" readonly v-model="listData. education_background">
+                </div>
+            </li>
+            <li class="li" onclick="myScroll('monthly_salary', 0, '年收入')">
+                <div class="content">
+                    <div class="title">年收入</div>
+                    <input type="text" placeholder="待完善" readonly v-model="listData.monthly_salary">
+                </div>
+            </li>
+            <li class="li" onclick="myScroll('occupation', 0, '职业')">
+                <div class="content">
+                    <div class="title">职业</div>
+                    <input type="text" placeholder="待完善" readonly v-model="listData.occupation">
+                </div>
+            </li>
+            <li class="li" onclick="_url({url:'frame4/qianming', title:'个性签名'})">
+                <div class="content flex-col" style="align-items: flex-start;">
+                    <div class="title">个性签名 </div>
+                    <input style="text-align: left;" type="text" placeholder="添加个性签名，交友成功率提高2倍" readonly v-model="listData.slogan">
+                </div>
+            </li>
+        </ul>
+        <ul class="ul w-bg">
+            <li class="li no-go">
+                <div class="content nborder">
+                    <div class="title"><b>更多资料</b><span class="rw-tip" v-if="taskData.more_info  && !ios">{{taskData.more_info.title}}+{{taskData.more_info.reward}}金币</span></div>
+                </div>
+            </li>
+            <li class="li">
+                <div class="content">
+                    <div class="title">毕业院校</div>
+                    <input type="text" placeholder="待完善" v-model="listData.school_of_graduation">
+                </div>
+            </li>
+            <li class="li" onclick="myScroll('weight', 1, '体重', [40, 100])">
+                <div class="content">
+                    <div class="title">体重</div>
+                    <input type="text" placeholder="请选择" readonly v-model="listData.weight">
+                </div>
+            </li>
+            <li class="li" onclick="selectUserCity('through_membership')">
+                <div class="content">
+                    <div class="title">家乡</div>
+                    <input type="text" placeholder="待完善" v-model="listData.through_membership" readonly>
+                </div>
+            </li>
+            <li class="li" onclick="myScroll('live_status', 0, '居住情况')">
+                <div class="content">
+                    <div class="title">居住情况</div>
+                    <input type="text" placeholder="待完善" v-model="listData.live_status" readonly>
+                </div>
+            </li>
+            <li class="li" onclick="myScroll('is_house_purchase', 0, '是否购房')">
+                <div class="content">
+                    <div class="title">是否购房</div>
+                    <input type="text" placeholder="待完善" v-model="listData.is_house_purchase" readonly>
+                </div>
+            </li>
+            <li class="li" onclick="myScroll('is_car_purchase', 0, '是否购房')">
+                <div class="content">
+                    <div class="title">是否购车</div>
+                    <input type="text" placeholder="待完善" v-model="listData.is_car_purchase" readonly>
+                </div>
+            </li>
+        </ul>
+        <ul class="ul w-bg">
+            <li class="li" onclick="openSlogan()">
+                <div class="content flex-col" style="align-items: flex-start;">
+                    <div class="title"><b>自我介绍</b><span class="rw-tip" v-if="taskData.perfect_info  && !ios">{{taskData.perfect_info.title}}+{{taskData.perfect_info.reward}}金币</span>
+                    </div>
+                    <input style="text-align: left;" type="text" placeholder="介绍一下我自己" readonly v-model="listData.self_slogan">
+                </div>
+            </li>
+        </ul>
+        <ul class="ul w-bg">
+            <li class="li" onclick="_url({}, 'modal/tags_modal')">
+                <div class="content flex-col" style="align-items: flex-start;">
+                    <div class="title"><b>我的标签</b></div>
+                    <div class="tag-ul flex-w">
+                        <span class="tag" v-for="(m, index) in data.tags">{{m}}</span>
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <ul class="ul w-bg">
+            <li class="li no-go">
+                <div class="content">
+                    <div class="title"><b>手机号</b></div>
+                    <input style="text-align: left;margin-left: 15px;" type="text" readonly v-model="data.phone">
+                </div>
+            </li>
+        </ul>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script src="../../script/select_json.js"></script>
+<script src="../../script/user.js"></script>
+<script src="../../script/uinfo.js"></script>
+<script src="../../script/audio.js"></script>
+<script src="../../script/mobile_select.js"></script>
+<script src="../../script/select_date.js"></script>
+<script src="../../script/map.js"></script>
+<script>
+    var vtime;
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgUrl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            data: {},
+            head: '',
+            listData: {
+                name: '',
+                sex: '',
+                birthday: '',
+                wxcount: '',
+                qq: '',
+                line_price: 0,
+                qq_price: 0,
+                phone_price: 0,
+                city: '',
+                offten_city: '',
+                stature: '',
+                emotion: '',
+                education_background: '',
+                monthly_salary: '',
+                occupation: '',
+                slogan: '',
+                // 更多资料
+                school_of_graduation: '',
+                weight: '',
+                through_membership: '',
+                live_status: '',
+                is_house_purchase: '',
+                is_car_purchase: '',
+                self_slogan: '',
+                voice: '',
+            },
+            kejian: '', // 0 可见 1不可见
+            ios: 1, // 1上架 0非上架
+            imgList: [],
+            imgArr: [],
+            taskData: {}, // 资料完善奖励
+
+            vplay: 0, // 0 未播放 1播放中
+            vbg: 0,
+            escape_w: escape_w
+        },
+        watch: {
+            vplay: function(n) {
+                clearInterval(vtime)
+                if (n == 1) {
+                    var vv = 100 / (view.data.voice_time + 2);
+                    vtime = setInterval(function() {
+                        view.vbg += vv;
+                    }, 1000)
+                } else {
+                    view.vbg = 0;
+                }
+            }
+        },
+        methods: {
+            returnTime(time) {
+                return returnTime(time)
+            },
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+        }
+    })
+    var audio;
+    apiready = function() {
+        audio = new Audio();
+        view.ios = $api.getStorage('shang');
+
+        getUserInfo(1);
+        // // 重新获取
+        _listener('viewappear', function(ret) {
+            getUserInfo();
+        })
+        // 常驻城市
+        _listener('selectOfftenCity', function(ret) {
+            if (ret && ret.value.city) {
+                view.listData.offten_city = ret.value.city.join('/');
+            }
+        })
+        // 当前城市
+        _listener('selectCity', function(ret) {
+            console.log(JSON.stringify(ret))
+            if (ret && ret.value.city) {
+                view.listData.offten_city = ret.value.city.join('/');
+                view.listData.city = ret.value.city[0];
+            }
+        })
+        getOccupation();
+
+        // 相册
+        // getUserPhoto(function(all, imgArr) {
+        //     view.imgList = all;
+        //     view.imgArr = imgArr;
+        // })
+    }
+
+    var nowDate = new Date();
+    var nowYear = nowDate.getFullYear();
+    var nowMon = nowDate.getMonth();
+    var nowDay = nowDate.getDate();
+
+    /*默认全部参数*/
+    $.selectDate("#select_2", {
+        start: nowYear - 100,
+        end: nowYear - 18,
+        select: [nowYear - 18, nowMon + 1, nowDay],
+        title: '请选择生日'
+    }, function(data) {
+        console.log(data);
+        view.listData.birthday = data.year + "-" + data.month + "-" + data.day;
+    });
+
+    // 修改头像
+    function changeHeader() {
+        openPic(function(ret) {
+            if (ret && ret.data) {
+                view.head = ret.data;
+                _upImg({
+                    image: ret.data
+                }, function(u) {
+                    _ajax('api/user/editHead', function(rets, errs) {
+                        _msg(rets.msg);
+                    }, {
+                        user_id: $api.getStorage('userid'),
+                        head: u,
+                    })
+                })
+            }
+        })
+    }
+
+    // 获取个人资料
+    function getUserInfo(type) {
+        _getUser(function(ret) {
+            view.data = ret.result;
+            // view.listData = ret.result;
+            view.taskData = ret.result.task;
+            if (type) {
+                view.head = ret.result.head_portrait;
+            }
+            for (var key in view.listData) {
+                if (ret.result[key] && typeof ret.result[key] != 'string') {
+                    ret.result[key] = ret.result[key].join(',');
+                }
+                view.listData[key] = ret.result[key] == 'null' ? '' : ret.result[key] || '';
+            }
+            view.kejian = ret.result.kejian;
+        })
+    }
+
+    // 提交个人资料
+    function _more() {
+        if (view.listData.wxcount && !isRegisterUserName(view.listData.wxcount)) {
+            _msg('未填写正确的' + escape_w + '号');
+            return;
+        }
+        if (!view.listData.birthday || view.listData.birthday == 0) {
+            _msg('请选择生日');
+            return;
+        }
+        _loading();
+        var obj = view.listData;
+        obj.user_id = $api.getStorage('userid');
+        obj.dy_program = '';
+        if (isNaN(Number(obj.line_price))) {
+            _msg(escape_w + '解锁金额有误');
+            return;
+        }
+        if (isNaN(Number(obj.qq_price))) {
+            _msg('QQ解锁金额有误');
+            return;
+        }
+        _ajax('api/user/editInfo', function(ret, err) {
+            console.log(JSON.stringify(ret))
+            console.log(JSON.stringify(err))
+            _loadingClose();
+            _msg(ret.msg)
+            timerWin(2000)
+        }, obj);
+    }
+
+
+    function openVoice() {
+        if (view.data.voice_auth == 1) {
+            _msg('审核中')
+        } else {
+
+            _url({
+                url: 'frame4/jiao_you_xuan_yan',
+                title: '语音签名'
+            })
+        }
+    }
+
+    // 打开自我介绍
+    function openSlogan() {
+        if (view.data.is_identity_authentication != 2) {
+            var obj = {
+                msg: '小火苗提倡真实交友，自我介绍需要完成真人认证才能填写哦~',
+                btn: ['真人认证'],
+            }
+            _confirm(obj, function(bIndex) {
+                if (bIndex == 1) {
+                    _url({
+                        url: 'frame4/authentication_frame',
+                        title: '身份认证'
+                    })
+                }
+            })
+            return;
+        }
+        _url({
+            url: 'frame4/jieshao',
+            title: '自我介绍'
+        })
+    }
+
+
+    function updateArea() {
+        var map = new Map();
+        map.getLocation(function(ret, err) {
+            if (ret.status) {
+                returnArea(ret.lon, ret.lat, function(reg) {
+                    var data = reg.result.addressComponent;
+                    view.listData.city = data.city.replace('市', '');
+                })
+            }
+        })
+    }
+</script>
+
+</html>

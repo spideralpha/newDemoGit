@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>小火苗</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/rank.css">
+    <style>
+        html,
+        body {
+            background: transparent;
+        }
+
+        .head {
+            background: #fff;
+            padding-bottom: 6px;
+        }
+
+        .phead {
+            height: 50px;
+            box-shadow: 0 0 6px #ccc;
+        }
+
+        #fx-header {
+            padding-top: 30vh;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .phitem {
+            height: 50px;
+            line-height: 50px;
+            font-size: 14px;
+            position: relative;
+        }
+
+        .phitem.active::after {
+            content: "";
+            display: inline-block;
+            position: absolute;
+            width: 20px;
+            height: 3px;
+            bottom: 0px;
+            border-radius: 3px;
+            left: calc(50% - 10px);
+            background: #F46CEF;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <header id="fx-header" onclick="_close()">
+            <div class="head">
+                <div class="phead flex-a" @click.stop>
+                    <div class="phitem active" onclick="randomSwitchBtn(0)">财富榜</div>
+                    <div class="phitem" onclick="randomSwitchBtn(1)">魅力榜</div>
+                    <div class="phitem" onclick="randomSwitchBtn(2)">恩爱榜</div>
+                </div>
+            </div>
+        </header>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script src="../../script/group.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+        },
+        methods: {
+            // 跳转
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+        }
+    })
+    apiready = function() {
+        openGroup()
+    }
+    // 打开组
+    function openGroup() {
+        var headerh = $api.offset($api.dom('#fx-header')).h;
+        console.log(headerh);
+        var frameArr = ['frame0/rank_money', 'frame0/rank_money', 'frame0/rank_love'];
+        var pageParam = [];
+        var id = api.pageParam['id'];
+        for (var i = 0; i < 3; i++) {
+            var obj = {
+                index: i + 1,
+                id: id,
+            }
+            pageParam.push(obj);
+        }
+        groupInit('rank', frameArr, headerh, 0, 0, '.phitem', pageParam, {
+            pre: 3
+        });
+    }
+
+    // 点击分类栏目时，设置 frame 组当前可见 frame
+    function randomSwitchBtn(index) {
+        active(index, '.phitem'); // cls 使用与组名一致，便于复用
+        api.setFrameGroupIndex({
+            name: 'rank',
+            index: index,
+            scroll: true, //是否平滑滚动至目标窗口，即是否带有动画
+            reload: false, // 刷新
+        });
+    }
+
+    // 关闭
+    function _close() {
+        api.closeFrame({
+            name: 'frame0/rank_win'
+        });
+        api.closeFrameGroup({
+            name: 'rank'
+        });
+    }
+</script>
+
+</html>

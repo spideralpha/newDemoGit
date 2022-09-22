@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Document</title>
+    <link rel="stylesheet" href="../css/api.css">
+    <link rel="stylesheet" href="../css/news.css">
+    <link rel="stylesheet" href="../css/aui_font.css">
+    <link rel="stylesheet" href="../css/base_icon.css">
+    <link rel="stylesheet" href="../css/footer.css">
+    <link rel="stylesheet" href="../css/swiper.css">
+    <style>
+        .z-list {
+            margin-bottom: 0;
+        }
+
+        .toutiao {
+            display: flex;
+            align-items: center;
+            margin: 0 12px;
+            padding: 3px 3px 3px 12px;
+            background: #FFFFFF;
+            border: 1px solid #E936BA;
+            box-shadow: 0px 1px 10px 0px rgba(230, 230, 230, 0.48);
+            border-radius: 8px;
+        }
+
+        .toutiao .left {
+            font-size: 14px;
+            position: relative;
+            overflow: hidden;
+            width: 76%;
+            height: 20px;
+            line-height: 20px;
+        }
+
+        .toutiao .scrollbox {
+            position: absolute;
+            display: inline-block;
+            white-space: nowrap;
+            left: 0;
+            top: 0;
+        }
+
+        .toutiao .left span {
+            font-size: 14px;
+        }
+
+        .toutiao .left img {
+            object-fit: contain;
+        }
+
+        .toutiao .left span.uname {
+            font-size: 14px;
+            color: #BB51D2;
+        }
+
+        .toutiao .left span.gift {
+            color: #FF3121;
+        }
+
+        .toutiao .right {
+            width: 52px;
+            text-align: center;
+            background: linear-gradient(-25deg, #F359F1, #FFACC9);
+            border-radius: 8px;
+            color: #fff;
+            font-weight: 500;
+            font-size: 14px;
+            padding: 10px 6px;
+        }
+
+        .index-rank-icon {
+            background-image: url('../image/icon/rankicon@2.png');
+        }
+
+        .index-hongbao-icon {
+            background-image: url('../image/member/ic_pay_to_view.png');
+            width: 25px;
+            height: 25px;
+        }
+
+        .veralmi {
+            vertical-align: middle;
+        }
+
+        .ml5 {
+            margin-left: 5px;
+        }
+
+        /* 电视 */
+        #tv {
+            font-size: 14px;
+            color: #757575;
+            line-height: 2;
+            overflow: hidden;
+            height: 60px;
+            position: relative;
+        }
+
+        #tv .time {
+            color: #757575;
+            margin-right: 10px;
+        }
+
+        #tv .clap-icon {
+            background-image: url('../image/index/applause.png');
+            background-size: 20px;
+            background-repeat: repeat-x;
+            width: 60px;
+            height: 20px;
+            background-position: left center;
+        }
+
+        #tv .name {
+            color: red;
+        }
+
+        #tv .gift {
+            color: #7338d8;
+        }
+
+        #tv .up-btn {
+            color: #757575;
+            float: right;
+        }
+
+        #tv .tv-content {
+            animation-name: in;
+            animation-duration: 1s;
+            position: absolute;
+            width: 100%;
+            left: 0;
+            background: #fff;
+            box-sizing: border-box;
+            padding: 5px 10px;
+            display: -moz-box;
+            display: -webkit-box;
+            background-size: 100%;
+            background-repeat: no-repeat;
+            background-position: center;
+            opacity: 0.8;
+        }
+
+        @keyframes in {
+            0% {
+                top: 60px;
+            }
+
+            100% {
+                top: 0px;
+            }
+        }
+
+        #tv .tv-content.go {
+            animation-name: go;
+        }
+
+        #tv .tv-content img {
+            height: 20px;
+        }
+
+        @keyframes go {
+            0% {
+                top: 0px;
+            }
+
+            100% {
+                top: -60px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <header>
+            <div class="z-list" v-if="!ios">
+                <div class="item video-item" v-if="show_video_voice" onclick="openSP(2)">
+                    <img src="../image/index/1.png" alt="">
+                    <div class="label">视频速配</div>
+                </div>
+                <div class="item voice-item" v-if="show_video_voice" onclick="openSP(1)">
+                    <img src="../image/index/2.png" alt="">
+                    <div class="label">语音速配</div>
+                </div>
+                <div class="item area-item" onclick="showDetail('modal/tongchengsupei')">
+                    <img src="../image/index/3.png" class="lw" alt="">
+                    <div class="label">同城速配</div>
+                </div>
+                <div class="item chat-item" onclick="_url({url:'fuqi/index', title:'夫妻相'})">
+                    <img src="../image/index/4.png" class="lw" alt="">
+                    <div class="label">夫妻相</div>
+                </div>
+                <div class="item chat-item" onclick="getRankArr()">
+                    <img src="../image/index/5.png" class="lw" alt="">
+                    <div class="label">排行榜</div>
+                </div>
+                <!-- <div class="item chat-item" onclick="_url({ url: 'frame0/groupchat', title: '群聊派对' })">
+                    <img src="../image/icon/index_chat.png" class="lw" alt="">
+                    <div class="label" style="color: #ED8D58;">聊天广场</div>
+                </div> -->
+            </div>
+            <!-- <div class="swiper-container" v-if="lbList.length>0">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide" v-for="(m, index) in lbList">
+                        <img :src="returnImg(m.img)" onerror="this.src='../image/error-img.png'" alt="" v-if="m.url"
+                            @click="_url({url:m.url, title:'详情'}, 'web')">
+                        <img :src="returnImg(m.img)" onerror="this.src='../image/error-img.png'" alt="" v-else>
+                    </div>
+                </div>
+            </div> -->
+            <!-- <div class="toutiao flex-bt " v-if="!ios"> -->
+            <!-- <div class="left" v-if="bapin.content">
+                    <span class="uname">{{bapin.name}}</span>: {{bapin.content}}
+                </div>
+                <div class="left" v-else>
+                    <span class="uname">{{bapin.name}}</span>: {{bapin.content}}
+                </div> -->
+            <!-- types: 1霸屏广播 2礼物 -->
+            <!-- <div class="left" v-if="bapin.types == 2">
+                    <div class="scrollbox">
+                        <span v-if="bapin.user_id">
+                            <span class="uname" @click.stop="go_userInfo(bapin.user_id)">{{bapin.name_1}}</span> 送给 <span class="uname" @click.stop="go_userInfo(bapin.to_user)">{{bapin.name_2}}</span> 一个 <img width="12" height="12" :src="returnImg(bapin.gift_cover)" alt=""> <span class="gift">{{bapin.gift_name}}</span> ，掌声祝福
+                        </span>
+                        <span v-else>这世界没爱了</span>
+                    </div>
+                </div>
+                <div class="left" v-else>
+                    <div class="scrollbox">
+                        <span class="uname" v-if="bapin.user_id">{{bapin.name_1}}<img src="../image/icon/laba.png" class="veralmi" alt=""><span class="veralmi ml5">{{bapin.content}}</span></span>
+                        <span v-else>这世界没爱了</span>
+                    </div>
+                </div>
+                <div class="right" onclick="showDetail('modal/index_toutiao')">发霸屏头条 </div> -->
+            <!-- 电视 -->
+            <div id="tv" v-if="!ios">
+                <!-- <div class="tv-content">
+                    <span class="time">23:35</span> <span class="name">张三张三</span>送给<span class="name">李四李四</span>1个<span class="gift">[花心花心]</span><img src="../../image/test/car1.png" alt="">,掌声响起来...<span class="clap-icon"></span>
+                    <span class="up-btn">📺 如何上电视</span>
+                    <span class="up-btn">🔒 锁屏中(10)...</span>
+                </div> -->
+            </div>
+            <!-- </div> -->
+            <ul class="h-wrap">
+                <!-- 第一个头部 -->
+                <li class="h-list one new-padding-10 flex-bt">
+                    <ul class="wrap  one2 new-nav" style="justify-content: flex-start;">
+                        <li class="n-list list  new-padding-10 active" tapmode onclick="randomSwitchBtn(0, 'one2')">推荐
+                        </li>
+                        <li class="n-list list new-padding-10 " tapmode onclick="randomSwitchBtn(1, 'one2')">附近</li>
+                    </ul>
+<!--                    <div id="search" class="flex" onclick="_url({}, 'frame0/search_case')">-->
+<!--                        <i class="base-icon index1-search-icon"></i>-->
+<!--                    </div>-->
+                    <div id="redpacket" v-if="!ios" class="flex" onclick="_url({url:'frame4/renwu', title:'任务中心'})">
+                        <i class="base-icon index-hongbao-icon"></i>
+                    </div>
+                </li>
+            </ul>
+        </header>
+        <!-- 脚部 -->
+        <footer>
+            <ul class="f-wrap flex-c">
+                <li class="f-list active">
+                    <img src="../image/index_images/button01.png" alt="">
+                    <span>缘分</span>
+                </li>
+                <li class="f-list" onclick="_index(1)">
+                    <img src="../image/index_images/button2.png" alt="">
+                    <span>动态</span>
+                </li>
+                <li class="f-list" onclick="_index(2)">
+                    <img src="../image/index_images/button3.png" alt="">
+                    <span>聊天</span>
+                    <span class="num new-hide"></span>
+                </li>
+                <li class="f-list" onclick="_index(4)">
+                    <img src="../image/index_images/button5.png" alt="">
+                    <span>我的</span>
+                </li>
+            </ul>
+        </footer>
+    </div>
+</body>
+<script src="../script/jquery.js"></script>
+<script src="../script/api.js"></script>
+<script src="../script/ffkj.js"></script>
+<script src="../script/group.js"></script>
+<script src="../script/map.js"></script>
+<script src="../script/vue.js"></script>
+<script src="../script/update.js"></script>
+
+<script src="../script/swiper.js"></script>
+<script src="../script/index.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            ios: 1, // 1上架 0非上架,
+            lbList: [],
+            bpTime: 0,
+            bapin: {
+                content: '',
+                time: 0
+            }, // 霸屏
+            xuni: [],
+            show_video_voice: 1
+        },
+        methods: {
+            // 跳转 查看用户详情
+            go_userInfo(id, name, sex) {
+                go_userInfo(id, name, sex)
+            },
+            // 跳转
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            }
+        }
+    })
+    var index_sex = $api.getStorage('sex');
+    var map;
+
+    apiready = function() {
+        $api.fixStatusBar($api.dom('header'));
+        $api.fixTabBar($api.dom('footer'));
+        map = new Map();
+        view.ios = $api.getStorage('shang');
+
+        // 语音视频是否隐藏
+        view.show_video_voice = $api.getStorage('hide_video_voice') == 0;
+
+        // _heibai(1)
+        keyback();
+
+
+        changeMsgNum()
+        // 监听消息数量
+        _listener('msgNum', function(ret) {
+            if (ret && ret.value) {
+                var result = ret.value;
+                changeMsgNum(result)
+            }
+        })
+
+        // getAddress()
+        _listener('viewappear', function() {
+            getAddress()
+        })
+        getBapin();
+        // 获取首页轮播
+        // swiperLoad(function () {
+        _getUser(function(ret) {
+            setOnline(1);
+            if (ret.result.shoushi) {
+                changeFrame(0);
+                setTimeout(function() {
+                    _url({
+                        type: 2,
+                        animationType: 0
+                    }, 'frame4/pwd');
+                }, 100)
+            } else {
+                changeFrame(0);
+            }
+            if (ret.result.zhaohu == 1 && !view.ios) {
+                setTimeout(function() {
+                    showDetail('modal/hi_modal')
+                }, 1000)
+            }
+
+        })
+        // })
+
+        setTimeout(function() {
+            updateVision()
+        }, 2000)
+
+        // 首页公告
+        // setTimeout(function () {
+        //     showDetail('modal/index_ad')
+        // }, 3000)
+
+
+        _listener('newmsg', function(ret) {
+            showMsgFrm(ret.value.data)
+        })
+        _listener('Speaker', function(ret) {
+            var result = ret.value.result;
+            setTVScroll(result);
+        })
+
+        getBeauty()
+    }
+
+    // 获取排行榜开启状态 0: 该排行榜显示 1隐藏
+    //1恩爱(亲密度)|2女神(收到礼物)|3富豪(送出礼物)|4男神(收到礼物)|5家族(威望)|6(魅力值)|8邀请
+    function getRankArr() {
+        _ajax('api/config/ranking', function(ret, err) {
+            if (ret && ret.code == 200) {
+                $api.setStorage('rankArr', ret.data);
+                _url({}, 'frame0/index_rank_win')
+            } else {
+                _msg(ret.msg);
+            }
+        })
+    }
+</script>
+
+</html>

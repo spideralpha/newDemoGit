@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport"
+        content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>title</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui_font.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/news.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/frame3.css" />
+    <style>
+        .base-icon {
+            width: 42px;
+            height: 25px;
+            display: inline-block;
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+        }
+
+        /* 我的 消息开启 */
+        .base-icon.my-msg {
+            background-image: url('../../image/icon/c2.png');
+        }
+
+        /* 我的 消息关闭 */
+        .base-icon.my-msg-close {
+            background-image: url('../../image/icon/c1.png');
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <section class="m-frame">
+            <ul class="item">
+                <li class="item_li" onclick="changeNick()">
+                    <div class="lt">昵称</div>
+                    <div class="rt">
+                        <span class="f-size12 phone">{{ffInfo.name}}</span>
+                        <span class="aui-iconfont aui-icon-right"></span>
+                    </div>
+                </li>
+                <li class="item_li" onclick="_url({url:'frame4/bang_ding_shou_ji_frm', title:'修改手机'})">
+                    <div class="lt">手机号码</div>
+                    <div class="rt">
+                        <span class="f-size12 phone">{{ffInfo.phone}}(仅自己可见)</span>
+                        <span class="aui-iconfont aui-icon-right"></span>
+                    </div>
+                </li>
+                <li class="item_li" onclick="_url({url:'user/pwd', title:'修改密码'})">
+                    <span class="lt">修改登录密码</span>
+                    <span class="aui-iconfont aui-icon-right"></span>
+                </li>
+            </ul>
+        </section>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/jquery.js"></script>
+<script type="text/javascript" src="../../script/ffkj.js"></script>
+<script type="text/javascript" src="../../script/vue.js"></script>
+<script type="text/javascript">
+    var view = new Vue({
+        el: '#view',
+        data: {
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+        }
+    })
+    apiready = function () {
+        view.ios = $api.getStorage('shang');
+        // 获取用户信息
+        _getUser(function (ret) {
+            view.ffInfo = ret.result;
+        })
+    }
+    // 修改昵称
+    function changeNick() {
+        api.prompt({
+            title: '请输入昵称',
+            buttons: ['确定', '取消']
+        }, function (ret, err) {
+            console.log(JSON.stringify(ret))
+            if (ret.buttonIndex == 1) {
+                var text = ret.text;
+                if (!text) {
+                    _msg('昵称不能为空');
+                    return;
+                }
+                _ajax('user_info_edit.php', function (ret, err) {
+                    console.log(JSON.stringify(ret))
+                    console.log(JSON.stringify(err))
+                    var msg = ret.code == 200 ? '修改成功' : '修改失败';
+                    _msg(msg);
+                    if (ret && ret.code == 200) {
+                        view.ffInfo.name = text;
+                        _send('my_name', {
+                            name: text
+                        }); // 更新名字
+                    }
+                }, {
+                    user_id: $api.getStorage('userid'),
+                    ziduan: 'name',
+                    value: text
+                })
+            }
+
+        });
+    }
+</script>
+
+</html>

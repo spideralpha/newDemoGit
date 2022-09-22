@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>小火苗</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/aui_font.css">
+    <link rel="stylesheet" href="../../css/xueli.css">
+</head>
+
+<body>
+    <div id="view" v-cloak class="wrap">
+        <p class="title">请按以下要求上传房产证明</p>
+        <ul class="ul ">
+            <li class="list flex">
+                <img src="../../image/icon/house.jpg" alt="">
+            </li>
+            <!-- <li class="list up-img flex-col flex-c" v-if="!img" onclick="selectFile()">
+                <img src="../../image/icon/cammer.png" alt="">
+                <span class="new-margin-t-10">上传房产证明</span>
+            </li>
+            <li class="list flex" v-else onclick="selectFile()">
+                <img :src="img" alt="">
+            </li> -->
+        </ul>
+        <!-- <div class="tip-wrap">
+            <p class="title">说明：</p>
+            <p class="text">应当提交以下文件之一：</p>
+            <p class="text">&nbsp;&nbsp;(1)国内的毕业证</p>
+            <p class="text">&nbsp;&nbsp;(2)国内的学位证书</p>
+            <p class="text">&nbsp;&nbsp;(3)毕业证明书(毕业证书丢失的可由毕业院校开具证明)</p>
+            <p class="text">&nbsp;&nbsp;(4)学信网的在线认证报告(有二维码)</p>
+            <p class="text">&nbsp;&nbsp;(5)教育部留学服务中心颁发的国外学历学位认证书</p>
+        </div> -->
+        <div class="des-wrap">
+            <!-- <p class="title">相关证件编号：</p>
+            <div class="input">
+                <input type="text" placeholder="请输入相关证件编号" v-model="number">
+            </div> -->
+            <ul class="dy-wrap">
+                <li class="list tu flex-col">
+                    <div class="title">相关证件图片</div>
+                    <div class="content">
+                        <ul class="img-wrap flex-w">
+                            <li class="i-list" v-for="(m, index) in imgList">
+                                <div class="img">
+                                    <img :src="m" alt="">
+                                </div>
+                                <i class="aui-iconfont aui-icon-close" @click.stop @click="delImg(index)"></i>
+                            </li>
+                            <li id="pic" class="i-list" v-if="imgList.length<2" onclick="selectFile();">
+                                <div class="img img-h">
+                                    <img src="../../image/icon/btn_addphoto.png" alt="">
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <footer class="flex-c">
+            <button class="new-submit" onclick="submit(1)">确定</button>
+        </footer>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script src="../../script/rz_up.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+            imgList: [],
+            number: '', // 相关编号
+        },
+        methods: {
+            returnImg(url) {
+                return returnImg(url);
+            },
+            _url(param, url) {
+                _url(param, url);
+            },
+            delImg(index) {
+                delImg(index)
+            }
+
+        }
+    })
+    apiready = function () {}
+</script>
+</html>

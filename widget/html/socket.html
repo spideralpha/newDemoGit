@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>小火苗</title>
+</head>
+
+<body>
+</body>
+<script src="../script/api.js"></script>
+<script src="../script/jquery.js"></script>
+<script src="../script/ffkj.js"></script>
+<script src="../script/vue.js"></script>
+<script src="../script/socket.js"></script>
+<script>
+    apiready = function() {
+        openWS(1);
+        // socket关闭
+        console.log('socket重新连接')
+        _listener('socketclose', function(ret) {
+            openWS(1);
+        })
+    }
+
+    // 消息列表
+    function getMsgList() {
+        if (!$api.getStorage('userid')) return;
+        var obj = {
+            userid: $api.getStorage('userid')
+        };
+        _ajax('Home/Privatechat/getOtherList', function(ret, err) {
+            // console.log(JSON.stringify(ret));
+            // console.log(JSON.stringify(err));
+        }, {
+            data: JSON.stringify(obj)
+        })
+    }
+
+    // 打开ws
+    function openWS(index) {
+        // 建立长连接
+        var _ws = new WS(index);
+
+        // 监听用户登录
+        _listener('fresh', function() {
+            _ws.band()
+            pushMsg($api.getStorage('userid'));
+            setTimeout(function() {
+                getMsgList();
+            }, 500)
+        })
+        _ws.open(function() {
+            _ws.band();
+            pushMsg($api.getStorage('userid'));
+            setTimeout(function() {
+                getMsgList();
+            }, 500)
+        });
+
+        // 长连接 渲染数据
+        _ws.get(function(rets) {
+            if (rets.indexOf('action') != -1) {
+                rets = JSON.parse(rets);
+                console.log(JSON.stringify(rets));
+                if (rets) {
+                    var action = rets.action;
+                    action = action.toLowerCase();
+                    console.log(action);
+                    // 霸屏
+                    if (action == 'api/speaker/lists') {
+                        _send('Speaker', {
+                            result: rets.data,
+                        })
+                    }
+                    // 消息数量变化
+                    if (action == 'home/privatechat/changeread') {
+                        _send('changeread', {
+                            result: rets.data,
+                        })
+                    }
+                    // 群聊已读 消息数量
+                    if (action == 'api/cluster/changeread') {
+                        pushMsg($api.getStorage('userid'))
+                    }
+                    // 阅后即焚
+                    if (action == 'home/privatechat/burnimg') {
+                        _send('chat_burnImg', {
+                            result: rets,
+                        })
+                    }
+                    // 红包
+                    if (action == 'home/privatechat/addtalk') {
+                        // if (rets.data && rets.data.data) {
+                        //     // 配置正确
+                        //     _send('getHBNum', {
+                        //         id: rets.data.id,
+                        //         info: rets.data.data
+                        //     })
+                        // } else {
+                        //     // 获取配置失败
+                        //     _send('getHBNum', {
+                        //         id: rets.data.id,
+                        //         msg: rets.data.msg
+                        //     })
+                        // }
+                    }
+                    // 渲染消息数量 Home/Privatechat/getreadcount
+                    if (action == 'home/privatechat/getreadcount') {
+                        var result = rets.data;
+                        if (!$api.getStorage('shang')) {
+                            api.setAppIconBadge({ //桌面红点
+                                badge: Number(result.chat_count) + Number(result.message_count),
+                            });
+                        }
+                        var msgNum = {
+                            cnum: Number(result.chat_count),
+                            mnum: Number(result.message_count)
+                        }
+                        $api.setStorage('msgNum', msgNum);
+                        _send('msgNum', msgNum);
+                        if (result.message == 1) {
+                            setWarnning();
+                        }
+                    }
+                    // 收到视频匹配信息
+                    if (action == 'api/user/pipei') {
+                        var call = $api.getStorage('callStatus');
+                        if (call != 1) {
+                            $api.setStorage('requestStatus', 1);
+                            // 不在通话中
+                            _url({
+                                id: rets.data.user_id,
+                                // type: rets.data.type,
+                            }, 'frame0/video_virtual'); // 接听画面
+                        }
+                    }
+                    
+                    // 当匹配成功后，关闭其他用户的虚拟页面
+                    if (action == 'api/user/pipeiclose') {
+                        var call = $api.getStorage('callStatus');
+                        if (call == 1) {
+                            api.closeWin({
+                                name: 'frame0/video_virtual'
+                            });
+                        }
+                        $api.setStorage('callStatus', 0);
+                    }
+
+                    if (action == 'home/privatechat/torequest') {
+                        // 连麦接收
+                        var call = $api.getStorage('callStatus');
+                        if (call != 1) {
+                            $api.setStorage('requestStatus', 1);
+                            // 不在通话中
+                            var u = rets.data.types == 1 ? 'frame0/lianmai' : 'frame0/videochat';
+                            _url({
+                                id: rets.data.another_id,
+                                type: 0,
+                                slidBackEnabled: 0,
+                                orderid: rets.data.orderid,
+                                from_type: rets.data.from_type
+                            }, u); // 接收
+                        } else {
+                            // 正在通话中 则挂断
+                            _ajax('home/Privatechat/returnRequest', function() {}, {
+                                user_id: rets.data.another_id,
+                                another_id: rets.data.user_id,
+                                channel: 'channel' + rets.data.another_id,
+                                status: 0,
+                                types: rets.data.types
+                            })
+                        }
+                        if ($api.getStorage('resume') != 1) {
+                            var light = api.systemType == 'ios' ? false : true;
+                            api.notification({
+                                notify: {
+                                    content: '对方邀请你通话',
+                                    updateCurrent: true
+                                },
+                                light: light,
+                                vibrate: [500, 500, 500, 500, 500, 500, 500, 500],
+                                sound: 'widget://res/tip.mp3'
+                            }, function(reg, erg) {
+                                if (reg && reg.id) {
+                                    $api.setStorage('notifiId', reg.id);
+                                }
+                            });
+                        }
+                    }
+                    if (action == 'home/privatechat/returnrequest') {
+                        $api.setStorage('requestStatus', rets.data.status);
+                        // 收到 后端 推送过来的 对方已接听/取消的状态
+                        _send('returnRequest', {
+                            status: rets.data.status,
+                            uid: rets.data.another_id,
+                            types: rets.data.types,
+                            recharge_user_id: rets.data.recharge_user_id
+                        })
+                        if (rets.data.status == 0) {
+                            api.cancelNotification({
+                                id: $api.getStorage('notifiId'),
+                            });
+                        }
+                    }
+                    // 首页公告
+                    if (action == 'home/user/getnewmsg') {
+                        // console.log(JSON.stringify(rets))
+                        _send('index_notice', {
+                            notice: rets.data
+                        });
+                    }
+                    // 弹窗消息
+                    if (action == 'home/privatechat/getnewmsg') {
+                        if (rets.data && rets.data.new) {
+                            var ndd = rets.data;
+                            _send('newmsg', {
+                                data: ndd
+                            });
+                        }
+                    }
+                    // 红包
+                    if (action == 'model/task/finish') {
+                        if (rets.data) {
+                            var ndd = rets.data;
+                            if (!$api.getStorage('shang')) {
+
+                                api.execScript({
+                                    name: $api.getStorage('nowWin'),
+                                    script: "showDetail('modal/hongbao_modal', { title:'" + ndd.title + "', money: " + ndd.money + " , msg: '" + ndd.msg + "'})"
+                                })
+                            }
+
+                        }
+                    }
+                    // 首页消息列表滚动
+                    if (action == 'home/privatechat/getotherlist') {
+                        if (rets.data && rets.data.result) {
+                            var result = rets.data.result;
+                            _send('index_msglist', {
+                                result: result
+                            })
+                            $api.setStorage('index_msglist', result);
+                            $api.rmStorage('msgList');
+                            for (var i = 0, len = result.length; i < len; i++) {
+                                if (result[i].count > 0 && result[i].kefu != 1 && result[i].is_cluster != 1) {
+                                    $api.setStorage('msgList', result[i]);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    // 系统消息
+                    if (action == 'home/user/syslist') {
+                        var result = rets.data;
+                        _send('syslist', {
+                            result: result
+                        })
+                    }
+                    // 群聊消息
+                    if (action == 'api/cluster/getnewmsg') {
+                        _send('qun_newmsg', {
+                            result: rets.data
+                        })
+                    }
+                    // 登录判断
+                    if (action == 'login') {
+                        if (rets.data.device_id != api.deviceId) {
+                            _send('logout', {
+                                uid: $api.getStorage('userid')
+                            });
+                            _logout();
+                            api.execScript({
+                                name: $api.getStorage('nowWin'),
+                                script: "showDetail('modal/login_modal')"
+                            })
+                        }
+                    }
+
+                    // 直播间最新消息
+                    if (action == 'api/live/commentlist') {
+                        if (rets.data && rets.data.length > 0) {
+                            _send('zbMsg', {
+                                data: rets.data
+                            })
+                        }
+                    }
+                }
+            }
+        })
+    }
+</script>
+
+</html>

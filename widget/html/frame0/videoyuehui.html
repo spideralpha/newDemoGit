@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <style>
+        .list {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            padding: 4px 2vw;
+        }
+
+        .list .item {
+            padding: 4px 0;
+            display: flex;
+            width: 44vw;
+            max-width: 44vw;
+            min-width: 44vw;
+            flex-direction: column;
+        }
+
+        .list .item .top {
+            width: 44vw;
+            height: 44vw;
+            position: relative;
+        }
+
+        .list .item .top .avatar {
+            width: 44vw;
+            height: 44vw;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .list .item .top .online {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: rgba(0, 0, 0, 0.151);
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            padding: 2px 5px;
+            color: #fff;
+            border-radius: 20px;
+        }
+
+        .list .item .top .online img {
+            width: 10px;
+            height: 10px;
+            margin-right: 4px;
+        }
+
+        .list .item .top .playtag {
+            width: 16px;
+            height: 16px;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+
+        .list .item .top .ageadd {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            font-size: 12px;
+            color: #fff;
+        }
+
+        .list .item .top .play {
+            width: 28px;
+            height: 28px;
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+        }
+
+        .list .item .bottom {
+            padding: 3px 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .list .item .bottom .name {
+            font-size: 14px;
+            margin-right: 4px;
+        }
+
+        .list .item .bottom .real {
+            height: 14px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="list" id="view" v-cloak>
+        <div class="item" v-for="(x, index) in ffList" @click="goUserInfo(x)">
+            <div class="top">
+                <img class="avatar" :src="returnImg(x.user_head)" onerror="this.src='../../image/touxiang.png'" alt="">
+                <div class="online" v-if="x.is_online!=0 && x.last_login_datetime!= '保密'"><img
+                        src="../../image/icon/icon_status_online.png" alt="">在线</div>
+                <img src="../../image/icon/icon_video_tag.png" class="playtag" alt="">
+                <div class="ageadd">{{x.user_age}}岁 · {{x.city}}</div>
+                <img src="../../image/icon/icon_video.png" class="play" alt="">
+            </div>
+            <div class="bottom">
+                <div class="name">{{ x.user_name}}</div>
+                <img src="../../image/man/ms_yourself_certificate_ok.png" v-if="x.is_identity_authentication == 2 && !ios" class="real"
+                    alt="">
+            </div>
+        </div>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+        },
+        methods: {
+             // 跳转 查看用户详情
+             goUserInfo(data) {
+                go_userInfo(data.user_id, data.user_name, data.user_sex)
+            },
+            // 跳转
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+        }
+    })
+
+    apiready = function () {
+        view.ios = $api.getStorage('shang');
+        _shangla(function () {
+            getData(0);
+        })
+
+        _scrollToBottom(function () {
+            if (heigutgao == 1) {
+                pagenum++;
+                getData(pagenum);
+            }
+        })
+    }
+
+    // 加载第一页
+    function getData(page) {
+        var lon = $api.getStorage('lon');
+        var lat = $api.getStorage('lat');
+        var sex = $api.getStorage('sex') == '女' ? '男' : '女';
+
+        var param = {
+            pagesize: pagesize,
+            sex: sex,
+            user_id: $api.getStorage('userid'),
+            longitude: lon,
+            latitude: lat,
+            appointment: 1
+        }
+
+        console.log(JSON.stringify(param))
+        if (page == 0) {
+            $('body').scrollTop(0);
+        }
+        var loading = page == 0 ? 1 : 0;
+        _lists('api/user/index', page, loading, param);
+    }
+</script>
+
+</html>

@@ -1,0 +1,156 @@
+html,
+body {
+    background: transparent;
+}
+
+.modal-bg {
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    /* background: rgba(0, 0, 0, 0.3); */
+    left: 0;
+    top: 0;
+    display: flex;
+    align-items: flex-end;
+
+}
+
+.wrap {
+    background: #fff;
+    padding: 10px;
+    border-radius: 10px 10px 0 0;
+    width: 100vw;
+    box-sizing: border-box;
+
+}
+
+/* .img-ul {
+    display: -webkit-box;
+} */
+
+.img-ul {
+    height: calc((100vw - 20px) / 4 * 5);
+    overflow-y: auto;
+    display: -moz-box;
+    display: -webkit-box;
+    /* 换行空格问题 */
+    font-size: 0;
+}
+
+.list {
+    position: relative;
+    width: calc((100vw - 20px) / 4);
+    height: calc((100vw - 20px) / 4);
+    padding: 5px;
+    overflow: hidden;
+    box-sizing: border-box;
+    display: inline-block;
+}
+
+.list img {
+    width: 100%;
+    height: 100%;
+    border-radius: 5px;
+}
+
+.video .time {
+    color: #fff;
+    font-size: 10px;
+    display: flex;
+    align-items: center;
+    position: absolute;
+    bottom: 7px;
+    left: 10px;
+}
+
+.video .time::before {
+    background-image: url('../image/icon/live_list_livetv_icon.png');
+    background-size: 100%;
+    display: inline-block;
+    content: '';
+    width: 12px;
+    height: 12px;
+    margin-right: 5px;
+}
+
+.select {
+    background-image: url('../image/icon/select3.png');
+    width: 15px;
+    height: 15px;
+    background-size: 50%;
+    background-color: rgba(0, 0, 0, 0.3);
+    background-repeat: no-repeat;
+    background-position: center center;
+    border-radius: 50%;
+    position: absolute;
+    right: 10px;
+    top: 10px;
+}
+
+.num {
+    width: 17px;
+    height: 17px;
+    background: #F46CEF;
+    border-radius: 50%;
+    position: absolute;
+    right: 10px;
+    top: 10px;
+
+    font-size: 12px;
+    font-weight: 500;
+    color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 头部 */
+header {
+    position: relative;
+    padding: 14px 0;
+}
+
+.head-title {
+    font-size: 15px;
+    font-weight: 400;
+    color: #000000;
+}
+
+.head-title img {
+    width: 10px;
+    margin-left: 5px;
+}
+
+.success-btn {
+    font-size: 15px;
+    font-family: PingFang SC;
+    font-weight: 400;
+    color: #F46CEF;
+    position: absolute;
+    right: 0;
+}
+
+.head-title span {
+    margin: 0 10px;
+    color: #999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.head-title span::after {
+    display: inline-block;
+    content: '';
+    width: 10px;
+    height: 2px;
+    background: #fff;
+}
+
+.head-title span.active {
+    color: #000;
+}
+
+.head-title .active::after {
+    background: #000;
+}

@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Document</title>
+    <link rel="stylesheet" href="../css/api.css">
+    <link rel="stylesheet" href="../css/aui_font.css">
+    <link rel="stylesheet" href="../css/base_icon.css">
+    <link rel="stylesheet" href="../css/news.css">
+    <link rel="stylesheet" href="../css/frame0.css">
+    <link rel="stylesheet" href="../css/swiper.css">
+    <style>
+        /* 滚动公告 */
+        .rz-img {
+            width: calc(100% - 20px);
+            margin: 10px;
+        }
+
+        /* 消息滚动 */
+        .user-s {
+            position: fixed;
+            right: 10px;
+            bottom: 10vh;
+            background: #ff66c1;
+            color: #fff;
+            padding: 5px;
+            border-radius: 20px;
+            max-width: 30vw;
+            display: flex;
+            align-items: center;
+            z-index: 1;
+
+        }
+
+        .user-s .swiper-container {
+            height: 30px;
+        }
+
+        .user-s .swiper-slide {
+            display: flex;
+            align-items: center;
+            font-size: 10px;
+            color: #fff;
+            justify-content: flex-start;
+        }
+
+        .user-s .u-tx {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+
+        .user-s .name {
+            color: #fff;
+
+            display: -webkit-box !important;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            word-wrap: break-word;
+            word-break: break-all;
+            white-space: normal !important;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            width: 80px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <div class="user-s" v-if="msglist.length>0 && !ios">
+            <div class="swiper-container">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide" v-for="(m, index) in msglist" @click="_url({ touserid: m.userid, title: '与' + m.name + '的聊天', moreType: 1, }, 'frame0/liaotian_win')">
+                        <img class="u-tx" :src="returnImg(m.sumb_headimg)" onerror="this.src='../image/touxiang.png'" alt="">
+                        <p><span class="name">{{m.name}}:</span><span class="name">{{m.content}}</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 用户列表 -->
+        <ul class="ulist-wrap">
+            <li class="list" v-for="(m, index) in ffList" @click="goUserInfo(m)">
+                <div class="content-wrap">
+                    <div class="tx img-h " :class="{'xinren':m.is_new==1, 'hat':m.is_daren==1}">
+                        <img :src="returnImg(m.user_head)" onerror="this.src='../image/touxiang.png'" alt="">
+                    </div>
+                    <div class="content">
+                        <div class="flex-bt">
+                            <div class="name-wrap">
+                                <span class="name" :class="{'new-vip-name':m.noble_grade>3}">{{ m.user_name}}</span>
+                                <span class="new-tag man-ntag" :class="{'woman-ntag':m.user_sex=='女'}" v-if="m.realname_auth==2 && !ios"></span>
+                                <span class="new-tag rz-tag" v-if="m.is_identity_authentication==2 && !ios"></span>
+                                <img v-if="m.noble_icon && !ios" class="new-noble" :src="returnImg(m.noble_icon)" onerror="this.src='../image/error-img.png'" alt="">
+                                <img v-else-if="m.car_cover && !ios" class="new-car" :src="returnImg(m.car_cover)" onerror="this.src='../image/error-img.png'" alt="">
+                            </div>
+                        </div>
+                        <div class="tag-wrap">
+                            <span class="tag city-tag" v-if="m.city && nav==0">{{ m.city}}</span>
+                            <span class="tag city-tag" v-if="m.user_distance && nav==1">{{ m.user_distance}}</span>
+                            <span class="tag" v-if="m.user_age">{{m.user_age}}岁</span>
+                            <span class="tag" v-if="m.stature && m.user_sex=='女'">{{m.stature}}cm</span>
+                            <span class="tag" v-if="m.occupation">{{ m.occupation}}</span>
+                            <span class="tag" v-if="m.monthly_salary && m.user_sex=='男'">{{ m.monthly_salary}}</span>
+                        </div>
+                        <span class="new-index-voice" :class="{'active':index==playIndex}" v-if="m.voice" @click.stop="openVoice(index)">{{m.voice_time}}''</span>
+                        <!-- <span class="new-index-voice active"></span> -->
+                        <p class="sign aui-ellipsis-1" v-else-if="m.self_slogan"> {{m.self_slogan}}</p>
+                    </div>
+                </div>
+                <div class="hi-tag" v-if="!ios" :class="{'hi-tags':m.dashan==1}" @click.stop @click="dashan(index, $event)">打招呼</div>
+            </li>
+        </ul>
+    </div>
+</body>
+<script src="../script/api.js"></script>
+<script src="../script/jquery.js"></script>
+<script src="../script/ffkj.js"></script>
+<script src="../script/vue.js"></script>
+<script src="../script/frame0.js"></script>
+<script src="../script/swiper.js"></script>
+<script src="../json/frame0.js"></script>
+<script src="../json/frame2_1.js"></script>
+<script>
+    var index_sex; // 首页选中显示什么性别
+    var index_city = $api.getStorage('index_city') || '附近'; // 首页筛选要求的城市
+    var filtroHot;
+    var filtroNew;
+    var filtroVip;
+    var filtroReal;
+
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            notice: [], // 公告列表
+            ios: 1, // 1上架 0非上架
+            msglist: [],
+            playIndex: -1,
+
+            nav: 0,
+        },
+        methods: {
+            // 跳转 查看用户详情
+            goUserInfo(data) {
+                go_userInfo(data.user_id, data.user_name, data.user_sex)
+            },
+            // 收藏
+            sc(uid, index) {
+                _sc(uid, index);
+            },
+            // 听音频
+            openVoice(index) {
+                openVoice(index);
+            },
+            // 更多
+            _more(index) {
+                _scAndBlack(index);
+            },
+            // 心动
+            dashan(index, event) {
+                var e = event.currentTarget;
+                _dashan(index, e);
+            },
+            // 跳转
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+
+        }
+    })
+    var swiper;
+    apiready = function() {
+        view.nav = api.pageParam['index'];
+        api.bringFrameToFront({
+            from: 'up_modal',
+            to: api.frameName
+        });
+        api.bringFrameToFront({
+            from: 'modal/sign_modal',
+            to: api.frameName
+        });
+        view.ios = $api.getStorage('shang');
+        filtroHot = api.pageParam['hot'] || 0;
+        filtroNew = api.pageParam['new'] || 0;
+        filtroVip = api.pageParam['vip'] || 0;
+        filtroReal = api.pageParam['real'];
+        index_sex = api.pageParam['sex'];
+        api.refreshHeaderLoadDone();
+
+        showSlideTime($api.getStorage('index_msglist'))
+        // 消息列表
+        _listener('index_msglist', function(ret) {
+            if (ret && ret.value.result) {
+                var res = ret.value.result;
+                showSlideTime(res)
+            }
+        })
+        // 监听切换城市
+        _listener('index_city', function(ret) {
+            if (ret && ret.value.city) {
+                index_city = ret.value.city;
+                getData(0);
+            }
+        })
+        // 监听登录
+        _listener('fresh', function(ret) {
+            getData(0);
+
+        })
+        // 更新公告信息
+        _listener('index_notice', function(ret) {
+            if (ret) {
+                view.notice = ret.value.notice;
+            }
+        })
+        // 设置上线优先
+        _listener('onlineFirst', function(ret) {
+            _shangla(function() {
+                getData(0);
+            })
+        })
+
+        // 地址更新
+        _listener('areaupdate', function() {
+            getData(0);
+        })
+
+        _shangla(function() {
+            getData(0);
+        })
+
+        _scrollToBottom(function() {
+            if (heigutgao == 1) {
+                pagenum++;
+                if (pagenum == 1 && api.pageParam['index'] == 0 && $api.getStorage('rz') != 2) {
+                    var html = `<img src="../image/index/rz.png" class="rz-img" onclick="openRZ()">`
+                    $('.wrap').append(html)
+                }
+                getData(pagenum);
+            }
+        })
+    }
+
+    // 加载第一页
+    function getData(page) {
+        var lon = $api.getStorage('lon');
+        var lat = $api.getStorage('lat');
+        // var _city = index_city == '附近' ? undefined : index_city;
+        // var online = $api.getStorage('online') == 1 ? 1 : undefined;
+        // if (_city) {
+        //     _city = _city.replace('市', '');
+        // }
+        var sex = $api.getStorage('sex') == '女' ? '男' : '女';
+
+        var param = {
+            pagesize: pagesize,
+            sex: sex,
+            // city: _city,
+            user_id: $api.getStorage('userid'),
+            // hot: filtroHot,
+            // new: filtroNew,
+            // vip: filtroVip,
+            // is_identity_authentication: 0,
+            // nvshen: filtroReal,
+            longitude: lon,
+            latitude: lat,
+            // online: online
+        }
+        var index = api.pageParam['index'];
+        if (index == 0) {
+            param.hot = 1;
+        }
+        // if (index == 1) {
+        //     param.new = 1;
+        // }
+        // if (index > 2) {
+        //     param.star = index;
+        // }
+        console.log(JSON.stringify(param))
+        if (page == 0) {
+            $('body').scrollTop(0);
+        }
+        var loading = page == 0 ? 1 : 0;
+        _lists('api/user/index', page, loading, param);
+    }
+
+    function openRZ() {
+        _url({
+            url: 'frame4/authentication_frame',
+            title: '身份认证'
+        })
+    }
+
+    // 显示消息提示
+    function showSlideTime(res) {
+        if (res) {
+            view.msglist = res;
+            setTimeout(function() {
+                if (!swiper) {
+                    swiper = new Swiper('.swiper-container', {
+                        direction: 'vertical', // 垂直切换选项
+                        loop: true, // 循环模式选项
+                        autoplay: {
+                            delay: 3000,
+                        },
+                        allowTouchMove: false,
+                        observer: true, //修改swiper自己或子元素时，自动初始化swiper
+                        observeParents: true, //修改swiper的父元素时，自动初始化swiper
+                    })
+                }
+            }, 500)
+        }
+    }
+</script>
+
+</html>

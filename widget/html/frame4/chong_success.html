@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>小火苗</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <style>
+        #view {
+            background-image: url('../../image/member/recharge_success_bg.jpg');
+            background-size: 100%;
+            background-repeat: no-repeat;
+        }
+
+        /* 金币 */
+        .icon {
+            background-image: url('../../image/member/recharge_icon_gold.png');
+            background-size: 100%;
+            width: 20px;
+            height: 20px;
+        }
+
+        .new-back {
+            background-image: url('../../image/back.png');
+        }
+
+        .top {
+            text-align: center;
+        }
+
+        .top h3 {
+            font-weight: normal;
+            font-size: 25px;
+            margin: 10px 0;
+        }
+
+        .warn {
+            color: #CD7DFE;
+        }
+
+        /* 列表 */
+        .buy-ul {
+            padding: 20px 30px;
+        }
+
+        .buy-ul .list {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            margin: 10px 0;
+        }
+
+        .content {
+            display: flex;
+            align-items: center;
+        }
+
+        .content img {
+            height: 20px;
+            margin-left: 5px;
+        }
+
+        .content .icon {
+            margin-left: 5px;
+        }
+
+        .btn {
+            line-height: 35px;
+            border-radius: 20px;
+            border: 1px solid;
+            width: 50%;
+        }
+
+        .tip {
+            text-align: center;
+            color: red;
+            padding: 15px 0;
+            font-size: 14px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <header>
+            <div class="back new-back" tapmode onclick="_closeToWin()"></div>
+        </header>
+        <div class="wrap">
+            <div class="top">
+                <img style="width: 120px;" src="../../image/member/recharge_success_pic.png" alt="">
+                <h3>充值成功</h3>
+                <p class="txt"><span class="money warn">{{ffInfo.money+Number(ffInfo.reward_money)}}金币</span>已存入余额</p>
+            </div>
+            <ul class="buy-ul">
+                <li class="list">
+                    <span class="name">购买金币</span>
+                    <div class="content">{{ffInfo.money}}<span class="icon"></span></div>
+                </li>
+                <li class="list" v-if="ffInfo.reward_money">
+                    <span class="name">多送</span>
+                    <div class="content">{{ffInfo.reward_money}}<span class="icon"></span></div>
+                </li>
+                <li class="list" v-if="ffInfo.reward_noble_name">
+                    <span class="name">赠送权益</span>
+                    <div class="content"><span class="warn">{{ffInfo.reward_noble_day}}天{{ffInfo.reward_noble_name}}</span><img :src="returnImg(ffInfo.reward_noble_cover)" onerror="this.src='../../image/error-img.png'" alt=""></div>
+                </li>
+                <li class="list" v-if="ffInfo.reward_car_name">
+                    <span class="name">赠送权益</span>
+                    <div class="content"><span class="warn">{{ffInfo.reward_car_day}}天{{ffInfo.reward_car_name}}</span><img :src="returnImg(ffInfo.reward_car_cover)" onerror="this.src='../../image/error-img.png'" alt=""></div>
+                </li>
+                <li class="list">
+                    <span class="name">合计</span>
+                    <div class="content">{{ffInfo.money+Number(ffInfo.reward_money)}}<span class="icon"></span></div>
+                </li>
+            </ul>
+            <div class="flex-c"><button class="btn" onclick="_closeToWin()">完成</button></div>
+            <p class="tip" onclick="_url({url:'frame3/choujiang', title:'抽奖'})">本次充值赠送1次抽奖，立即抽奖</p>
+        </div>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+        },
+        methods: {
+            // 跳转
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+        }
+    })
+
+    apiready = function() {
+        $api.fixStatusBar($api.dom('header'));
+        view.ffInfo = api.pageParam['data'];
+    }
+</script>
+
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        html,
+        body {
+            margin: 0;
+        }
+
+        textarea {
+            width: calc(90% - 20px);
+            resize: none;
+            border: none;
+            outline: none;
+            margin: 20px 5%;
+            background-color: #f3f3f3;
+            border-radius: 10px;
+            padding: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <textarea name="" id="" v-model="text" rows="10"></textarea>
+    </div>
+    <script src="../../script/api.js"></script>
+    <script src="../../script/jquery.js"></script>
+    <script src="../../script/vue.js"></script>
+    <script src="../../script/ffkj.js"></script>
+    <script>
+        var view = new Vue({
+            el: '#view',
+            data: {
+                text: ''
+            },
+            methods: {}
+        })
+
+        function _more() {
+            if (!view.text) {
+                _msg('请输入内容');
+                return;
+            }
+            if (view.text.length > 50) {
+                _msg('最多只能输入50个字');
+                return;
+            }
+            _loading();
+            _ajax('api/Privatechat/addCommonWords', function(ret, err) {
+                _loadingClose();
+                _msg(ret.msg);
+                if (ret && ret.code == 200) {
+                    timerWin();
+                }
+            }, {
+                user_id: $api.getStorage('userid'),
+                content: view.text,
+                channel: 2, // 1语音|2文字
+            })
+        }
+    </script>
+</body>
+
+</html>

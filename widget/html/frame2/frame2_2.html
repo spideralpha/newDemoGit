@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/frame2.css">
+    <style>
+        .wrap .u-wrap .list-wrap {
+            border-bottom: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap" id="view" v-cloak>
+        <ul class="u-wrap">
+
+            <!-- 系统消息 -->
+            <li class="list" v-for="(m, index) in ffList" @click="msg(m.id, m.name)">
+                <div class="tx img-h">
+                    <img v-if="m.id == 1" src="../../image/icon/ic_diantai.png" alt="">
+                    <img v-if="m.id == 2" src="../../image/icon/ic_shenqing.png" alt="">
+                    <img v-if="m.id == 3" src="../../image/icon/ic_shouyi.png" alt="">
+                    <img v-if="m.id == 4" src="../../image/icon/ic_pingjia.png" alt="">
+                    <img v-if="m.id == 5" src="../../image/icon/ic_mianju.png" alt="">
+                </div>
+                <div class="content">
+                    <div class="flex-bt">
+                        <div class="name-wrap" style="position: relative;">
+                            <span class="name">{{m.name}}</span>
+
+                        </div>
+                        <span class="time">{{ m.time }}</span>
+                    </div>
+                    <div class="flex-bt new-margin-t-10">
+                        <p class="msg aui-ellipsis-1" style="max-width: 80%;;">{{clearHtml(m.content)}}</p>
+                        <span class="yuan" v-if="m.num != 0">{{m.num>99?'99+':m.num}}</span>
+                    </div>
+
+                </div>
+            </li>
+        </ul>
+        <div id="no_more" :class="{'null-sj': ffList.length == 0}"></div>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script src="../../script/socket.js"></script>
+
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+        },
+        methods: {
+            // 清除html
+            clearHtml(s) {
+                return clearHtml(s);
+            },
+            // 打开窗口
+            msg(id, title) {
+                var _this = this;
+                // 电台 申请 收益 评价 系统通知
+                var urlArr = ['frame2/dy_list', 'frame2/requestlist', 'frame2/imgsylist', 'frame2/evalist',
+                    'frame2/sys_info'
+                ];
+                _ajax('Home/User/isread', function(ret, err) {
+                    pushMsg($api.getStorage('userid'));
+                    _url({
+                        url: urlArr[id - 1],
+                        title: title
+                    });
+                }, {
+                    user_id: $api.getStorage('userid'),
+                    id: id
+                })
+            },
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+
+        }
+    })
+    var sysTime = 1000;
+    var sysNowType = 0;
+    apiready = function() {
+        _shangla(function() {
+            setTimeout(function() {
+                getNowMsgList();
+            }, 500)
+        })
+
+        openWS();
+        // 监听socket是否已关闭
+        _listener('socketclose', function(ret) {
+            if (ret.value.index == 3) {
+                openWS();
+            }
+        })
+        _listener('fresh', function(ret) {
+            openWS();
+        })
+
+    }
+
+    function openWS() {
+        var _ws = new WS(3);
+        _ws.open(function() {
+            _ws.send(JSON.stringify({
+                userid: $api.getStorage('userid')
+            }));
+        });
+        // 长连接 渲染数据
+        _ws.get(function(rets) {
+            if (rets.indexOf('action') != -1) {
+                rets = JSON.parse(rets);
+                console.log(JSON.stringify(rets));
+                if (rets.code == 200) {
+                    if (rets.action == 'Home/User/syslist') {
+                        view.ffList = rets.data;
+                    }
+
+                }
+                if (rets.action == 'Home/Privatechat/getreadcount') {
+                    getNowMsgList();
+                    return;
+                }
+            }
+        })
+    }
+
+
+
+    // 即时刷新的消息
+    function getNowMsgList() {
+        if (!$api.getStorage('userid')) {
+            api.refreshHeaderLoadDone();
+            return;
+        }
+
+        _ajax('Home/User/syslist', function(ret, err) {
+            api.refreshHeaderLoadDone();
+        }, {
+            user_id: $api.getStorage('userid')
+        })
+
+    }
+</script>
+
+</html>

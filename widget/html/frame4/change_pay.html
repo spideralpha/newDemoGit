@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <style>
+        html,
+        body {
+            background: none;
+        }
+
+        ul,
+        li {
+            list-style: none;
+        }
+
+        .bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .wrap {
+            font-size: 14px;
+            background: #fff;
+            width: 80vw;
+            border-radius: 5px;
+            overflow: hidden;
+            padding-top: 10px;
+            box-shadow: 0 3px 10px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .wrap .list {
+            line-height: 45px;
+            margin: 0 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .wrap .list input {
+            outline: none;
+            width: 100%;
+            line-height: 45px;
+        }
+
+        .btn-wrap {
+            display: flex;
+        }
+
+        .btn {
+            width: 50%;
+            text-align: center;
+            color: #fff;
+            line-height: 45px;
+            outline: none;
+        }
+
+        .cancel {
+            background: #ddd;
+        }
+
+        .submit {
+            background: #F46CEF;
+            ;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg" id="view" v-cloak>
+        <div class="wrap">
+            <ul>
+                <li class="list name">
+                    {{returnName(ffInfo.zhifuname, 1)}}
+                </li>
+                <li class="list count">{{returnName(ffInfo.zhifucount)}}
+                </li>
+            </ul>
+            <div class="btn-wrap">
+                <button class="btn cancel" onclick="api.closeFrame();">取消</button>
+                <button class="btn submit" onclick="openChange();">修改</button>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+        },
+        methods: {
+            returnName(s, all) {
+                return returnName(s, all);
+            },
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+
+        }
+    })
+    apiready = function() {
+        view.ios = $api.getStorage('shang');
+        _getUser(function(ret) {
+            console.log(JSON.stringify(ret))
+            view.ffInfo = ret.result;
+        })
+    }
+
+    // 打开修改窗口
+    function openChange() {
+        _url({
+            url: 'frame4/set_paya',
+            title: '修改' + escape_a,
+            phone: view.ffInfo.phone
+        });
+        setTimeout(function() {
+            api.closeFrame({
+                name: 'frame4/change_pay'
+            })
+        }, 500)
+    }
+</script>
+
+</html>

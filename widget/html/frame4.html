@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Document</title>
+    <link rel="stylesheet" href="../css/api.css">
+    <link rel="stylesheet" href="../css/news.css">
+    <link rel="stylesheet" href="../css/aui_font.css">
+    <style>
+        html,
+        body {
+            margin: 0;
+        }
+
+        .nav {
+            padding: 14px 6px;
+            font-size: 14px;
+        }
+
+        .nav .aui-icon-left {
+            font-size: 14px;
+            margin-right: 6px;
+            font-weight: bold;
+        }
+
+        .list {
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .list .item {
+            padding: 12px 10px;
+            font-size: 14px;
+            position: relative;
+        }
+
+        .list .item.active {
+            color: slateblue;
+        }
+
+        .list .item.active::after {
+            width: 24px;
+            height: 1px;
+            content: '';
+            background: slateblue;
+            position: absolute;
+            bottom: 2px;
+            left: calc(50% - 12px);
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <header>
+            <div class="nav" onclick="_closeToWin();">
+                <span class="aui-iconfont aui-icon-left"></span>
+                开通贵族
+            </div>
+            <div class="list">
+                <div class="item" @click="randomSwitchBtn(index)" v-for="(m, index) in ffList"> {{m.name}}</div>
+                <!-- <div class="item" tapmode onclick="randomSwitchBtn(0)">骑士</div>
+                <div class="item" tapmode onclick="randomSwitchBtn(1)">子爵</div>
+                <div class="item" tapmode onclick="randomSwitchBtn(2)">伯爵</div>
+                <div class="item" tapmode onclick="randomSwitchBtn(3)">侯爵</div>
+                <div class="item" tapmode onclick="randomSwitchBtn(4)">公爵</div>
+                <div class="item" tapmode onclick="randomSwitchBtn(5)">国王</div> -->
+                <!-- <div class="item" tapmode onclick="randomSwitchBtn(6)">帝王</div> -->
+            </div>
+        </header>
+    </div>
+
+</body>
+<script src="../script/api.js"></script>
+<script src="../script/jquery.js"></script>
+<script src="../script/vue.js"></script>
+<script src="../script/ffkj.js"></script>
+<script src="../script/group.js"></script>
+<script>
+    var regType;
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+            index: 0,
+
+        },
+        methods: {
+            _url(pageParam, url, login) {
+                _url(pageParam, url, login);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+            randomSwitchBtn(index) {
+                randomSwitchBtn(index);
+            }
+        }
+    })
+
+    apiready = function() {
+        _heibai(1);
+        $api.fixStatusBar($api.dom('header'));
+        // _openFrame('frame4/huiyuan',0,1,{});
+        getVip();
+
+
+        _listener('newmsg', function(ret) {
+            showMsgFrm(ret.value.data)
+        })
+    }
+
+    function randomSwitchBtn(index) {
+        api.setFrameGroupIndex({
+            name: 'item',
+            index: index,
+            scroll: false, //是否平滑滚动至目标窗口，即是否带有动画
+            reload: false, // 刷新
+        });
+    }
+
+    // 获取套餐列表
+    function getVip() {
+        var index = api.pageParam['index'] || 0;
+        _ajax('api/grade/nobleList', function(ret, err) {
+            console.log(JSON.stringify(ret))
+            console.log(JSON.stringify(err))
+            if (ret.code == 200) {
+                var result = ret.data;
+                view.ffList = result;
+                setTimeout(function() {
+                    var h = $api.offset($api.dom('header')).h;
+                    var frmArr = [];
+                    var paramArr = [];
+                    for (var i = 0; i < result.length; i++) {
+                        frmArr.push('frame4/huiyuan');
+                        var obj = {
+                            index: i + 1,
+                            data: result[i]
+                        }
+                        paramArr.push(obj);
+                    }
+                    groupInit('item', frmArr, h, 0, index, '.item', paramArr, {
+                        pre: result.length,
+                        scrollEnabled: false
+                    });
+                }, 500)
+                // for (var i = 0, len = ret.data.length; i < len; i++) {
+                //     if (view.ffInfo[i].hot == 1) {
+                //         view.vipObj = view.ffInfo[i];
+                //     }
+                // }
+            }
+        })
+    }
+</script>
+
+</html>

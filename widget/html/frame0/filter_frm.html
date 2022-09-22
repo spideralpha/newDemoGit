@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>图片高斯模糊</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/filter.css">
+    <style>
+        .img-wrap {
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak v-if="ffInfo.id">
+        <!-- 如果已焚毁 -->
+        <div class="fen" v-if="ffInfo.type==0">
+            <div class="wrap">
+                <img src="../../image/forbid.png" alt="">
+                <div id="js-vip" v-if="userInfo.sex=='女' && userInfo.is_identity_authentication!=2">
+                    <p>(认证可延长查看时间达6秒)</p>
+                    <button onclick="_url({url:'frame4/authentication_frame', title:'认证身份'})">马上认证</button>
+                </div>
+                <div id="js-vip" v-else-if="userInfo.sex=='男' && userInfo.is_vip==0 ">
+                    <p>(会员可延长查看时间达6秒)</p>
+                    <button onclick="_url({ url: 'frame4', title: '充值会员'})">马上升级会员</button>
+                </div>
+                <p v-else>照片已焚毁</p>
+            </div>
+        </div>
+        <!-- 否则 -->
+        <div class="img-filter" v-else>
+            <div :class="{'gaosi': ffInfo.burn == 1 || (Number(ffInfo.packet)>0 && ffInfo.see == 0)}"
+                style="position: relative;">
+                <div class="img-wrap">
+                    <img :src="returnImg(ffInfo.pic[0])" alt="" id="scale-img" @touchstart="_touchstart($event);">
+                </div>
+            </div>
+            <div class="word js-unPay" v-if="ffInfo.burn > 0 && Number(ffInfo.packet)==0">
+                <p>阅后即焚的照片</p>
+                <span>按住屏幕查看</span>
+            </div>
+            <div class="word js-pay" onclick="lookImg(1)"
+                v-else-if="ffInfo.burn == 0 && (Number(ffInfo.packet)>0 && ffInfo.see == 0)">
+                <p class="js-word_text">红包照片</p>
+                <span>付费查看</span>
+            </div>
+            <div class="word js-pay" onclick="lookImg(2)" v-else-if="ffInfo.burn > 0 && Number(ffInfo.packet)>0">
+                <p class="js-word_text">阅后即焚的红包照片</p>
+                <span>付费查看</span>
+            </div>
+        </div>
+
+        <footer>
+            <p>{{index+1}}</p>
+        </footer>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script src="../../script/scale.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {}, // 图片信息
+            userInfo: {}, // 用户信息
+            ios: 1, // 1上架 0非上架
+            sex: '',
+
+            touserid: '',
+            index: 0,
+        },
+        methods: {
+            _touchstart(event) {
+                var e = event.currentTarget;
+                _touchstart(event, e);
+            },
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 图片
+            returnImg(url) {
+                return returnImg(url);
+            },
+        }
+    })
+    apiready = function () {
+        view.ffInfo = api.pageParam.imgInfo;
+        view.touserid = api.pageParam.touserid;
+        view.index = api.pageParam.index;
+
+        if(view.touserid==$api.getStorage('userid')){
+            //自己查看时直接看照片
+            view.ffInfo.packet=0;
+            view.ffInfo.burn=0;
+        }
+
+        //长按显示图片
+        _listener('longpress', function () {
+            if (view.ffInfo.burn > 0 && Number(view.ffInfo.packet) == 0) {
+                lookImg(0)
+            }
+        })
+        _getUser(function (ret) {
+            view.userInfo = ret.result
+        })
+
+        _listener('viewappear', function () {
+            _getUser(function (ret) {
+                view.userInfo = ret.result
+            })
+        })
+    };
+
+    // 长按 用于缩放时触发长按效果调用
+    function longpress() {
+        if (view.ffInfo.burn > 0 && Number(view.ffInfo.packet) == 0) {
+            lookImg(0)
+        }
+    }
+
+    // 查看图片
+    function lookImg(type) {
+        if (type == 0) {
+            burnImg();
+        } else if (type == 1) {
+            payImg(function () {
+                view.ffInfo.packet = 0;
+            });
+        } else {
+            payImg(function () {
+                view.ffInfo.packet = 0;
+                burnImg();
+            });
+        }
+    }
+
+    // 焚毁照片
+    function burnImg() {
+        if ((view.userInfo.sex == '女' && view.userInfo.is_identity_authentication == 2) || (view.userInfo.sex == '男' &&
+                view.userInfo.is_vip > 0)) {
+            var time = 6000;
+        } else {
+            var time = 2000;
+        }
+        view.ffInfo.burn = 0;
+        if(view.touserid != $api.getStorage('userid')){
+            setTimeout(function () {
+                view.ffInfo.type = 0;
+            }, time)
+            _ajax('Home/User/burn', function (ret, err) {}, {
+                user_id: view.touserid,
+                to_user: $api.getStorage('userid'),
+                id: view.ffInfo.id,
+            })
+        }
+    }
+
+    // 付费
+    function payImg(callback) {
+        var result = view.ffInfo;
+        var data = {
+            user_id: view.touserid,
+            to_user: $api.getStorage('userid'),
+            img_id: result.id,
+            price: result.packet,
+        };
+        var obj = {
+            msg: '该图片的价格为' + result.packet + '币，请确认您的操作。',
+        }
+        _confirm(obj, function (bIndex) {
+            if (bIndex == 1) {
+                _ajax('Home/User/packetimg', function (ret) {
+                 
+                    if (ret.code == 200) {
+                        _msg('支付成功，眼睛不要离开屏幕，图片马上出来~');
+                        pushMsg(view.touserid);
+                        if (typeof callback == 'function') {
+                            callback();
+                        }
+                    } else {
+                        _msg(ret.msg);
+                    }
+                }, data)
+            }
+        })
+    }
+</script>
+
+</html>

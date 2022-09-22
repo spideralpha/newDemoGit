@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/login.css">
+    <style>
+        .login-bg {
+            padding: 10px 0;
+            width: 100vw;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-bg">
+        <div class="wrap">
+            <ul class="input-wrap w-bg">
+                <li class="li code">
+                    <span class="name">验证码</span>
+                    <input style="width: 150px;" type="text" placeholder="请输入收到的验证码">
+                    <span class="get-code new-theme-color forget" data-status=0 tapmode onclick="getCode()">发送验证码</span>
+                </li>
+                <li class="li phone new-hide">
+                    <span class="name">+86</span>
+                    <input type="text" placeholder="请输入手机号">
+                </li>
+            </ul>
+            <button class="new-btn" tapmode onclick="submit()">立即注销</button>
+        </div>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/login.js"></script>
+<script src="../../script/code.js"></script>
+<script src="../../script/keyboard.js"></script>
+<script>
+    apiready = function() {
+        var phone = api.pageParam['phone'];
+        $('.phone input').val(phone)
+    }
+
+    // 下一步
+    function submit() {
+        var phone = $.trim($('.phone input').val());
+        var code = $.trim($('.code input').val());
+        if (!checkMobile(phone)) {
+            _msg('请输入正确的手机号');
+            return;
+        }
+        if (!phone) {
+            _msg('手机号未填写');
+            return;
+        }
+        if (!code) {
+            _msg('验证码未填写');
+            return;
+        }
+
+        _ajax('api/Member/deleteAccount', function(ret, err) {
+            _msg(ret.msg);
+            if (ret && ret.code == 200) {
+                setTimeout(function() {
+                    _login()
+                }, 500)
+            }
+        }, {
+            user_id: $api.getStorage('userid'),
+            code: code
+        })
+    }
+</script>
+
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/aui_font.css">
+    <style>
+        .rulemomdal {
+            position: fixed;
+            top: 0;
+            right: 0;
+            left: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, .3);
+        }
+
+        .rulemomdal .rulebox {
+            width: 80vw;
+            height: 100vw;
+            background-color: #fff;
+            border-radius: 12px;
+            margin: calc(50vh - 50vw) 10vw;
+            position: relative;
+        }
+
+        .rulemomdal .rulebox .head {
+            font-size: 14px;
+            padding: 12px 0;
+            text-align: center;
+        }
+
+        .rulemomdal .rulebox .content {
+            font-size: 12px;
+            padding: 6px 12px;
+            overflow: auto;
+            height: 80%;
+        }
+
+        .rulemomdal .rulebox .aui-icon-close {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="rulemomdal" onclick="api.closeFrame()">
+        <div class="rulebox">
+            <div class="head">守护规则</div>
+            <div class="content">
+                <p>1. 什么是守护骑士？</p>
+                <p>守护骑士是双方的亲密关系的体现，标志着双方已经逐渐熟悉，并认可对方，向着另一个虚拟人生的阶梯迈进。 </p>
+                <p>2. 如何成为守护骑士？ </p>
+                <p>亲密度排行榜的榜首即可成为守护骑士。</p>
+                <p>3. 什么是亲密度？</p>
+                <p>亲密度是体现2人关系的一个量化标尺，亲密度指数越高则代表着两人的交往关系越紧密。 </p>
+                <p>4. 如何提升亲密度？</p>
+
+                <p>和对方文字、语音、视频聊天、以及赠送礼物均可增加亲密度，每消费1金币即可提升1点亲密度。 </p>
+                <p>5. 如何维持亲密度？</p>
+
+                <p>维持亲密度的方法：赠送对方魅力值级别乘以10对应的金币，即如果对方魅力值是10级，那么每天送给对方100金币以上就可以维持当前的亲密度了。 </p>
+            </div>
+            <span class="aui-iconfont aui-icon-close" onclick="api.closeFrame()"></span>
+        </div>
+    </div>
+    <script src="../../script/api.js"></script>
+    <script src="../../script/jquery.js"></script>
+    <script>
+        $(".rulebox").on('click', function () {
+            return false;
+        });
+    </script>
+</body>
+
+</html>

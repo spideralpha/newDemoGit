@@ -1,0 +1,133 @@
+/* 搜索 */
+.search-wrap {
+    background: #F7F7F7;
+    border-radius: 20px;
+    margin: 0 15px;
+    padding: 10px 15px;
+}
+
+.search-wrap .base-icon {
+    margin-right: 5px;
+    width: 18px;
+    height: 18px;
+}
+
+.search-wrap input::placeholder {
+    color: #B3B3B3;
+}
+
+
+/* 列表 */
+.list {
+    padding: 10px;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.list .item {
+    /* width: calc(50% - 5px); */
+    width: 100%;
+    /* border-radius: 10px; */
+    overflow: hidden;
+    /* margin-bottom: 10px; */
+    background: #fff;
+    /* box-shadow: 0 1px 3px #ddd; */
+    border-bottom: 1px solid #eee;
+}
+
+.list .item:nth-child(odd) {
+    /* margin-right: 10px; */
+}
+
+.list .qun-img {
+    position: relative;
+}
+
+.list .qun-img .avatar {
+    width: 100%;
+    height: 55vw;
+}
+
+.list .qun-img .tx {
+    position: absolute;
+    bottom: 10px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    left: 10px;
+}
+
+.list .content {
+    /* padding: 10px; */
+}
+
+.list .desc {
+    color: #999999;
+    font-size: 12px;
+    margin: 5px 0;
+}
+
+.list .footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 7px;
+}
+
+.list .footer .num {
+    background-image: url('../image/icon/qun.png');
+    background-size: 20px;
+    background-repeat: no-repeat;
+    background-position: 0 center;
+    font-size: 12px;
+    padding-left: 23px;
+    color: #52AAFB;
+}
+
+.list .footer .btn {
+    color: #999999;
+    border-radius: 15px;
+    font-size: 12px;
+    border: 1px solid;
+    padding: 0px 6px;
+    line-height: 20px;
+}
+
+.list .footer .btn.active {
+    color: #E63BE4;
+}
+
+/* 创建 */
+.add-wrap {
+    background-color: transparent;
+    background-size: 30px;
+    background-position: center 10px;
+    background-repeat: no-repeat;
+    display: inline-block;
+    text-align: center;
+    border-radius: 50%;
+    font-size: 14px;
+    padding-top: 39px;
+    word-break: keep-all;
+    background-image: url('../image/icon/build.png');
+    position: fixed;
+    bottom: 10vh;
+    right: 10px;
+    width: 70px;
+    z-index: 1;
+    height: 70px;
+    box-shadow: 0 1px 5px #ddd;
+    border-radius: 50%;
+    box-sizing: border-box;
+    background-color: #fff;
+}
+
+.my-icon {
+    width: 10px;
+    height: 10px;
+    display: inline-block;
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+
+    background-image: url('../image/jiazu/chat_room_number_icon.png');
+}

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>title</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/news.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/frame2_dy.css" />
+
+</head>
+
+<body>
+    <ul class="m-dymanic" id="view" v-cloak>
+        <li class="li" v-for="(item, index) in listData">
+            <div class="left tx img-h">
+                <img :src="returnImg(item.head)" onerror="this.src='../../image/touxiang.png'" alt="">
+            </div>
+            <div class="rt">
+                <p style="    color: #545454;">
+                    <span style="color:#1fb4f6">{{ item.name }}</span>用了{{ item.price }}<span v-if="item.type ==1">解锁了你的相册</span><span v-if="item.type ==2">查看了你的一张红包照片</span>
+                </p>
+                <p style="    display: flex;justify-content: space-between;color:#ccc;margin-top: 15px;">
+                    <span> </span>
+                    <span>{{item.time}}</span>
+                </p>
+            </div>
+        </li>
+    </ul>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+
+<script type="text/javascript">
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+        },
+        methods: {
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+
+        }
+    })
+
+    apiready = function() {
+        var param = {
+            user_id: $api.getStorage('userid'),
+        };
+        // _shangla(function () {
+        //     _lists('home/User/imgsylist', 0, 1, param);
+        // })
+
+        // _scrollToBottom(function () {
+        //     if (heigutgao == 1) {
+        //         pagenum++;
+        //         _lists('home/User/imgsylist', pagenum, '', param);
+        //     }
+        // })
+        getData();
+    }
+    // 获取评价列表
+    function getData() {
+        _ajax('home/User/imgsylist', function(ret, err) {
+            if (ret && ret.data) {
+                view.ffList = ret.data;
+            }
+        }, {
+            user_id: $api.getStorage('userid'),
+        })
+    }
+</script>
+
+</html>

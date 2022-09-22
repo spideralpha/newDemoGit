@@ -1,0 +1,159 @@
+.orderList ul.orderUl>li {
+    padding: 10px;
+    background: white;
+    font-size: 12px;
+    /* margin-top: 10px; */
+    border-bottom: 1px solid #eee;
+}
+
+.goodsInfo .tui_kuan {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    text-align: right;
+    line-height: 28px;
+    box-sizing: border-box;
+    padding: 0 10px;
+}
+
+.goodsInfo .tui_kuan span {
+    color: #F37C15;
+}
+
+.orderNumber {
+    color: #666666;
+}
+
+.orderNumber .state {
+    float: right;
+    color: #F37C15;
+}
+
+.goodsList>ul>li {
+    background: #fafafa;
+    padding: 6px;
+    margin: 10px 0;
+    position: relative;
+}
+
+.goodsList>ul>li>div {
+    float: left;
+}
+
+.goodsPic {
+    width: 25%;
+    margin-right: 5%;
+}
+
+.goodsPic img {
+    width: 100%;
+    height: 100%;
+}
+
+.goodsInfo {
+    width: 70%;
+}
+
+.goodsInfo .goodsName {
+    font-size: 14px;
+    line-height: 20px;
+}
+
+.goodsInfo .goodsPrice {
+    float: right;
+}
+
+.goodsInfo .oldPrice {
+    font-size: 12px;
+}
+
+.moneyState {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    text-align: right;
+    color: #F37C15;
+}
+
+.sumPrice {
+    text-align: right;
+}
+
+.btn {
+    text-align: right;
+    margin-top: 10px;
+}
+
+.btn span {
+    display: inline-block;
+    padding: 3px 8px;
+    border: 1px solid #CCCCCC;
+}
+
+.covers {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background: rgba(0, 0, 0, .3);
+    display: none;
+}
+
+.pay_way {
+    position: absolute;
+    background: white;
+    width: 84%;
+    padding: 0 3%;
+    top: 50%;
+    left: 50%;
+    margin-top: -90px;
+    margin-left: -45%;
+    border-radius: 6px;
+}
+
+.pay_way>ul>li {
+    font-size: 14px;
+    line-height: 30px;
+    color: #5e5e5e;
+    margin: 0 auto;
+    padding: 10px 0;
+    background: white;
+}
+
+.pay_way>ul>li {
+    border-bottom: 1px solid #e7e7e7;
+}
+
+.pay_way>ul>li .bangding {
+    color: #999;
+}
+
+.pay_way>ul>li span {
+    margin-left: 6px;
+}
+
+.pay_way>ul>li .left {
+    margin-left: 21px;
+}
+
+.pay_way>ul>li>img {
+    width: 23px;
+    vertical-align: text-bottom;
+    margin-bottom: -4px;
+}
+
+.pay_way .active {
+    background: url(../../image/zhi_fu_choice.png) no-repeat right;
+    background-size: 20px;
+}
+
+.pay_way .pay {
+    width: 90%;
+    margin: 15px auto;
+    text-align: center;
+    line-height: 35px;
+    border-radius: 5px;
+    font-size: 14px;
+}

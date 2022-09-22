@@ -1,0 +1,79 @@
+.field {
+    display: flex;
+    padding: 10px 0;
+    margin: 0 14px;
+}
+
+.field .label {
+    width: 80px;
+    min-width: 80px;
+    font-size: 14px;
+    line-height: 36px;
+}
+
+.field .input input {
+    border: 1px solid #ccc;
+    padding: 6px 10px;
+    width: calc(100vw - 128px);
+    border-radius: 6px;
+}
+
+.field .input span {
+    font-size: 12px;
+    color: rgb(189, 53, 53);
+}
+
+.uppic {
+    width: 96px;
+    margin: 20px auto;
+    text-align: center;
+}
+
+.uppic img {
+    width: 96px;
+    height: 64px;
+}
+
+.uppic img.rz-img {
+    width: 100px;
+    height: 100px;
+    object-fit: contain;
+    border-radius: 5px;
+}
+
+.uppic span {
+    color: #787878;
+    margin: 2px 0;
+}
+
+.tips {
+    width: 75vw;
+    font-size: 14px;
+    margin-left: 15vw;
+}
+
+.tips .tip {
+    margin: 6px 0;
+}
+
+.xieyi {
+    margin: 20px 0 10px 0;
+    color: #888;
+    font-size: 12px;
+}
+
+.xieyi img {
+    width: 14px;
+    height: 14px;
+}
+
+.btn {
+    width: 40%;
+    margin-left: 30%;
+    color: #ffffff;
+    border-radius: 30px;
+    text-align: center;
+    font-size: 14px;
+    line-height: 40px;
+    background: linear-gradient(to right, rgb(252, 87, 151), rgb(242, 21, 110));
+}

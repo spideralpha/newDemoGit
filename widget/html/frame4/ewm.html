@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>小火苗</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/swiper.css">
+    <style>
+        .wrap {
+            margin-top: 50px;
+        }
+
+        .swiper-slide {
+            width: calc(100vw - 140px);
+            height: calc(130vw - 140px);
+        }
+
+        .swiper-slide .img {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .swiper-slide .img img {
+            width: calc(100vw - 140px);
+            height: calc(130vw - 140px);
+            border-radius: 10px;
+            box-shadow: 0 1px 5px #000;
+            object-fit: cover;
+        }
+
+        .swiper-slide-duplicate-active .img img,
+        .swiper-slide-active .img img {
+            transform: scale(1);
+        }
+
+        .swiper-slide-duplicate-active .img-wrap,
+        .swiper-slide-active .img-wrap {
+            transform: scale(1);
+        }
+
+        /* 分享 信息 */
+        .img-wrap {
+            position: relative;
+            transform: scale(0.9);
+            width: calc(100vw - 140px);
+            height: calc(130vw - 140px);
+        }
+
+        .info {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            box-sizing: border-box;
+            padding: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .info .tx {
+            border-radius: 50%;
+        }
+
+        .info .tx img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+        }
+
+        .info .ewm img {
+            width: 70px;
+        }
+
+        /* 二维码 */
+        #qrcode {
+            visibility: hidden;
+            position: fixed;
+        }
+
+        /*保存的图片 */
+        #show-img {
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            opacity: 0;
+        }
+
+        #show-img .container {
+            position: relative;
+        }
+
+        #show-img .show-imgbg {
+            width: 100%;
+        }
+
+        #show-img .info {
+            padding-bottom: 15px;
+        }
+
+        .ewm img {
+            background: #fff;
+        }
+
+        #show-img .ewm img {
+            width: 100px;
+            height: 100px;
+        }
+
+        #ff-footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: #fff;
+
+        }
+
+        .footer {
+            padding: 20px 0;
+
+        }
+
+        .share-title {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .share .list {
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            width: 25vw;
+        }
+
+        .share img {
+            width: 50px;
+            margin-bottom: 10px;
+        }
+
+        .share .list span {
+            font-size: 14px;
+        }
+
+        .btn-wrap {
+            z-index: 100;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap" id="view" v-cloak>
+
+        <div class="swiper-container">
+            <div class="swiper-wrapper">
+                <div class="swiper-slide" v-for="(m, index) in lbList">
+                    <div class="img-wrap">
+                        <div class="img">
+                            <img :src="returnImg(m.img)" alt="">
+                        </div>
+                        <div class="info">
+                            <div class="left flex">
+                                <div class="tx">
+                                    <img :src="ffInfo.head_portrait" alt="">
+                                </div>
+                                <div>
+                                    <p class="name">{{ffInfo.name}}</p>
+                                    <p class="name">{{ffInfo.send_code}}</p>
+                                </div>
+                            </div>
+                            <div class="ewm">
+                                <img :src="ewm" alt="">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer id="fx-footer">
+            <div class="flex-c">
+                <button class="new-submit" onclick="_save()">保存二维码</button>
+            </div>
+        </footer>
+        <!-- 二维码 -->
+        <div id="qrcode"></div>
+        <!-- 用以保存的图片 -->
+        <div id="show-img" v-if="share">
+            <div class="container">
+                <img class="show-imgbg" :src="sharebg" alt="">
+                <div class="info">
+                    <div class="left flex">
+                        <div class="tx">
+                            <img :src="ffInfo.head_portrait" alt="">
+                        </div>
+                        <div>
+                            <p class="name">{{ffInfo.name}}</p>
+                            <p class="name">{{ffInfo.send_code}}</p>
+                        </div>
+                    </div>
+                    <div class="ewm">
+                        <img :src="ewm" alt="">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script src="../../script/swiper.js"></script>
+<script src="../../script/qrcode.js"></script>
+<script src="../../script/html2canvas.js"></script>
+<script src="../../script/img.js"></script>
+<script src="../../json/user.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+            ewm: '',
+            share: 0, // 是否显示分享图片
+            aindex: 1,
+            codeurl: '',
+            lbList: [],
+            sharebg: '', // 分享的背景图
+        },
+        methods: {
+            _url: function(param, url) {
+                _url(param, url);
+            },
+            // 复制
+            copyTxt: function(text) {
+                copyTxt(text)
+            },
+            returnImg(s) {
+                return returnImg(s);
+            }
+        }
+    })
+    var swiper;
+    // test();
+    apiready = function() {
+        getLunBo();
+        view.codeurl = share_url + '?yq=' + $api.getStorage('userid');
+
+        _getUser(function(ret) {
+            api.imageCache({
+                url: imgurl + ret.result.head_portrait
+            }, function(rets, errs) {
+                ret.result.head_portrait = rets.url;
+                view.ffInfo = ret.result;
+            });
+        })
+        _ajax('api/tool/qrcode', function(ret, err) {
+            if (ret && ret.code == 200 && ret.data && ret.data.qr) {
+                view.ewm = ret.data.qr;
+            }
+        }, {
+            data: view.codeurl
+        })
+        // api.imageCache({
+        //     url: view.ewm
+        // }, function(rets, errs) {
+        //     view.ewm = rets.url;
+        // });
+    }
+
+    // 获取轮播
+    function getLunBo() {
+        getSlide(5, function(data) {
+            view.lbList = data;
+            setTimeout(function() {
+                swiper = new Swiper('.swiper-container', {
+                    loop: true,
+                    slidesPerView: "auto",
+                    slidesOffsetBefore: 70,
+                    spaceBetween: 10,
+                    pagination: {
+                        el: '.swiper-pagination',
+                        clickable: true,
+                    },
+                });
+            }, 1000)
+        })
+
+    }
+
+    // 保存
+    function submit(callback) {
+        var data = view.lbList;
+        view.share = 1;
+        var index = swiper.activeIndex;
+        index = index % data.length;
+        var img = imgurl + data[index].img;
+
+        api.imageCache({
+            url: img
+        }, function(rets, errs) {
+            view.sharebg = rets.url
+            setTimeout(function() {
+                canvasToBase('#show-img', function() {
+                    // savePhotoToAlbum();
+                    view.share = 0;
+                    if (typeof callback == 'function') {
+                        callback();
+                    }
+                });
+            }, 500)
+        });
+
+    }
+
+    // vx分享
+    function _WX(type) {
+        submit(function() {
+            _weixin(type);
+        })
+    }
+    // 保存
+    function _save() {
+        submit(function() {
+            savePhotoToAlbum();
+        })
+    }
+</script>
+
+</html>

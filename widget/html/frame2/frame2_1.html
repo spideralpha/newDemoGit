@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/aui_font.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/frame2.css">
+    <link rel="stylesheet" href="../../css/swiper.css">
+    <style>
+        .msglist-wrap .u-wrap .list {
+            border-bottom: 1px solid #fafafa;
+            padding: 10px 0;
+            margin: 0 10px;
+        }
+
+        .msglist-wrap .u-wrap .tx {
+            overflow: visible;
+        }
+
+        .msglist-wrap .u-wrap .tx img {
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+        }
+
+        .msglist-wrap .u-wrap .list .name {
+            font-size: 14px;
+        }
+
+        .msglist-wrap .u-wrap .msg {
+            color: #999999;
+        }
+
+        .msglist-wrap .u-wrap .time {
+            color: #B3B3B3;
+            font-size: 10px;
+        }
+
+        /* 消息提醒数 */
+        .msglist-wrap .u-wrap .list .yuan {
+            position: absolute;
+            right: -8px;
+            top: -4px;
+        }
+
+        /* 官方 */
+        .sys-tag {
+            background: #7ED0AE;
+            color: #fff;
+            border-radius: 15px;
+            font-size: 10px;
+            padding: 0 5px;
+        }
+
+        .msglist-wrap .u-wrap .tx img.jiazu-tag {
+            width: 60px;
+            position: absolute;
+            height: auto;
+            bottom: 0;
+        }
+
+        /* 轮播 */
+        .swiper-container {
+            margin: 7px 14px;
+        }
+
+        .swiper-container img {
+            width: 100%;
+            border-radius: 7px;
+            height: 30vw;
+        }
+
+        /* 置顶 */
+        .msglist-wrap .u-wrap .top,
+        .msglist-wrap .u-wrap .top .list {
+            background: #f3f3f3;
+        }
+
+        .msglist-wrap .list-wrap {
+            width: 100vw;
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+
+        .msglist-wrap .u-wrap .list {
+            width: 100vw;
+            box-sizing: border-box;
+            -webkit-transform: translateX(0px);
+            transition: -webkit-transform 500ms ease-in-out;
+        }
+
+        .msglist-wrap .u-wrap .slid-left .list {
+            -webkit-transform: translateX(-100px);
+        }
+
+        .slid-left .top-btn {
+            -webkit-transform: translateX(calc(100vw - 100px));
+        }
+
+        .slid-left .del-btn {
+            -webkit-transform: translateX(calc(100vw - 100px));
+        }
+
+        .msg-btn {
+            position: absolute;
+            color: #fff;
+            text-align: center;
+
+            -webkit-transform: translateX(100vw);
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: -webkit-transform 500ms ease-in-out;
+        }
+
+        .del-btn {
+            width: 100px;
+            background: red;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="msglist-wrap" id="view" v-cloak>
+        <div class="swiper-container" v-if="lbList.length>0 && !ios">
+            <div class="swiper-wrapper">
+                <div class="swiper-slide" v-for="(m, index) in lbList"><img :src="returnImg(m.img)" onerror="this.src='../../image/error-img.png'" alt="" @click="openSlid(index)"></div>
+            </div>
+        </div>
+        <ul class="u-wrap">
+            <li class="list-wrap" v-for="(m, index) in ffList2" v-if="m.id==2 || m.id==3 || m.id==999" @click="openChat(m)">
+                <div class="list">
+                    <div class="tx img-h">
+                        <img :src="returnImg(m.pic)" onerror="this.src='../../image/touxiang.png'" alt="">
+                    </div>
+                    <div class="content">
+                        <div class="flex-bt">
+                            <div class="name-wrap" style="position: relative;">
+                                <span class="name">{{m.name}}</span>
+                            </div>
+                        </div>
+                        <div class="flex-bt new-margin-t-10">
+                            <p class="msg aui-ellipsis-1">{{m.content}}</p>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li class="list-wrap" :class="{'top':m.top==1,'slid-left':m.s == 1}" v-for="(m, index) in ffList" :id="m.userid" :key="index">
+                <div class="list" @click="goTalk(index)" @touchstart="touchstartF($event, index);" @touchmove="touchmoveF($event, index);">
+                    <div class="tx img-h">
+                        <img :src="returnImg(m.sumb_headimg)" onerror="this.src='../../image/touxiang.png'" alt="">
+                        <img :src="returnImg(m.noble_circle)" v-if="m.noble_circle && !ios" class="tx_cover" alt="">
+                        <span class="yuan" v-if="m.count > 0">{{m.count>99? '99+' : m.count}}</span>
+                        <img v-if="m.is_cluster==1" class="jiazu-tag" src="../../image/icon/ms_family_top_icon.png" alt="">
+                    </div>
+                    <div class="content">
+                        <div class="flex-bt">
+                            <div class="name-wrap" style="position: relative;">
+                                <span class="name">{{m.name}} <span class="sys-tag" v-if="m.kefu == 1">官方</span></span>
+                                <img v-if="m.noble_icon && !ios" class="new-noble" :src="returnImg(m.noble_icon)" onerror="this.src='../image/error-img.png'" alt="">
+                            </div>
+                            <span class="time" v-if="m.city"><i class="aui-iconfont aui-icon-location"></i>{{m.city}}</span>
+                        </div>
+                        <div class="flex-bt new-margin-t-10">
+                            <p class="msg aui-ellipsis-1" style="max-width: 55%;;">{{clearHtml(m.content)}}</p>
+                            <span class="time">{{m.addtime}}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="del-btn msg-btn" @click.stop="delMsg(index)">删除</div>
+            </li>
+        </ul>
+        <div id="no_more" :class="{'null-sj': ffList.length == 0}"></div>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script src="../../script/swiper.js"></script>
+<script src="../../script/limitchat.js"></script>
+<script src="../../json/liao1.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            // ffList: ret.data.result.result, // 私聊列表
+            ffList: [], // 私聊列表
+            ffList2: [], // 系统消息
+            ffInfo: {},
+            isVip: 0,
+            sysInfo: [], // 系统通知 所有人的
+            kefu: 0, // 客服id
+            ios: 1,
+            lbList: [],
+            x: 0,
+            y: 0,
+            swipeX: false,
+            swipeY: false,
+        },
+        methods: {
+            delMsg(index) {
+                var touserid = view.ffList[index].userid;
+                _ajax('home/Privatechat/delChat', function(res, err) {
+                    if (res && res.code == 200) {
+                        _msg('删除成功')
+                        view.ffList.splice(index, 1);
+                    } else {
+                        _msg('删除失败');
+                    }
+                }, {
+                    uid: $api.getStorage('userid'),
+                    touid: touserid,
+                })
+            },
+            touchstartF: function(event, index) {
+                if (view.ffList[index].kefu == 1) return;
+                view.x = event.changedTouches[0].pageX;
+                view.y = event.changedTouches[0].pageY;
+
+                view.swipeX = true;
+                view.swipeY = true;
+            },
+            touchmoveF: function(event, index) {
+                if (view.ffList[index].kefu == 1) return;
+                var e = event.currentTarget;
+                var X = event.changedTouches[0].pageX;
+                var Y = event.changedTouches[0].pageY;
+
+                var swipeX = view.swipeX;
+                var swipeY = view.swipeY;
+                var x = view.x;
+                var y = view.y;
+                // 左右滑动
+                if (swipeX && Math.abs(X - x) - Math.abs(Y - y) > 0) {
+                    // 阻止事件冒泡
+                    event.stopPropagation();
+                    if (X - x > 10) {
+                        event.preventDefault();
+                        view.ffList[index].s = 0;
+                    }
+                    if (x - X > 10) {
+                        event.preventDefault();
+                        view.ffList[index].s = 1;
+                    }
+                    view.swipeY = false;
+                }
+                // 上下滑动
+                if (swipeY && Math.abs(X - x) - Math.abs(Y - y) < 0) {
+                    view.swipeX = false;
+                }
+            },
+            // 轮播跳转
+            openSlid(index) {
+                console.log(index);
+                var _this = this;
+                var data = _this.lbList[index];
+                if (!data.url) {
+                    _url({
+                        url: 'frame4/yaoqing',
+                        title: '我的邀请'
+                    })
+                } else {
+                    _url({
+                        url: data.url,
+                        title: '详情'
+                    }, 'web1')
+                }
+            },
+            // 系统消息跳转
+            openChat(result) {
+                var id = result.id;
+                var data = result.data;
+                if (data && typeof data == 'string') {
+                    data = JSON.parse(data);
+                }
+                switch (id) {
+                    case 1:
+                        _url({
+                            url: 'frame3/visitor',
+                            title: result.name,
+                            num: data.count
+                        })
+                        break;
+                    case 2:
+                        _index(5)
+                        break;
+                    case 3:
+                        _url({
+                            url: 'frame0/groupchat',
+                            title: result.name
+                        })
+                        break;
+                    case 999:
+                        _url({
+                            url: 'frame2/sys_info',
+                            title: result.name
+                        })
+                        break;
+                    default:
+                        break;
+                }
+            },
+            // 打开聊天窗口
+            goTalk(index) {
+                var _this = this;
+                var data = _this.ffList[index];
+                var uid = data.userid;
+                var name = data.name;
+                if (data.is_cluster == 1) {
+                    // 群聊
+                    openQun(data.cluster_id, name, data.cluster_types)
+                    return;
+                }
+                if (data.kefu == 1) {
+                    _url({
+                        touserid: uid,
+                        title: '小火苗小秘书',
+                        moreType: 1,
+                    }, 'frame0/liaotian_win_kf')
+                } else {
+                    _url({
+                        touserid: uid,
+                        title: '与' + name + '的聊天',
+                        moreType: 1,
+                    }, 'frame0/liaotian_win')
+                }
+            },
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+
+            // 清除html
+            clearHtml(s) {
+                return clearHtml(s);
+            }
+        }
+    })
+    var sysTime = 1000;
+    var sysNowType = 0;
+    var feeObj = {};
+    apiready = function() {
+        getSlide(2, function(data) {
+            view.lbList = data;
+            setTimeout(function() {
+                var mySwiper = new Swiper('.swiper-container', {
+                    loop: true, // 循环模式选项
+                    autoplay: true,
+                })
+            }, 1000)
+        })
+        view.ios = $api.getStorage('shang');
+        openService()
+
+        _listener('viewappear', function(ret) {
+            getNowMsgList();
+        })
+        _listener('index_msglist', function(ret) {
+            var result = ret.value.result;
+            for (var i = 0, len = result.length; i < len; i++) {
+                result[i].s = 0;
+            }
+            view.ffList = result;
+        })
+        _listener('syslist', function(ret) {
+            var result = ret.value.result;
+            view.ffList2 = result;
+        })
+
+        _shangla(function() {
+            getNowMsgList();
+        }, 1)
+    }
+
+    // 获取客服id
+    function openService() {
+        _ajax('api/Member/kefu', function(ret, err) {
+            if (ret && ret.data && ret.data.id) {
+                view.kefu = ret.data.id
+            }
+        })
+    }
+
+    // 获取系统通知
+    function getAllSysInfo() {
+        _ajax('Home/User/sysmsg', function(ret, err) {
+            if (ret && ret.code == 200) {
+                view.sysInfo = ret.result;
+
+            }
+        })
+    }
+
+    // 即时刷新的消息
+    function getNowMsgList() {
+        if (!$api.getStorage('userid')) {
+            api.refreshHeaderLoadDone();
+            return;
+        }
+        var obj = {
+            userid: $api.getStorage('userid')
+        };
+        var obj1 = {
+            user_id: $api.getStorage('userid')
+        };
+        _ajax('Home/User/syslist', function(ret, err) {
+            api.refreshHeaderLoadDone();
+        }, {
+            user_id: $api.getStorage('userid')
+        })
+        _ajax('Home/Privatechat/getOtherList', function(ret, err) {
+            console.log(JSON.stringify(ret));
+            console.log(JSON.stringify(err));
+            api.refreshHeaderLoadDone();
+        }, {
+            data: JSON.stringify(obj)
+        })
+
+        _ajax('home/privatechat/getreadcount', function(ret, err) {
+            console.log(JSON.stringify(ret));
+            console.log(JSON.stringify(err));
+            api.refreshHeaderLoadDone();
+        }, {
+            data: JSON.stringify(obj1)
+        })
+    }
+
+    // 清空消息
+    function clearmsg() {
+        _confirm({
+            msg: '是否设置全部已读?'
+        }, function(bIndex) {
+            if (bIndex == 1) {
+                _ajax('home/privatechat/allRead', function(ret, err) {
+                    _msg(ret.msg);
+                    if (ret && ret.code == 200) {
+                        pushMsg($api.getStorage('userid'))
+                    }
+                }, {
+                    user_id: $api.getStorage('userid')
+                })
+            }
+
+        })
+    }
+</script>
+
+</html>

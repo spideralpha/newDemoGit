@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/aui_font.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <style>
+        html,
+        body {
+            margin: 0;
+            background: rgb(247, 249, 251);
+        }
+
+        .tab {
+            padding: 6px 14px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .tbody {
+            margin: 6px 14px;
+            padding: 0 10px;
+            background: #fff;
+            border-radius: 10px;
+        }
+
+        .titem {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            font-size: 13px;
+            border-bottom: 1px solid #f3f3f3;
+        }
+
+        .titem:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <div class="tbody">
+            <div class="titem" v-for="(item,index) in list" @click="_url({url:'frame3/helpdetial',title:item.title, content:item.content})">
+                <div class="lt">{{index+1}}、{{item.title}}</div>
+                <div class="rt">
+                    <span class="aui-iconfont aui-icon-right"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="../../script/api.js"></script>
+    <script type="text/javascript" src="../../script/jquery.js"></script>
+    <script type="text/javascript" src="../../script/ffkj.js"></script>
+    <script type="text/javascript" src="../../script/vue.js"></script>
+    <script type="text/javascript">
+        var view = new Vue({
+            el: '#view',
+            data: {
+                // list: [{
+                //     title: '什么是亲密度？如何维护？'
+                // }, {
+                //     title: '如何成为对方守护'
+                // }, {
+                //     title: '如何成为对方守护'
+                // }, {
+                //     title: '什么是亲密度？如何维护？'
+                // }]
+                list: []
+            },
+            methods: {
+                _url(param, url) {
+                    _url(param, url);
+                },
+                // 返回图片路径
+                returnImg(url) {
+                    return returnImg(url);
+                },
+            }
+        })
+        apiready = function () {
+            getData()
+        }
+
+        // 热门问题
+        function getData() {
+            _ajax('api/help/question', function (ret, err) {
+                if (ret && ret.code == 200) {
+                    view.list = ret.data;
+                }
+            }, {
+                cid: api.pageParam['id']
+            })
+        }
+    </script>
+</body>
+
+</html>

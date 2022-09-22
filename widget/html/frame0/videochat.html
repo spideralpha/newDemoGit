@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <style>
+        html,
+        body {
+            background: #000;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak></div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script src="../../script/audio.js"></script>
+<script src="../../script/rtc.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            type: 0, // 连接情况 -1发起 0 未连接 1已连接
+            status: 0, // 后端是否有推送状态过来
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            time: '0',
+            types: 2, // 1语音|2视频
+            myuserid: 0,
+            touserid: 0,
+            order: '',
+        },
+        methods: {
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+        }
+    })
+    var rtc;
+    var audio;
+    apiready = function() {
+        api.setKeepScreenOn({
+            keepOn: true
+        });
+        _listener('keyback', function() {})
+        if (!$api.getStorage('rtcid')) {
+            _alert('缺少视频通话配置，无法进行视频通话', function() {
+                api.closeWin();
+            });
+            return;
+        }
+        //  需将参数传给videochat_menu
+        view.myuserid = $api.getStorage('userid');
+        view.touserid = api.pageParam['id'];
+        view.type = api.pageParam['type'];
+        if (api.pageParam['orderid']) {
+            // 发起方推过来的订单id
+            view.order = api.pageParam['orderid'];
+        }
+        showDetail('frame0/videochat_menu', {
+            winName: api.pageParam['winName'],
+            type: view.type,
+            id: view.touserid,
+            orderid: view.order,
+            from_type: api.pageParam['from_type'],
+            to_type: api.pageParam['to_type'],
+            intimate: api.pageParam['intimate'] || 0, // 是否需要限制亲密度 1需要 0不需要
+        });
+        audio = new Audio();
+        audio.play({
+            url: 'widget://res/tip.mp3',
+            loop: 1,
+        })
+        audio.normal();
+        _listener('returnRequest', function() {
+            if (audio) {
+                audio.stop();
+            }
+        })
+        getPermission(['microphone', 'camera', 'photos'], function(code) {
+            if (code != 0) {
+                api.execScript({
+                    frameName: 'frame0/videochat_menu',
+                    script: 'refuse()'
+                })
+                _msg('请先开启相关权限');
+            } else {
+                rtc = new RTC();
+                rtc.setTrtcListener(function(ret) {
+                    if (ret.status) {
+                        if (ret.action == 'enterRoom') {
+                            rtc.startRemoteView(view.touserid)
+                            rtc.startLocalPreview()
+                            api.bringFrameToFront({
+                                from: 'frame0/videochat_menu',
+                            });
+                        }
+                        // 开始渲染本地或远程用户的首帧画面
+                        if (ret.action.indexOf('firstVideoFram') != -1) {
+                            api.bringFrameToFront({
+                                from: 'frame0/videochat_menu',
+                            });
+                        }
+                    }
+                })
+                getBeauty(function(obj) {
+                    rtc.meiyan(obj);
+                })
+            }
+        })
+
+    }
+    // 加入
+    function _join(uid) {
+        console.log('加入房间');
+        _ajax('api/Tencent/userSig', function(ret, err) {
+            if (ret && ret.code == 200) {
+                var obj = {
+                    uid: view.myuserid,
+                    sign: ret.data.userSig,
+                    room: uid
+                }
+                console.log('相关配置=====================');
+                console.log(JSON.stringify(obj));
+                rtc.enterRoom({
+                    uid: view.myuserid,
+                    sign: ret.data.userSig,
+                    room: uid
+                })
+            } else {
+                _leave(); // 不在通话中
+                _msg(ret.msg);
+                timerWin();
+            }
+        }, {
+            user_id: view.myuserid
+        })
+
+    }
+    // 离开
+    function _leave() {
+        $api.setStorage('callStatus', 0); // 不在通话中
+        if (rtc) {
+            rtc.exitRoom();
+        }
+    }
+
+    // 切换摄像头
+    function switchCamera() {
+        rtc.switchCamera();
+    }
+
+    function stopAudio() {
+        if (audio) {
+            audio.stop();
+        }
+        if (rtc) {
+            rtc.startLocalAudio();
+        }
+        api.bringFrameToFront({
+            from: 'frame0/videochat_menu',
+        });
+    }
+</script>
+
+</html>

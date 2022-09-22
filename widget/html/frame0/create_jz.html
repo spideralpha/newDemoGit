@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/aui_font.css">
+    <link rel="stylesheet" href="../../css/base_icon.css">
+    <style>
+        html,
+        body {
+            margin: 0;
+            background: #fff;
+        }
+
+        .tab {
+            padding: 8px 14px 2px 14px;
+            font-size: 13px;
+            color: #666;
+            background-color: #fff;
+            margin-top: 16px;
+        }
+
+        .inputitem {
+            background-color: #fff;
+            padding: 6px 14px;
+
+        }
+
+        .inputitem input,
+        .inputitem textarea {
+            border: 0;
+            outline: none;
+            width: calc(100% - 20px);
+            /* background: rgba(0, 0, 0, 0.068); */
+            /* border-radius: 4px; */
+            min-height: 20px;
+            padding: 8px 10px;
+            border-bottom: 1px solid #ddd;
+            font-size: 14px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+
+        .inputitem textarea {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-top: 8px;
+
+        }
+
+
+        .tu {
+            align-items: flex-start;
+            padding-bottom: 0;
+        }
+
+        .tu .i-list {
+            position: relative;
+            margin-bottom: 15px;
+            margin-right: 15px;
+        }
+
+        .tu .img {
+            height: 80px;
+            width: 80px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tu .img img {
+            height: 80px;
+            width: 80px;
+        }
+
+        .tu .aui-icon-close {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #fff;
+            border: 1px dashed #aaa;
+            border-radius: 50%;
+            padding: 2px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <div class="tab">选择家族封面</div>
+        <div class="inputitem tu">
+            <ul class="img-wrap flex-w">
+                <li id="pic" class="i-list" onclick="selectFile();">
+                    <div class="img img-h">
+                        <img :src="returnImg(logo)" onerror="this.src='../../image/icon/btn_addphoto.png'" alt="">
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="tab">家族昵称</div>
+        <div class="inputitem">
+            <input type="text" v-model="name">
+        </div>
+        <div class="tab">城市选择</div>
+        <div class="inputitem" onclick="selectCity('city')">
+            <input type="text" v-model="city" readonly>
+        </div>
+        <div class="tab">家族简介</div>
+        <div class="inputitem">
+            <textarea name="" style="resize:none" id="" rows="5" v-model="description"></textarea>
+        </div>
+        <div class="flex-c">
+            <div class="new-tbtn" style="width: 40%; margin: 30px;" onclick="submit()">创建家族</div>
+        </div>
+    </div>
+</body>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/api.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script src="../../script/select_json.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+
+            logo: '',
+            name: '',
+            description: '',
+            city: ''
+        },
+        methods: {
+            // 跳转
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+        }
+    })
+    apiready = function() {
+        if ($api.getStorage('appCity') && $api.getStorage('appCity').c) {
+            view.city = $api.getStorage('appCity').c;
+        }
+    }
+
+    // 选择图片
+    function selectFile() {
+        openPic(function(ret) {
+            if (ret && ret.data) {
+                view.logo = ret.data;
+            }
+        })
+    }
+    // 创建
+    function submit() {
+        if (!view.logo) {
+            _msg('请上传logo');
+            return
+        }
+        if (!view.name) {
+            _msg('请填写家族名称');
+            return
+        }
+        if (!view.description) {
+            _msg('请填写家族简介');
+            return
+        }
+        if (!view.city) {
+            _msg('请选择城市');
+            return
+        }
+        var city = view.city.replace('市', '');
+        _loading();
+
+        _upImg({
+            image: view.logo
+        }, function(u) {
+            _ajax('api/family/create', function(ret, err) {
+                _loadingClose();
+                _msg(ret.msg);
+                if (ret && ret.code == 200) {
+                    timerWin();
+                }
+            }, {
+                user_id: $api.getStorage('userid'),
+                logo: u,
+                name: view.name,
+                description: view.description,
+                longitude: $api.getStorage('lon'),
+                latitude: $api.getStorage('lat'),
+                city: city,
+            })
+        })
+
+    }
+</script>
+
+</html>

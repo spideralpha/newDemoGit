@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/aui_font.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/tousu.css">
+    <style>
+        html,
+        body {
+            background: #fff;
+        }
+
+        .dy-wrap .list .content input {
+            text-align: left;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <ul class="wrap dy-wrap">
+            
+            <p class="title new-padding-10">选择要举报的类型</p>
+            <li class="list" :class="{'select':m.id == selectId}" v-for="(m, index) in ffList" @click="select(m.id)">
+                <div class="title" style="font-weight: normal;">{{m.value}}</div>
+                <div class="yuan"></div>
+            </li>
+            <!-- <li class="list ">
+                <div class="title">沟通态度恶劣</div>
+                <div class="yuan"></div>
+            </li> -->
+            <li class="list tu flex-col">
+                <div class="title">补充描述</div>
+                <div class="content">
+                    <textarea name="" placeholder="详细说明举报内容吧" id="content" v-model="content"></textarea>
+                </div>
+            </li>
+            <li class="list tu flex-col">
+                <div class="title">联系方式</div>
+                <div class="content">
+                    <input type="text" placeholder="填写你的联系方式，便于我们与你联系" v-model="phone">
+                </div>
+            </li>
+        </ul>
+        <button class="new-submit" onclick="submit()">提交</button>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            ffList: [],
+            selectId: 0,
+            touserid: '',
+            phone: '',
+            content: '',
+        },
+        methods: {
+            select(id) {
+                var _this = this;
+                _this.selectId = id;
+            }
+        }
+    })
+    apiready = function () {
+        view.touserid = api.pageParam['uid'];
+        getReason()
+    }
+    // 举报原因
+    function getReason() {
+        _ajax('api/user/reportSelected', function (ret, err) {
+            console.log(JSON.stringify(ret));
+            console.log(JSON.stringify(err));
+            if (ret && ret.code == 200) {
+                view.ffList = ret.result;
+            }
+        })
+    }
+
+    // 确定
+    function submit() {
+        if (!view.content) {
+            _msg('举报内容不能为空');
+            return;
+        }
+        if (!view.selectId) {
+            _msg('请选择要举报的类型');
+            return;
+        }
+        if (!view.phone) {
+            _msg('联系方式不能为空');
+            return;
+        }
+
+        _loading();
+        _ajax('api/user/reportUser', function (ret, err) {
+            console.log(JSON.stringify(ret))
+            console.log(JSON.stringify(err))
+            _loadingClose();
+            var msg = ret.code == 200 ? '举报信息已提交，等待平台处理' : ret.msg;
+            _msg(msg);
+            if (ret && ret.code == 200) {
+                timerWin();
+            }
+        }, {
+            type: 1,
+            report_user: view.touserid, //被举报人id
+            user_id: $api.getStorage('userid'),
+            report_selected_id: view.selectId,
+            desc: view.content,
+            phone: view.phone,
+        })
+    }
+</script>
+
+</html>

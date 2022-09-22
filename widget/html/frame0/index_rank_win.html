@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>小火苗</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <style>
+        .bg {
+            background: linear-gradient(to bottom, #FA6F6F, #F6AF9A);
+            height: 100vw;
+            position: absolute;
+            width: 100vw;
+            top: 0;
+            left: 0;
+        }
+
+        .bg-nvshen {
+            background: linear-gradient(to bottom, #9781FF, #C8A6FC);
+        }
+
+        .bg-fuhao {
+            background: linear-gradient(to bottom, #CBA26C, #F0CB97);
+        }
+
+        .bg-nanshen {
+            background: linear-gradient(to bottom, #9497FE, #A3C2FC);
+        }
+
+        .bg-jiazu {
+            background: linear-gradient(to bottom, #65AEDB, #96CFE1);
+        }
+
+        .bg-meili {
+            background: linear-gradient(to bottom, #E17595, #EDA8B9);
+        }
+
+        .bg-tianlai {
+            background: linear-gradient(to bottom, #65C1BA, #88CFBF);
+        }
+
+        header {
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .nav-ul {
+            display: flex;
+            align-items: flex-end;
+            overflow-x: auto;
+            max-width: 80vw;
+        }
+
+        .nav-ul .list {
+            font-size: 13px;
+            font-family: PingFang SC;
+            font-weight: 500;
+            color: #fff;
+            margin-right: 17px;
+            word-break: keep-all;
+        }
+
+        .nav-ul .list.active {
+            font-size: 17px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-self: center;
+            flex-direction: column;
+        }
+
+        .nav-ul .list.active::after {
+            display: inline-block;
+            content: '';
+            width: 15px;
+            height: 3px;
+            background: #fff;
+            border-radius: 1px;
+            margin-top: 2px;
+        }
+
+        .type-nav {
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 15px 15px 5px 15px;
+            border: 1px solid #fff;
+        }
+
+        .type-nav .list {
+            width: calc(100% / 3);
+            line-height: 30px;
+            text-align: center;
+
+            font-size: 12px;
+            font-family: PingFang SC;
+            font-weight: 500;
+            color: #FFFFFF;
+        }
+
+        .type-nav .list.active {
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        .ques {
+            position: absolute;
+            right: 10px;
+        }
+
+        .ques img {
+            width: 20px;
+            padding: 7px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <header>
+            <div class="head flex" style="position:relative;">
+                <div class="new-back" onclick="_closeToWin()"></div>
+                <ul class="nav-ul">
+                    <!-- <li class="list active" onclick="randomSwitchBtn(0)">魅力榜</li>
+                    <li class="list" onclick="randomSwitchBtn(1)">富豪榜</li>
+                    <li class="list" onclick="randomSwitchBtn(2)">女神榜</li>
+                    <li class="list" onclick="randomSwitchBtn(3)">家族榜</li>
+                    <li class="list" onclick="randomSwitchBtn(4)">邀请榜</li>
+                    <li class="list" onclick="randomSwitchBtn(4)">邀请榜</li> -->
+                    <li v-for="(m, index) in navArr" class="list" :class="{'active':navIndex==index}" @click="randomSwitchBtn(index)">{{m.name}}</li>
+                </ul>
+                <div class="ques" onclick="_url({url:'other/rule', title:'上榜规则'})"><img src="../../image/icon/dial_alert_help_s.png" alt=""></div>
+            </div>
+            <ul class="type-nav flex">
+                <li class="list" :class="{'active': navObj[navIndex]==1}" onclick="changeTime(1)">日榜</li>
+                <li class="list" :class="{'active': navObj[navIndex]==2}" onclick="changeTime(2)">周榜</li>
+                <li class="list" :class="{'active': navObj[navIndex]==4}" onclick="changeTime(4)">总榜</li>
+            </ul>
+        </header>
+        <div class="bg" :class="nbg">
+        </div>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script src="../../script/group.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+            navObj: { //  1日榜 | 2周榜 | 3月榜 | 4总榜
+                0: 1,
+                1: 1,
+                2: 1,
+                3: 1,
+                4: 1,
+                5: 1,
+            },
+            navArr: [], // 
+            navIndex: 0,
+            navBg: {
+                1: 'bg-nanshen',
+                2: 'bg-nvshen',
+                3: 'bg-fuhao',
+                4: 'bg-tianlai',
+                5: 'bg-jiazu',
+                6: 'bg-meili',
+            },
+            nbg: ''
+        },
+        watch: {
+            navIndex: function(n, o) {
+                var t = view.navArr[n].types;
+                view.nbg = view.navBg[t];
+            }
+        },
+        methods: {
+            randomSwitchBtn(index) {
+                randomSwitchBtn(index)
+            },
+            // 跳转
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+        }
+    })
+    apiready = function() {
+        $api.fixStatusBar($api.dom('header'));
+        $api.fixStatusBar($api.dom('.bg'));
+        view.navArr = $api.getStorage('rankArr');
+
+        openGroup();
+
+
+        _listener('newmsg', function(ret) {
+            showMsgFrm(ret.value.data)
+        })
+    }
+    // 打开组
+    function openGroup() {
+        var headerh = $api.offset($api.dom('header')).h;
+        // 1恩爱(亲密度)|2女神(收到礼物)|3富豪(送出礼物)|4男神(收到礼物)|5家族(威望)|6(魅力值)|8邀请
+        var frameArr = [];
+        for (var i = 0, len = view.navArr.length; i < len; i++) {
+            if (view.navArr[i].types != 1) {
+                frameArr.push('frame0/rank_frm')
+            } else {
+                frameArr.push('frame0/index_rank_love');
+            }
+        }
+        groupInit('rank', frameArr, headerh, 0, 0, '.nav-ul .list', view.navArr, {
+            pre: 1,
+            fbg: 'rgba(0, 0, 0, 0)'
+        }, function(gindex) {
+            view.navIndex = gindex;
+        });
+    }
+
+    // 点击分类栏目时，设置 frame 组当前可见 frame
+    function randomSwitchBtn(index) {
+        view.navIndex = index;
+        // active(index, '.nav-ul .list'); // cls 使用与组名一致，便于复用
+        api.setFrameGroupIndex({
+            name: 'rank',
+            index: index,
+            scroll: true, //是否平滑滚动至目标窗口，即是否带有动画
+            reload: false, // 刷新
+        });
+    }
+
+    // 修改排序
+    function changeTime(index) {
+        api.execScript({
+            frameName: 'rank_' + view.navIndex,
+            script: 'changeTime(' + index + ')'
+        })
+        view.navObj[view.navIndex] = index;
+    }
+</script>
+
+</html>

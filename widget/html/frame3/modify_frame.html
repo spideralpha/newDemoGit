@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <style>
+        body {
+            margin: 0;
+            background-color: rgb(247, 247, 247);
+        }
+
+        .tips {
+            background-color: #fff;
+            color: #808080;
+            font-size: 14px;
+            padding: 14px 12px;
+            margin: 16px 14px;
+            border-radius: 10px;
+        }
+
+        .tips span {
+            font-size: 14px;
+            color: #F46CEF;
+        }
+
+        .mainbox {
+            padding: 14px 12px;
+            margin: 16px 14px;
+            background-color: #fff;
+            border-radius: 10px;
+        }
+
+        .mainbox .head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .mainbox .head .title {
+            color: #808080;
+            font-size: 14px;
+        }
+
+        .mainbox .head .addbtn {
+            padding: 4px 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(253, 199, 47, 0);
+            border: 1px solid #F46CEF;
+            border-radius: 35px;
+            color: #F46CEF;
+            font-size: 12px;
+        }
+
+        .mainbox .list {
+            background: #F5F5F5;
+            border-radius: 14px;
+            padding: 14px 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 10px 0;
+        }
+
+        .mainbox .list .value {
+            font-size: 14px;
+            color: #333;
+            max-width: calc(100% - 70px);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .mainbox .list.vince .value {
+            display: flex;
+            align-items: center;
+        }
+
+        .mainbox .list .value img {
+            width: 16px;
+            height: 16px;
+            margin-right: 10px;
+        }
+
+        .mainbox .list .editbtn {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            color: #F46CEF;
+            font-size: 14px;
+            width: 70px;
+            min-width: 70px;
+        }
+
+        .mainbox .list .editbtn img {
+            margin-right: 6px;
+            width: 16px;
+            height: 16px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <div class="mainbox">
+            <div class="head">
+                <div class="title" v-if="modifyindex==1">创建我的文字招呼，提升回复率！</div>
+                <div class="title" v-else>创建我的语音招呼，提升回复率！</div>
+                <div class="addbtn" onclick="addmodify()">+ 添加</div>
+            </div>
+            <div class="list" v-for="(m, index) in ffList">
+                <div class="value">{{m.content}}</div>
+                <div class="editbtn" @click="editmodify(m)">
+                    <img src="../../image/icon/edit.png" alt="">
+                    编辑
+                </div>
+            </div>
+            <!-- 完整示例 -->
+            <!-- <div class="list" :class="{ vince: modifyindex==0 }">
+                <div class="value"><img v-if="modifyindex==0" src="../../image/icon/vince.png" alt="">语音招呼1</div>
+                <div class="editbtn" onclick="editmodify()">
+                    <img src="../../image/icon/edit.png" alt="">
+                    编辑
+                </div>
+            </div>
+            <div class="list">
+                <div class="value">你好呀</div>
+                <div class="editbtn" onclick="editmodify()">
+                    <img src="../../image/icon/edit.png" alt="">
+                    编辑
+                </div>
+            </div> -->
+        </div>
+        <div class="tips">
+            <span>*</span> 喜欢&打招呼时，将使用自定义内容
+        </div>
+    </div>
+
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/vue.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+            modifyindex: -1 //0语音 1文字
+        },
+        methods: {
+            // 编辑
+            editmodify(data) {
+                if (view.modifyindex == 1) {
+                    showDetail('frame3/text_modify_modal', {
+                        content: data.content,
+                        id: data.id
+                    })
+                } else {
+                    showDetail('frame3/audio_modify_modal', {
+                        data: data
+                    })
+                }
+            },
+            // 跳转
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+        }
+    })
+    apiready = function () {
+        view.modifyindex = api.pageParam['index'];
+        getData();
+    }
+
+    // 添加
+    function addmodify() {
+        if (view.modifyindex == 1) {
+            showDetail('frame3/text_modify_modal')
+        } else {
+            showDetail('frame3/audio_modify_modal')
+        }
+    }
+
+    // 获取打招呼列表
+    function getData() {
+        _ajax('api/privatechat/commonWords', function (ret, err) {
+            if (ret && ret.code == 200) {
+                view.ffList = ret.data;
+            }
+        }, {
+            user_id: $api.getStorage('userid'),
+            channel: view.modifyindex + 1
+        })
+    }
+</script>
+
+</html>

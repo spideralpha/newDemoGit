@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>小火苗</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/imgmodal.css">
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <div class="wrap">
+            <ul class="img-ul" v-if="!show">
+                <li class="list" onclick="openCamera()">
+                    <div class="flex-c" style="height: 100%;background: #f3f3f3;border-radius: 5px;">
+                        <img style="width: 35px;height: 35px;" src="../../image/icon/camera.png" alt="">
+                    </div>
+                </li>
+                <li class="list" v-for="(m, index) in ffList" @click="selectImg(index)">
+                    <img :src="m.thumbPath" alt="">
+                    <span class="num" v-if="m.num">{{m.num}}</span>
+                    <span class="select" v-else></span>
+                </li>
+            </ul>
+            <ul class="img-ul video" v-else>
+                <li class="list" onclick="openCamera()">
+                    <div class="flex-c" style="height: 100%;background: #f3f3f3;border-radius: 5px;">
+                        <img style="width: 35px;height: 35px;" src="../../image/icon/camera.png" alt="">
+                    </div>
+                </li>
+                <li class="list" v-for="(m, index) in ffList" @click="selectVideo(index)">
+                    <img :src="m.thumbPath" alt="">
+                    <!-- <img src="../../image/test/03.jpg" alt=""> -->
+                    <span class="time">{{returnTime(m.duration)}}</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script src="../../script/photo.js"></script>
+<script src="../../json/photo.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: videoJson.list,
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+            num: 0,
+            max: 10,
+            show: 1, //0图片 1视频
+            total: 0
+        },
+        watch: {
+            num: function(n) {
+                _send('imgNum', {
+                    num: n
+                });
+            }
+        },
+        methods: {
+            returnTime(t) {
+                var time = Math.ceil(t / 1000);
+                var mm = Math.floor(t / 60);
+                mm = mm < 10 ? '0' + mm : mm;
+                var ss = t % 60;
+                ss = ss < 10 ? '0' + ss : ss;
+                return mm + ':' + ss;
+            },
+            selectImg(index) {
+                var _this = this;
+                if (!_this.ffList[index].num) {
+                    if (view.num == view.max) {
+                        _msg('最多只能选' + view.max + '张图');
+                        return;
+                    }
+                    view.num++;
+                    _this.ffList[index].num = view.num;
+                } else {
+                    view.num--;
+                    var num = _this.ffList[index].num;
+                    for (var i = 0, len = _this.ffList.length; i < len; i++) {
+                        var n = _this.ffList[i].num;
+                        if (n && n > num) {
+                            _this.ffList[i].num--;
+                        }
+                    }
+                    _this.ffList[index].num = 0;
+                }
+            },
+            selectVideo(index) {
+
+            },
+            // 跳转
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+        }
+    })
+    apiready = function() {
+        if (api.pageParam['max']) {
+            view.max = api.pageParam['max'];
+        }
+        view.show = api.pageParam['show'];
+        var imgType = !view.show ? 'image' : 'video';
+        var uiimg = new UIIMG();
+        uiimg.open(function(ret) {
+            view.total = ret.total;
+            for (var i = 0, len = ret.list.length; i < len; i++) {
+                ret.list[i].num = 0;
+            }
+            view.ffList = ret.list;
+        }, imgType)
+        // var dom = '.img-ul';
+        // $(dom).on('scroll', function(e) {
+        //     var st = $(dom).scrollTop();
+        //     var h = $(dom).height();
+        //     var sh = $(dom)[0].scrollHeight;
+        //     if (st >= (sh - h - 10)) {
+        //         setTimeout(function() {
+        //             uiimg.next(function(ret) {
+        //                 for (var i = 0, len = ret.list.length; i < len; i++) {
+        //                     ret.list[i].num = 0;
+        //                 }
+        //                 view.ffList = view.ffList.concat(ret.list);;
+        //             })
+        //         }, 300);
+        //     }
+        // })
+        _scrollToBottom(function() {
+            if (view.total > view.ffList.length) {
+                uiimg.next(function(ret) {
+                    for (var i = 0, len = ret.list.length; i < len; i++) {
+                        ret.list[i].num = 0;
+                    }
+                    view.ffList = view.ffList.concat(ret.list);;
+                })
+            }
+        })
+    }
+
+    // 关闭
+    function _close() {
+        api.closeFrame({
+            name: 'modal/img_modal_group'
+        })
+    }
+
+    // 确定
+    function submit() {
+        if (view.num == 0) {
+            _msg('请选择图片');
+            return;
+        }
+        var arr = [];
+        for (var i = 0, len = view.ffList.length; i < len; i++) {
+            if (view.ffList[i].num) {
+                arr.push(view.ffList[i]);
+            }
+        }
+
+        // 按数字大小排序
+        arr.sort(function(a, b) {
+            if (a.num > b.num) {
+                return 1;
+            } else {
+                return -1;
+            }
+        })
+
+        if (api.pageParam['event']) {
+            api.sendEvent({
+                name: api.pageParam['event'],
+                extra: {
+                    img: arr
+                }
+            })
+        }
+        _close();
+    }
+
+    // 相机
+    function openCamera() {
+        var media = view.show == 1 ? 'video' : 'pic';
+        openPicUrl(function(ret) {
+            if (api.pageParam['event']) {
+                api.sendEvent({
+                    name: api.pageParam['event'],
+                    extra: {
+                        img: [{
+                            path: ret.data,
+                            thumbPath: ret.data
+                        }]
+                    }
+                })
+            }
+            _close();
+        }, 1)
+    }
+</script>
+
+</html>

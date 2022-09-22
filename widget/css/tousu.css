@@ -1,0 +1,108 @@
+* {
+    touch-action: pan-y;
+}
+
+html,
+body {
+    background-color: #eee;
+}
+
+.dy-wrap .list {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #fff;
+    border-bottom: 1px solid #eee;
+    padding: 10px;
+    font-size: 14px;
+}
+
+.dy-wrap .list .content {
+    width: 100%;
+}
+
+.dy-wrap .list .content input {
+    width: 100%;
+    text-align: right;
+}
+
+.dy-wrap .list .title {
+    font-weight: bold;
+    margin-right: 10px;
+    /* color: #222; */
+    color: #333333;
+    word-break: keep-all;
+}
+
+.dy-wrap .list .yuan {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 1px solid #eee;
+}
+
+.dy-wrap .list.select .yuan {
+    background-image: url('../image/select3.png');
+    background-size: 20px 20px;
+    background-repeat: no-repeat;
+    border: 1px solid #fff;
+}
+
+.new-submit {
+    font-size: 14px;
+}
+
+/* 配图 */
+.dy-wrap .list.tu {
+    align-items: flex-start;
+}
+
+.dy-wrap .list.tu .i-list {
+    position: relative;
+    margin-top: 15px;
+    margin-right: 15px;
+}
+
+.dy-wrap .list.tu .img {
+    height: 80px;
+    width: 80px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.dy-wrap .list.tu .img img {
+    height: 80px;
+    width: 80px;
+}
+
+.dy-wrap .list.tu .aui-icon-close {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: #fff;
+    border: 1px dashed #aaa;
+    border-radius: 50%;
+    padding: 2px;
+}
+
+.tip {
+    font-size: 12px;
+    padding: 10px;
+}
+
+.text {
+    font-size: 14px;
+    background: #fff;
+    line-height: 20px;
+    margin-bottom: 20px;
+}
+
+.content textarea {
+    margin-top: 10px;
+    resize: none;
+    width: 100%;
+    height: 100px;
+    line-height: 20px;
+}

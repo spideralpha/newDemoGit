@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui_font.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/news.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/frame3.css" />
+    <style>
+        .base-icon {
+            width: 42px;
+            height: 25px;
+            display: inline-block;
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+        }
+
+        /* 我的 消息开启 */
+        .base-icon.my-msg {
+            background-image: url('../../image/icon/c2.png');
+        }
+
+        /* 我的 消息关闭 */
+        .base-icon.my-msg-close {
+            background-image: url('../../image/icon/c1.png');
+        }
+
+        .rt {
+            font-size: 12px;
+            color: #787878;
+        }
+
+        .rule {
+            padding: 14px 14px;
+            font-size: 12px;
+            line-height: 1.8;
+        }
+
+        .item {
+            margin: 16px 14px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <section class="m-frame">
+            <ul class="item">
+                <li class="item_li" onclick="changePrice('chat_price', 1)">
+                    <div class="lt">消息价格</div>
+                    <div class="rt" v-if="ffInfo.chat_price!=0">
+                        {{ffInfo.chat_price}}金币/条
+                        <span class="aui-iconfont aui-icon-right"></span>
+                    </div>
+                    <div class="rt" v-else>
+                        免费
+                        <span class="aui-iconfont aui-icon-right"></span>
+                    </div>
+                </li>
+                <li class="item_li">
+                    <div class="lt">语音接听</div>
+                    <div class="rt flex">
+                        <i class="base-icon my-msg" :class="{'my-msg-close':ffInfo.voice_switch==0}" onclick="changeSocial('voice_switch')"></i>
+                    </div>
+                </li>
+                <li class="item_li" onclick="changePrice('voice_price', 2)">
+                    <div class="lt">语音价格设置</div>
+                    <div class="rt" v-if="ffInfo.voice_price!=0">
+                        {{ffInfo.voice_price}}金币/分钟
+                        <span class="aui-iconfont aui-icon-right"></span>
+                    </div>
+                    <div class="rt" v-else>
+                        免费
+                        <span class="aui-iconfont aui-icon-right"></span>
+                    </div>
+                </li>
+                <li class="item_li">
+                    <div class="lt">视频接听</div>
+                    <div class="rt flex">
+                        <i class="base-icon my-msg" :class="{'my-msg-close':ffInfo.video_switch==0}" onclick="changeSocial('video_switch')"></i>
+                    </div>
+                </li>
+                <li class="item_li" onclick="changePrice('video_price', 3)">
+                    <div class="lt">视频价格设置</div>
+                    <div class="rt" v-if="ffInfo.video_price!=0">
+                        {{ffInfo.video_price}}金币/分钟
+                        <span class="aui-iconfont aui-icon-right"></span>
+                    </div>
+                    <div class="rt" v-else>
+                        免费
+                        <span class="aui-iconfont aui-icon-right"></span>
+                    </div>
+                </li>
+            </ul>
+        </section>
+        <section class="rule" v-if="content">
+            <div>收费设置说明：</div>
+            <div class="content" v-html="content">
+                <!-- <p>1.对方主动给您发消息、语音呼叫、视频呼叫是否收费，是否可以呼叫您，按多少金币/条(或分钟)计费，都依据您在本页设置的消息价格、语音价格、视频价格。</p>
+                <p>2、相互关注成为好友，则私聊互发消息都免费；相互守护即成为守护天使，则语音通话和视频通话免费。</p>
+                <p>3、随着您的魅力等级提升，所能设置的价格范围也将提高。</p> -->
+            </div>
+        </section>
+    </div>
+
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/jquery.js"></script>
+<script type="text/javascript" src="../../script/ffkj.js"></script>
+<script type="text/javascript" src="../../script/vue.js"></script>
+<script type="text/javascript" src="../../script/yinsi.js"></script>
+<script type="text/javascript" src="../../script/select_json.js"></script>
+<script type="text/javascript">
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+            content: '',
+        },
+        methods: {
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+        }
+    })
+    apiready = function() {
+        view.ios = $api.getStorage('shang');
+        getMyConfig();
+
+        getPageContent(9, function(data) {
+            view.content = data.body;
+        })
+    }
+
+    // 修改价格
+    function changePrice(ziduan, types) {
+        // 1消息|2语音|3视频
+        _ajax('api/personal/rechargeList', function(ret, err) {
+            if (ret && ret.code == 200) {
+                var arr = [];
+                var index = 0;
+                for (var i = 0, len = ret.data.length; i < len; i++) {
+                    var data = ret.data[i];
+                    var text = data.price ? data.price + '金币' : '免费';
+
+                    if (types == 1) {
+                        if (view.ffInfo.chat_price == ret.data[i].price) {
+                            index = i;
+                        }
+                    } else if (types == 2) {
+                        if (view.ffInfo.voice_price == ret.data[i].price) {
+                            index = i;
+                        }
+                    } else if (types == 3) {
+                        if (view.ffInfo.video_price == ret.data[i].price) {
+                            index = i;
+                        }
+                    }
+
+                    if (data.min_charm_grade) {
+                        text = text + '魅力值达' + data.min_charm_grade + '级可选';
+                    }
+                    var obj = {
+                        allow: data.allow,
+                        name: text,
+                        val: data.price,
+                    }
+                    arr.push(obj);
+                }
+
+
+                openUIActionSelector(arr, {
+                    col: 1,
+                    title: '价格',
+                    actives: [index]
+                }, function(ret, err) {
+                    console.log(JSON.stringify(ret))
+                    if (ret.eventType == 'ok') {
+                        var data = ret.selectedInfo[0];
+                        if (!data.allow) {
+                            _msg('您的魅力等级不够，无法设置为该价格');
+                            return;
+                        }
+                        view.ffInfo[ziduan] = data.val;
+                        changeConfig(ziduan, data.val)
+                    }
+                })
+            }
+        }, {
+            types: types,
+            user_id: $api.getStorage('userid'),
+        })
+    }
+</script>
+
+</html>

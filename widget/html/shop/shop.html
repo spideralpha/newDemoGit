@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/aui_font.css">
+    <link rel="stylesheet" href="../../css/base_icon.css">
+    <link rel="stylesheet" href="../../css/swiper.css">
+    <script src="../../script/swiper.js"></script>
+    <style>
+        /* 分类 */
+        .classfiy_ul {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            padding: 10px;
+        }
+
+        .classfiy_ul .li {
+            width: 20%;
+            /* height: 98px; */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            -webkit-box-pack: center;
+            /* 12版 */
+            -webkit-justify-content: center;
+            -moz-justify-content: center;
+            -ms-justify-content: center;
+            -o-justify-content: center;
+            justify-content: center;
+            font-size: 12px;
+            line-height: 2;
+            color: #aaaaaa;
+        }
+
+        .classfiy_ul .li .img-wrap {
+            /* background: linear-gradient(24deg, #fff, #fca0cf, #F46CEF, #F46CEF); */
+            /* background: linear-gradient(24deg, #fff, #ba9fe8, #F46CEF, #4208A7); */
+            /* border-radius: 50%; */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            /* box-shadow: 0px 0px 10px #F46CEF; */
+        }
+
+        .classfiy_ul .li .img-wrap img {
+            width: 50px;
+            height: 50px;
+        }
+
+        /* 轮播 */
+        .swiper-container {
+            overflow: hidden;
+        }
+
+        .swiper-slide img {
+            width: 100%;
+            height: 50vw;
+        }
+
+        /* 分页器 */
+        .swiper-pagination-fraction,
+        .swiper-pagination-custom,
+        .swiper-container-horizontal>.swiper-pagination-bullets {
+            position: absolute;
+            right: 10px;
+            width: auto;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            font-size: 12px;
+            justify-content: center;
+            bottom: 10px;
+            left: auto;
+        }
+
+        .swiper-pagination-bullet {
+            width: 4px;
+            height: 4px;
+        }
+
+        /* 广告图 */
+        .ad-img {
+            height: 25vw;
+            border-radius: 7px;
+            margin: 10px;
+            overflow: hidden;
+        }
+
+        .ad-img img {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* 商品列表 */
+        .shop-ul {
+            margin: 0 5px;
+        }
+
+        .shop-ul .list {
+            width: calc((100% - 10px)/2);
+            margin-right: 10px;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .shop-ul .list img {
+            width: 100%;
+            height: 150px;
+            object-fit: contain;
+        }
+
+        .shop-ul .list .tag {
+            font-size: 10px;
+            color: #fff;
+            background: #4caf50;
+            border-radius: 3px;
+            padding: 0 5px;
+            font-weight: normal;
+        }
+
+        .shop-ul .list:nth-child(2n) {
+            margin-right: 0;
+        }
+
+        .shop-ul .list .price {
+            color: orangered;
+        }
+
+        /* 我的积分 */
+
+        .meney {
+            width: 84vw;
+            margin: 20px 0;
+            margin-left: 8vw;
+            background-color: #f3f3f3;
+            height: 28vw;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+        }
+
+        .meney .label {
+            font-size: 12px;
+            color: #ccc;
+        }
+
+        .meney .value {
+            font-size: 20px;
+            color: #000;
+            margin-top: 10px;
+        }
+
+        .btn-wrap button {
+            border: 1px solid;
+            border-radius: 20px;
+            color: #CD7DFE;
+            padding: 5px 12px;
+            margin: 10px 15px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <!-- <header class="w-bg">
+            <ul class="classfiy_ul">
+                <li class="li" v-if="index < 5" v-for="(m, index) in themeList"
+                    @click="_url({title: m.name, id: m.id}, 'shop/fenlei_win')">
+                    <div class="img-wrap">
+                        <img class="img" :src="returnImg(m.image)" onerror="this.src='../../image/error-img.png'" />
+                    </div>
+                    <aside>{{ m.name }}</aside>
+                </li>
+            </ul>
+        </header> -->
+        <!--    <div class="ad-img">
+            <img src="../../image/test/02.png" alt="">
+        </div>-->
+        <div class="meney">
+            <div class="label">我的积分</div>
+            <div class="value">{{myMoney}}</div>
+            <div class="btn-wrap">
+                <button onclick="_url({ url: 'frame4/shouru', title: '积分清单' }, 'frame4/shouru_win')">积分清单</button>
+                <button onclick="_more()">兑换记录</button>
+            </div>
+        </div>
+        <div class="shop-wrap">
+            <!-- <h3 class="new-padding-10">推荐商品</h3> -->
+            <ul class="shop-ul flex-w">
+                <li class="list" v-for="(g, index) in ffList" @click="_url({url:'shop/shop_detail', title:'商品详情', id:g.id, toid:toid})">
+                    <div class="img">
+                        <img :src="returnImg(g.image)" onerror="this.src='../../image/error-img.png'" alt="">
+                    </div>
+                    <div class="aui-ellipsis-2">
+                        {{ g.name }}
+                    </div>
+                    <div class="price">{{ g.price }}积分</div>
+                </li>
+                <!-- <li class="list" v-for="i in 20">
+                    <div class="img">
+                        <img src="../../image/gift.png" alt="">
+                    </div>
+                    <div class="aui-ellipsis-2">
+                        名字 名字 名字 名字 名字
+                    </div>
+                    <div class="price">100积分</div>
+                </li> -->
+            </ul>
+        </div>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            myuserid: $api.getStorage('userid'),
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            lbList: [], //轮播列表
+            themeList: [], // 主题列表
+            gList: [], // 商品列表
+
+            myMoney: 0,
+            toid: '', // 接收礼物的用户
+        },
+        methods: {
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 图片
+            returnImg(url) {
+                return returnImg(url);
+            },
+
+            // 清除html
+            clearHtml(s) {
+                return clearHtml(s);
+            }
+        }
+    })
+    apiready = function() {
+        if (api.pageParam['id']) {
+            view.toid = api.pageParam['id'];
+        }
+        _getUser(function(ret) {
+            view.myMoney = ret.result.score;
+        })
+        _shangla(function() {
+            _lists('api/mall.goods/goodsList', 1, 1);
+        })
+        _scrollToBottom(function() {
+            if (heigutgao == 1) {
+                pagenum++;
+                _lists('api/mall.goods/goodsList', pagenum);
+            }
+        })
+    }
+
+    function _more() {
+        _url({}, 'shop/order_win')
+    }
+</script>
+
+</html>

@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/aui_font.css">
+    <style>
+        html,
+        body {
+            margin: 0;
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            height: 50px;
+            padding: 0 14px;
+            position: sticky;
+            top: 0;
+            background: #fff;
+        }
+
+        header i.aui-icon-left {
+            font-weight: bold;
+            margin-right: 10px;
+            font-size: 16px;
+        }
+
+        header span {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .list {
+            padding: 10px 14px;
+        }
+
+        .list .item {
+            display: flex;
+            align-items: center;
+        }
+
+        .list .item .avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 6px;
+            margin-right: 12px;
+            object-fit: cover;
+        }
+
+        .list .item .right {
+            height: 60px;
+            padding: 10px 0;
+            width: calc(100% - 72px);
+            border-bottom: 1px solid #f3f3f3;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .list .item .right .info {
+            height: 100%;
+            display: flex;
+            justify-content: space-between;
+            flex-direction: column;
+        }
+
+        .list .item .right .info .username {
+            font-size: 14px;
+        }
+
+        .list .item .right .info .tag {
+            display: flex;
+        }
+
+        .list .item .right .info .tag .tagitem {
+            display: flex;
+            align-items: center;
+            font-size: 12px;
+        }
+
+        .list .item .right .info .tag .tagitem img {
+            width: 16px;
+            height: 16px;
+            margin-right: 4px;
+        }
+
+        .list .item .right .info .todayactive {
+            font-size: 12px;
+            color: #787878;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <header>
+            <i class="aui-iconfont aui-icon-left" onclick="_closeToWin();"></i>
+            <span>成员列表（{{ffList.length}}人）</span>
+        </header>
+        <div class="list">
+            <div class="item" v-for="(m, index) in ffList">
+                <img class="avatar" :src="returnImg(m.avatar)" onerror="this.src='../../image/touxiang.png'" alt="">
+                <div class="right">
+                    <div class="info">
+                        <div class="username">{{m.name}}</div>
+                        <div class="tag">
+                            <span class="boy-tag" :class="{'girl-tag':m.sex == '女'}">{{m.age}}</span>
+                        </div>
+                        <!-- <div class="todayactive">今日活跃度：100</div> -->
+                    </div>
+                    <!-- <div class="juese">
+                        族长
+                    </div> -->
+                </div>
+            </div>
+            <!-- <div class="item" v-for="item in 10">
+                <img class="avatar" src="../../image/touxiang.png" alt="">
+                <div class="right">
+                    <div class="info">
+                        <div class="username">奇偶IE个</div>
+                        <div class="tag">
+                            <div class="tagitem">
+                                <img src="../../image/icon/ic_male_date.png" alt="">
+                                25
+                            </div>
+                        </div>
+                        <div class="todayactive">今日活跃度：0</div>
+                    </div>
+                </div>
+            </div> -->
+        </div>
+    </div>
+
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+        },
+        methods: {
+            // 跳转
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+        }
+    })
+    apiready = function() {
+        $api.fixStatusBar($api.dom('header'));
+        _shangla(function() {
+            _lists('api/cluster/users', 1, 1, {
+                id: api.pageParam['id']
+            });
+        })
+
+        _scrollToBottom(function() {
+            if (heigutgao == 1) {
+                pagenum++;
+                _lists('api/cluster/users', pagenum, '', {
+                    id: api.pageParam['id']
+                });
+            }
+        })
+    }
+</script>
+
+</html>

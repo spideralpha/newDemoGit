@@ -1,0 +1,206 @@
+html,
+body {
+    background: #7338d8;
+}
+
+.s-top h3 {
+    font-size: 40px;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    width: 100%;
+    top: 10vw;
+}
+
+.s-top h3 span {
+    font-size: 25px;
+    color: #fff;
+}
+
+.sign-bg {
+    width: 100%;
+    object-fit: contain;
+}
+
+.s-wrap {
+    position: relative;
+}
+
+.s-wrap .s-ul {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    padding: 20px;
+    position: absolute;
+    bottom: 0;
+}
+
+.s-ul .list {
+    display: inline-block;
+    margin-bottom: 15px;
+}
+
+.s-ul .list img {
+    height: 24vw;
+}
+
+.sign-btn {
+    background: #f771d2;
+    color: #fff;
+    width: 80%;
+    line-height: 45px;
+    border-radius: 30px;
+    margin-top: 30px;
+}
+
+.sign-btn.success {
+    background: #aaa;
+}
+
+
+/* 成功 */
+.modal-bg {
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-bg .modal {
+    width: 80vw;
+    position: relative;
+    text-align: center;
+}
+
+.modal-bg .m-bg {
+    width: 100%;
+}
+
+.modal-bg .m-wrap {
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+    box-sizing: border-box;
+    padding: 20px;
+}
+
+.modal-bg .m-close {
+    width: 20px;
+}
+
+.modal-bg p {
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.modal-bg .rw-img {
+    width: 80px;
+    width: 80px;
+    object-fit: contain;
+}
+
+.modal-bg .m-title {
+    color: #ff66c1;
+}
+
+.modal-bg .m-txt {
+    color: #757575;
+}
+
+.modal-bg .m-txt span {
+    color: #ff66c1;
+}
+
+.modal-bg .rw-btn {
+    width: 100%;
+    margin-top: 20px;
+}
+
+
+/* 前端样式 */
+.new-sign .s-wrap .s-ul {
+    justify-content: space-between;
+    padding: 20px 25px;
+}
+
+.new-sign .s-ul .list {
+    background: #f2f2f2;
+    border-radius: 10px;
+    text-align: center;
+    width: calc(100% / 4 - 5px);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 0;
+    overflow: hidden;
+}
+
+.new-sign .s-ul .list:nth-child(n+5) {
+    width: calc(100% / 3 - 5px);
+}
+
+.new-sign .s-ul .list:last-child {
+    background: #fff1cb;
+}
+
+.new-sign .s-ul .list img {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+    height: auto;
+    padding: 5px 0;
+}
+
+.new-sign .s-ul .list.active::after {
+    content: "";
+    display: inline-block;
+    background-image: url("../image/task/select1.png");
+    background-size: 40%;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: rgba(0, 0, 0, 0.5);
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+}
+
+.new-sign .num {
+    position: absolute;
+    left: 0;
+    top: 0;
+    background: linear-gradient(135deg, #ffc9e5, #ff66c1);
+    color: #fff;
+    border-radius: 10px 0 10px 0;
+    font-size: 10px;
+    padding: 0 5px;
+}
+
+.new-sign .name {
+    color: #757575;
+    font-size: 12px;
+}
+
+.rw-btn1 {
+    background-image: url('../image/task/tk_button1.png');
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+    /* width: 243px;*/
+    height: 44px;
+    text-align: center;
+    color: #fff;
+    line-height: 38px;
+    margin-top: 50px;
+    width: 100%;
+}

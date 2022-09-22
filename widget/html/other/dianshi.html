@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>小火苗</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <style>
+        html,
+        body {
+            background: #6b3dd4;
+        }
+
+        img {
+            width: 100%;
+        }
+
+        .content {
+            position: relative;
+        }
+
+        .content .c {
+            position: absolute;
+            top: 0;
+            padding: 25px;
+        }
+
+        .ul .list {
+            color: #d4403e;
+            line-height: 2;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .num {
+            background: #ff6a21;
+            color: #fff;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            text-align: center;
+            line-height: 20px;
+            margin-right: 15px;
+        }
+
+        .title {
+            font-weight: bold;
+            color: #d4403e;
+            font-size: 14px;
+        }
+
+        .o-ul {
+            display: flex;
+            margin-top: 15px;
+        }
+
+        .o-ul .list {
+            color: #d4403e;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            margin-right: 10px;
+        }
+
+        .o-ul .list .yuan {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 5px;
+            border: 1px solid #ddd;
+
+        }
+
+        .o-ul .active .yuan {
+            background-image: url('../../image/modal/ms_round_xz_small.png');
+            background-size: 100%;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div id="view" v-cloak class="wrap flex-col">
+        <img src="../../image/index/sds_img_1.png" alt="">
+        <img src="../../image/index/sds_img_2.png" alt="">
+        <div class="content">
+            <img src="../../image/index/sds_img_3.png" alt="">
+            <div class="c">
+                <ul class="ul">
+                    <li class="list"><span class="num">1</span>单次送出礼物价值超过10金币可上电视，同时有一定机率出现炫酷动画效果 </li>
+                    <li class="list"><span class="num">2</span>单次送出礼物总价超过100金币即可电视锁屏,1000金币可锁10秒,3000金币可锁20秒.金额越大,锁屏时间越长;
+                    </li>
+                </ul>
+                <p class="title">送礼物是否上电视（点选立即生效）</p>
+                <ul class="o-ul">
+                    <li class="list" onclick="select(1)" :class="{'active':speaker==1}"><span class="yuan"></span>我要上电视</li>
+<!--                    <li class="list" onclick="select(2)" :class="{'active':speaker==2}"><span class="yuan"></span>匿名上电视</li>-->
+                    <li class="list" onclick="select(3)" :class="{'active':speaker==3}"><span class="yuan"></span>不想上电视</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+            speaker: 1
+        },
+        methods: {
+            // 跳转
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+        }
+    })
+    apiready = function() {
+        _getUser(function(ret) {
+            view.speaker = ret.result.speaker;
+        })
+    }
+
+    function select(index) {
+        _loading();
+        _ajax('api/user/editInfo', function(ret, err) {
+            console.log(JSON.stringify(ret))
+            console.log(JSON.stringify(err))
+            _loadingClose();
+            _msg(ret.msg)
+            if (ret && ret.code == 200) {
+                view.speaker = index;
+            }
+        }, {
+            user_id: $api.getStorage('userid'),
+            speaker: index,
+        });
+    }
+</script>
+
+</html>

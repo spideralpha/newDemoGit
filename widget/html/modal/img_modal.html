@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>小火苗</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/imgmodal.css">
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <div class="modal-bg" onclick="_close()">
+            <div class="wrap" @click.stop>
+                <header class="flex-c">
+                    <div class="head-title flex-c">相册</div>
+                    <span class="success-btn" onclick="submit()">完成({{num}})</span>
+                </header>
+                <ul class="img-ul">
+                    <li class="list" onclick="openCamera()">
+                        <div class="flex-c" style="height: 100%;background: #f3f3f3;border-radius: 5px;">
+                            <img style="width: 35px;height: 35px;" src="../../image/icon/camera.png" alt="">
+                        </div>
+                    </li>
+                    <li class="list" v-for="(m, index) in ffList" @click="selectImg(index)">
+                        <img :src="m.thumbPath" alt="">
+                        <span class="num" v-if="m.num">{{m.num}}</span>
+                        <span class="select" v-else></span>
+                    </li>
+                    <!-- <li class="list " v-for="i in 10">
+                        <img src="../../image/test/03.jpg" alt="">
+                        <span class="select"></span>
+                        <span class="num">1</span>
+                    </li> -->
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script src="../../script/photo.js"></script>
+<script src="../../json/photo.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+            num: 0,
+            max: 10,
+            total: 0,
+            sroll: 0,
+        },
+        methods: {
+            selectImg(index) {
+                var _this = this;
+                if (!_this.ffList[index].num) {
+                    if (view.num == view.max) {
+                        _msg('最多只能选' + view.max + '张图');
+                        return;
+                    }
+                    view.num++;
+                    _this.ffList[index].num = view.num;
+                } else {
+                    view.num--;
+                    var num = _this.ffList[index].num;
+                    for (var i = 0, len = _this.ffList.length; i < len; i++) {
+                        var n = _this.ffList[i].num;
+                        if (n && n > num) {
+                            _this.ffList[i].num--;
+                        }
+                    }
+                    _this.ffList[index].num = 0;
+                }
+            },
+            // 跳转
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+        }
+    })
+    var uiimg;
+    apiready = function() {
+        if (api.pageParam['max']) {
+            view.max = api.pageParam['max'];
+        }
+        uiimg = new UIIMG();
+        uiimg.open(function(ret) {
+            view.total = ret.total;
+            for (var i = 0, len = ret.list.length; i < len; i++) {
+                ret.list[i].num = 0;
+            }
+
+            view.ffList = ret.list;
+        })
+        var dom = '.img-ul';
+        $(dom).on('scroll', function(e) {
+            var st = $(dom).scrollTop();
+            var h = $(dom).height();
+            var sh = $(dom)[0].scrollHeight;
+            if (view.sroll == 1) return;
+            if (st >= (sh - h - 10)) {
+                console.log('滚动')
+                if (view.total == view.ffList.length) {
+                    console.log('全部加载完毕')
+                    return;
+                }
+                view.sroll = 1;
+                uiimg.next(function(ret) {
+                    for (var i = 0, len = ret.list.length; i < len; i++) {
+                        ret.list[i].num = 0;
+                    }
+                    view.ffList = view.ffList.concat(ret.list);
+                    view.sroll = 0
+                })
+            }
+        })
+    }
+
+    // 关闭
+    function _close() {
+        api.closeFrame();
+    }
+
+    // 确定
+    function submit() {
+        if (view.num == 0) {
+            _msg('请选择图片');
+            return;
+        }
+        var arr = [];
+        for (var i = 0, len = view.ffList.length; i < len; i++) {
+            if (view.ffList[i].num) {
+                arr.push(view.ffList[i]);
+            }
+        }
+
+        // 按数字大小排序
+        arr.sort(function(a, b) {
+            if (a.num > b.num) {
+                return 1;
+            } else {
+                return -1;
+            }
+        })
+        var e = api.pageParam['event'];
+        if (!e) return;
+        if (api.systemType == 'ios') {
+            uiimg.tran(arr, function(brr) {
+                _send(e, {
+                    img: brr
+                })
+            })
+        } else {
+            _send(e, {
+                img: arr
+            })
+        }
+        setTimeout(function() {
+            _close();
+        }, 500)
+    }
+
+    // 相机
+    function openCamera() {
+        openPicUrl(function(ret) {
+            var e = api.pageParam['event'];
+            if (e) {
+                _send(e, {
+                    img: [{
+                        path: ret.data,
+                        thumbPath: ret.data
+                    }]
+                })
+            }
+            setTimeout(function() {
+                _close();
+            }, 500)
+        }, 1)
+    }
+</script>
+
+</html>

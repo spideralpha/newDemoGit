@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport"
+		content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+	<title>title</title>
+	<link rel="stylesheet" type="text/css" href="../../css/api.css" />
+	<link rel="stylesheet" type="text/css" href="../../css/news.css" />
+
+	<style>
+		.content ul li {
+			background: white;
+			padding: 8px;
+			margin-bottom: 10px;
+		}
+
+		.jilu .item1 {
+			color: #484848;
+			font-size: 18px;
+			line-height: 35px;
+		}
+
+		.jilu .item1 .time {
+			float: right;
+			font-size: 14px;
+			color: #787878;
+		}
+
+		.jilu .item2 {
+			font-size: 12px;
+			color: #787878;
+			padding: 20px 0;
+			border-top: 1px dotted #c9c9c9;
+			border-bottom: 1px dotted #c9c9c9;
+		}
+
+		.jilu .item2 span {
+			display: block;
+		}
+
+		.jilu .item2 .cash {
+			font-size: 30px;
+			margin-top: 5px;
+		}
+
+		.jilu .item3,
+		.jilu .item4 {
+			font-size: 12px;
+			color: #787878;
+			line-height: 25px;
+		}
+
+		.jilu .item3 {
+			margin-top: 8px;
+		}
+
+		.null-page {
+			height: 100%;
+			background: #e2f1eb;
+		}
+
+		.null-img {
+			width: 50%;
+			display: block;
+			margin: 105px auto 50px;
+		}
+
+		.p-info {
+			text-align: center;
+			font-size: 20px;
+			color: #13b77b;
+		}
+
+
+		.null {
+			width: 100%;
+			text-align: center;
+			margin: 55px auto 0;
+		}
+
+		.null img {
+			width: 55%;
+		}
+
+		.null p {
+			width: 100%;
+			text-align: center;
+			line-height: 35px;
+			color: #484848;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="content" id="view" v-cloak>
+		<ul class="content-ul">
+			<div v-for="(item, index) in ffList">
+				<li>
+					<div class="jilu">
+						<p class="item1">
+							<span v-if="item.state == 0">零钱提现中</span>
+							<span v-else-if="item.state == 2">零钱提现失败</span>
+							<span v-else-if="item.state == 1">零钱提现成功</span>
+							<span class="time">{{item.addtime}}</span>
+						</p>
+						<p class="item2">
+							<span>提现金额</span>
+							<span class="appcolor_tx cash">{{item.price}}</span>
+						</p>
+						<p class="item3">
+							<span v-if="item.paymethod == 0"> 提现账号：{{item.wxname}} </span>
+							<span v-if="item.paymethod == 1"> 提现账号：{{item.zhifuname}} </span>
+							<br>
+							<!-- <span>手续费：{{item.shouxu}}</span> -->
+						</p>
+						<p class="item4" v-if="item.state == 2"> 失败原因: {{item.reason}} </p>
+						<p class="item4" v-else-if="item.state == 1"> 到账时间: {{ item.daotime }} </p>
+					</div>
+				</li>
+			</div>
+		</ul>
+		<div id="no_more" class="null" v-if="ffList.length==0"></div>
+		<div id="no_more" v-else>暂无更多</div>
+	</div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/jquery.js"></script>
+<script type="text/javascript" src="../../script/ffkj.js"></script>
+<script type="text/javascript" src="../../script/vue.js"></script>
+<script type="text/javascript">
+	var view = new Vue({
+		el: '#view',
+		data: {
+			imgurl: imgurl,
+			ios: 1,
+			transObj: {},
+			ffInfo: {},
+			ffList: []
+		}
+	})
+
+	apiready = function () {
+		getData()
+	};
+
+	// 获取提现记录
+	function getData() {
+		_ajax('Home/Withdraw/getRecord?userid=' + $api.getStorage('userid'), function (ret, err) {
+			console.log(JSON.stringify(ret))
+			console.log(JSON.stringify(err))
+			if (ret && ret.code == 200) {
+				view.ffList = ret.result;
+			}
+		})
+	}
+</script>
+
+</html>

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <style>
+        #city-view .bg {
+            width: 100vw;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        #city-view .city-wrap {
+            background: #fff;
+            width: 100vw;
+            /* position: fixed;
+            bottom: 0;
+            left: 0; */
+        }
+
+        #city-view .city-wrap .li {
+            line-height: 20px;
+            border-bottom: 1px solid #eee;
+            padding: 10px;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        #city-view .city-wrap ul .li:last-child {
+            border-bottom: 0;
+        }
+
+        #city-view .city-wrap .left {
+            width: 40vw;
+            overflow-y: auto;
+            height: calc(100vh - 50px);
+            border-right: 1px solid #eee;
+        }
+
+        #city-view .city-wrap .right ul {
+            width: 60vw;
+            overflow-y: auto;
+            height: calc(100vh - 50px);
+        }
+
+        #city-view .city-wrap ul .li.active {
+            color: #F46CEF;
+            /* font-weight: bold; */
+        }
+
+        #city-view .city-wrap .left .li.active {
+            background: #F46CEF;
+            color: #fff;
+        }
+
+        /* 按钮 */
+        #city-view .btn-wrap {
+            border-bottom: 1px solid #eee;
+        }
+
+        #city-view .btn-wrap .btn {
+            color: #F46CEF;
+            font-size: 14px;
+        }
+
+        /* 选中的城市 */
+        #city-view .select-wrap {
+            position: fixed;
+            bottom: 0;
+            width: 100vw;
+            z-index: 2;
+            background: #fff;
+        }
+
+        #city-view .select-wrap .tag {
+            border: 1px solid;
+            color: #F46CEF;
+            font-size: 12px;
+            padding: 2px 10px;
+            border-radius: 5px;
+            margin: 10px 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap" id="city-view">
+        <!-- <div class="bg" onclick="closeModalFrm()"></div> -->
+        <div class="city-wrap">
+            <!-- <div class="btn-wrap flex-bt new-padding-10">
+                <button class="btn" onclick="closeModalFrm()">取消</button>
+                <button class="btn" onclick="frmSubmit()">确定</button>
+            </div> -->
+            <div class="flex">
+                <ul class="left">
+                    <li class="li" :class="{'active': index == 0}" v-for="(m, index) in proList"
+                        @click="selectPro(index, $event)">{{m}}</li>
+                    <!-- <li class="li">1</li> -->
+                </ul>
+                <div class="right">
+                    <ul class="ul" :class="{'new-hide' : index != cityIndex}" v-for="(m, index) in city">
+                        <li class="li " v-for="(c, cIndex) in m">{{c}}</li>
+                    </ul>
+                    <!-- <ul class="ul">
+                        <li class="li ">120</li>
+                        <li class="li active">120</li>
+                    </ul> -->
+                </div>
+            </div>
+            <div class="select-wrap">
+                <span class="tag" v-for="(m, index) in selectCity">{{m}}</span>
+                <!-- <span class="tag">广州</span>
+                <span class="tag">广州</span>
+                <span class="tag">广州</span> -->
+            </div>
+        </div>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/area.js"></script>
+<script src="../../script/vue.js"></script>
+<script>
+    var cityLen = 1;
+    var cityView = new Vue({
+        el: '#city-view',
+        data: {
+            proList: province,
+            city: city,
+            cityIndex: 0,
+            selectCity: []
+        },
+        methods: {
+            selectPro(index, event) {
+                var _this = this;
+                var e = event.currentTarget;
+                $(e).addClass('active').siblings().removeClass('active');
+                _this.cityIndex = index;
+            }
+        }
+    })
+
+    apiready = function () {
+        $api.fixTabBar($api.dom('.select-wrap'));
+        cityLen = api.pageParam['cityLen'] || 1;
+        var type = api.pageParam['type'];
+        console.log(type)
+        if(type == 0){
+            province.unshift('附近');
+            city.unshift(['附近']);
+        }
+        if(type == 1){
+            province.unshift('不限地区');
+            city.unshift(['不限地区']);
+        }
+    }
+
+
+    $('#city-view .right').on('click', '.li', function () {
+        var $this = $(this);
+        var text = $this.text()
+        var cls = $this.hasClass('active');
+        var arr = cityView.selectCity;
+        if (!cls) {
+            if (arr.length == cityLen) {
+                _msg('最多只能选择' + cityLen + '个城市');
+                return;
+            }
+            $this.toggleClass('active');
+            cityView.selectCity.push(text);
+        } else {
+            $this.toggleClass('active');
+            for (var i = 0, len = arr.length; i < len; i++) {
+                if (arr[i] == text) {
+                    arr.splice(i, 1);
+                    return;
+                }
+            }
+        }
+
+    })
+
+
+    //更多按钮
+    function _more(){
+        frmSubmit();
+    }
+
+    function frmSubmit() {
+        if (cityView.selectCity.length == 0) {
+            _msg('请选择至少一个城市');
+            return;
+        }
+        var str = cityView.selectCity.join(',');
+        // changeCity(str);
+        // var fn = api.pageParam['fn'];
+        // var callback = 'newChange("' + fn + '", "' + str + '")';
+        // var winName = api.pageParam['winName'];
+        // var frameName = api.pageParam['frameName'];
+        // if (!winName) {
+        //     winName = frameName;
+        // }
+        // api.execScript({
+        //     name: winName,
+        //     frameName: frameName,
+        //     script: callback
+        // })
+        if(api.pageParam['event']){
+            api.sendEvent({
+                name: api.pageParam['event'],
+                extra: {
+                    city: str
+                }
+            })
+        }
+
+       api.closeWin();
+    }
+</script>
+
+</html>

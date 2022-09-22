@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/aui_font.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/chengyuan.css">
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <div class="list">
+            <div class="item" v-for="(m, index) in ffList" @click="share(m)">
+                <img class="avatar" :src="returnImg(m.user_head)" onerror="this.src='../../image/touxiang.png'" alt="">
+                <div class="right">
+                    <div class="info">
+                        <div class="username">{{m.user_name}}
+                            <!-- <span class="new-fuhao" v-if="m.charmGrade"><img :src="returnImg(m.charmIcon)" onerror="this.src='../../image/icon/meili.png'" alt=""></span>
+                            <span class="new-fuhao" v-if="m.tycoonGrade"><img :src="returnImg(m.tycoonIcon)" onerror="this.src='../../image/icon/tuhao.png'" alt=""></span> -->
+                            <img v-if="m.is_noble" :src="returnImg(m.noble_icon)" class="new-noble" onerror="this.src='../image/error-img.png'" alt="">
+                        </div>
+                        <div class="tag">
+                            <span class="boy-tag" :class="{'girl-tag':m.user_sex == '女'}">{{m.user_age}}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+            id: 0,
+            type: 0
+        },
+        methods: {
+            share(m) {
+                var _this = this;
+                _ajax('api/Family/invite', function(ret, err) {
+                    _msg(ret.msg);
+                    if (ret && ret.code == 200) {
+                        timerWin();
+                        _url({
+                            touserid: m.user_id,
+                            title: '与' + m.user_name + '的聊天',
+                            moreType: 1,
+                        }, 'frame0/liaotian_win');
+                    }
+                }, {
+                    user_id: $api.getStorage('userid'),
+                    id: _this.id,
+                    to_user: m.user_id
+                })
+            },
+            // 跳转
+            _url: function(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg: function(url) {
+                return returnImg(url);
+            },
+        }
+    })
+    apiready = function() {
+        view.id = api.pageParam['id'];
+        view.type = api.pageParam['type'];
+
+        if (view.type == 0) {
+            var data = $api.getStorage('index_msglist');
+            var arr = [];
+            for (var i = 0, len = data.length; i < len; i++) {
+                if (data[i].kefu != 1 && data[i].is_cluster != 1) {
+                    var obj = {
+                        user_id: data[i].userid,
+                        user_head: data[i].sumb_headimg,
+                        user_name: data[i].name,
+                        user_sex: data[i].sex,
+                        user_age: data[i].age,
+                    }
+                    arr.push(obj);
+                }
+            }
+            view.ffList = arr;
+        } else {
+            _shangla(function() {
+                _lists('home/Dymanic/myattention', 1, 1, {
+                    user_id: $api.getStorage('userid'),
+                    types: view.type
+                });
+            })
+
+            _scrollToBottom(function() {
+                if (heigutgao == 1) {
+                    pagenum++;
+                    _lists('home/Dymanic/myattention', pagenum, '', {
+                        user_id: $api.getStorage('userid'),
+                        types: view.type
+                    });
+                }
+            })
+        }
+    }
+</script>
+
+</html>

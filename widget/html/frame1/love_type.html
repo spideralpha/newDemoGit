@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>小火苗</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <style>
+        header {
+            padding: 10px;
+            font-size: 14px;
+        }
+
+        header img {
+            width: 15px;
+            margin-right: 10px;
+        }
+
+        header .input {
+            background: #f3f3f3;
+            border-radius: 15px;
+            padding: 7px 10px;
+            margin-left: 10px;
+        }
+
+        header .input input {
+            padding-left: 10px;
+        }
+
+        header .btn {
+            color: #ba9fe8;
+            border-left: 1px solid;
+            padding: 0 7px;
+        }
+
+        header .btn.active {
+            color: #CD7DFE;
+        }
+
+        header .user {
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+        }
+
+        header .user .tx {
+            width: 35px;
+            height: 35px;
+        }
+
+        header .header {
+            margin: 10px 0;
+        }
+
+        .list {
+            text-align: center;
+            padding: 5px;
+            box-sizing: border-box;
+            width: 50vw;
+            font-size: 14px;
+        }
+
+        .list img {
+            width: 100%;
+            margin-bottom: 7px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <header>
+            <div class="flex top">
+                <b>TA的ID</b>
+                <div class="input flex">
+                    <input type="number" placeholder="必填" v-model="id">
+                    <button class="btn" :class="{'active':id}" onclick="submit()">搜索</button>
+                </div>
+            </div>
+            <div class="user" v-if="ffInfo.user_id">
+                <img class="tx" :src="returnImg(ffInfo.user_head)" onerror="this.src='../../image/touxiang.png'" alt="">
+                <span class="name">{{ffInfo.user_name}}</span>
+            </div>
+            <div class="header flex">
+                <img src="../../image/icon/icon_cht_intimacy.png" alt="">
+                <span>选择感情进度</span>
+            </div>
+        </header>
+        <ul class="ul flex-w">
+            <li class="list" v-for="(m, index) in ffList" @click="selectTheme(m)">
+                <img :src="returnImg(m.image)" onerror="this.src='../../image/error-img.png'" alt="">
+                <p>{{ m.name }}</p>
+            </li>
+            <!-- <li class="list">
+                <img src="../../image/love/love1.jpg" alt="">
+                <p>恋爱了</p>
+            </li>
+            <li class="list">
+                <img src="../../image/love/love1.jpg" alt="">
+                <p>恋爱了</p>
+            </li> -->
+        </ul>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+            id: '',
+            subId: ''
+        },
+        methods: {
+            selectTheme(m) {
+                if (!view.ffInfo.user_id) {
+                    _msg('请先输入TA的ID点击搜索～');
+                    return;
+                }
+                _url({
+                    id: m.id,
+                    url: 'frame1/fa_lovething',
+                    title: '爱情故事投稿',
+                    uid: view.ffInfo.user_id
+                })
+            },
+            // 跳转
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+        }
+    })
+    apiready = function() {
+        getTheme();
+    }
+
+    // 获取主题列表
+    function getTheme() {
+        _ajax('home/dymanic/category', function(ret, err) {
+            if (ret && ret.code == 200 && ret.result && ret.result.length > 0) {
+                view.ffList = ret.result;
+            }
+        })
+    }
+
+    // 搜索用户
+    function submit() {
+        var id = $.trim(view.id);
+        if (!id || id == $api.getStorage('userid')) {
+            _msg('请填写对方id');
+            return;
+        }
+        _ajax('api/user/index', function(ret, err) {
+            if (ret && ret.code == 200) {
+                if (ret.result && ret.result.length > 0) {
+                    view.ffInfo = ret.result[0];
+                } else {
+                    _msg('未查到相关用户')
+                }
+            } else {
+                _msg('网络连接失败，请稍后重试')
+            }
+        }, {
+            id: id,
+            user_id: $api.getStorage('userid'),
+            longitude: $api.getStorage('lon'),
+            latitude: $api.getStorage('lat'),
+        })
+    }
+</script>
+
+</html>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/aui_font.css">
+    <link rel="stylesheet" href="../../css/win.css">
+    <style>
+        .wrap {
+            background: #fff;
+            color: #333333;
+            /* border-bottom: 1px solid #eee; */
+        }
+
+        .wrap .list {
+            padding: 10px 0;
+            font-size: 14px;
+            /* border-bottom: 1px solid #eee; */
+            color: #666;
+            position: relative;
+        }
+
+        .wrap .list.active {
+            /* border-bottom: 2px solid #F46CEF; */
+            color: #F46CEF;
+        }
+
+        .wrap .list.active .l-title {
+            color: #F46CEF;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="head new-padding-10 flex-c">
+            <div class="back" tapmode onclick="_closeToWin()"></div>
+            <div class="title">我的订单</div>
+        </div>
+        <ul class="wrap flex-a">
+            <!-- <li class="list active" tapmode onclick="randomSwitchBtn(0)">
+                <div class="l-title">待付款</div>
+            </li> -->
+            <li class="list" tapmode onclick="randomSwitchBtn(0)">
+                <div class="l-title">待发货</div>
+            </li>
+            <li class="list" tapmode onclick="randomSwitchBtn(1)">
+                <div class="l-title">待收货</div>
+            </li>
+            <li class="list" tapmode onclick="randomSwitchBtn(2)">
+                <div class="l-title">已签收</div>
+            </li>
+        </ul>
+    </header>
+</body>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/api.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/group.js"></script>
+<script>
+    var moreType = 0;
+    apiready = function() {
+        $api.fixStatusBar($api.dom('header'));
+        openGroup();
+    }
+
+    // 打开组
+    function openGroup() {
+        var headerh = $api.offset($api.dom('header')).h;
+        var frameArr = [];
+        var pageParam = [];
+        for (var i = 1, len = 4; i < len; i++) {
+            var frm = 'shop/order';
+            var obj = {
+                status: i
+            };
+            frameArr.push(frm);
+            pageParam.push(obj);
+        }
+        groupInit('order', frameArr, headerh, 0, 0, '.wrap .list', pageParam);
+    }
+
+    // 点击分类栏目时，设置 frame 组当前可见 frame
+    function randomSwitchBtn(index) {
+        active(index, '.wrap .list'); // cls 使用与组名一致，便于复用
+        api.setFrameGroupIndex({
+            name: 'order',
+            index: index,
+            scroll: true, //是否平滑滚动至目标窗口，即是否带有动画
+            reload: false, // 刷新
+        });
+    }
+</script>
+
+</html>

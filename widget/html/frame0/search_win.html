@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/win.css">
+    <style>
+        .title {
+            background: #F5F5F5;
+            border-radius: 20px;
+            font-size: 14px;
+            padding: 7px 10px;
+            width: 70%;
+        }
+
+        .title img {
+            width: 15px;
+        }
+
+        .title input {
+            font-size: 14px;
+        }
+
+        header .more {
+            color: #333;
+            font-size: 16px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="head new-padding-10 flex-c">
+            <div class="back new-back" tapmode onclick="_closeToWin()"></div>
+            <div class="title flex">
+                <img src="../../image/icon/ic_navi_search.png" alt="">
+                <input type="search" style="width: 100%;" placeholder="输入小火苗ID">
+            </div>
+            <div class="more" tapmode onclick="_key()">搜索</div>
+        </div>
+    </header>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script>
+    var moreType = 0;
+    apiready = function() {
+        $api.fixStatusBar($api.dom('header'));
+    }
+
+    // 回车搜索
+    window.onkeydown = function(e) {
+        if (e.keyCode == 13) {
+            _key();
+        }
+    }
+
+    // 搜索
+    function _key() {
+        var keyword = $.trim($('.title input').val());
+        if (!keyword) {
+            _msg('请输入关键字搜索');
+            return;
+        }
+        _openFrame('frame0/search', '', '1', {
+            key: keyword
+        });
+    }
+</script>
+
+</html>

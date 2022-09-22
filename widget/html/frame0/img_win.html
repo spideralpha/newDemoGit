@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/aui_font.css">
+    <link rel="stylesheet" href="../../css/win.css">
+</head>
+
+<body>
+    <header>
+        <div class="head new-padding-10 flex-c">
+            <div class="back" tapmode onclick="_close()"></div>
+            <div class="title">查看大图</div>
+            <div class="more hide" tapmode onclick="_more()">更多</div>
+        </div>
+    </header>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/group.js"></script>
+<script>
+    apiready = function() {
+        api.addEventListener({
+            name: 'keyback'
+        }, function() {
+            _heibai(1);
+            _close();
+        })
+        _heibai(1)
+        $api.fixStatusBar($api.dom('header'));
+
+        getXC();
+        _listener('newmsg', function(ret) {
+            showMsgFrm(ret.value.data)
+        })
+    }
+
+    // 获取相册
+    function getXC() {
+        var uid = $api.getStorage('userid');
+        if (api.pageParam['uid']) {
+            uid = api.pageParam['uid'];
+        }
+        _ajax('api/Userimg/lists', function(ret, err) {
+            console.log(JSON.stringify(ret));
+            console.log(JSON.stringify(err));
+            if (ret && ret.code == 200) {
+                var showZan = api.pageParam['showZan']
+                var imgArr = [];
+                var frameArr = [];
+                var pageParam = [];
+                for (var i = 0, len = ret.result.length; i < len; i++) {
+                    if (ret.result[i].types == 1) {
+                        imgArr.push(ret.result[i]);
+                        imgArr[i].showZan = showZan;
+                        frameArr.push('frame0/img_frm');
+                    }
+                }
+
+                var h = $api.offset($api.dom('header')).h;
+                pageParam = imgArr;
+
+                groupInit('img', frameArr, h, 0, api.pageParam['iIndex'], '', pageParam);
+            }
+        }, {
+            user_id: uid,
+            to_user: $api.getStorage('userid'),
+            slide: api.pageParam['slide']
+        })
+    }
+
+    // 退出
+    function _close() {
+        _send('updateHeadSlid');
+        _closeToWin();
+    }
+</script>
+
+</html>

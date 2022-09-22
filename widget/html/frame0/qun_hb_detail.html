@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/aui_font.css">
+    <link rel="stylesheet" href="../../css/hb_detail.css">
+    <style>
+        #fx-header {
+            background: #734d9a;
+        }
+
+        .tuikuan-tip {
+            position: fixed;
+            bottom: 0;
+            padding: 10px;
+            box-sizing: border-box;
+            width: 100%;
+            text-align: center;
+        }
+
+        .text {
+            margin-top: 15px;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            font-size: 12px;
+            color: #757575;
+        }
+
+        .user-ul .list {
+            padding: 10px 10px 0;
+            font-size: 14px;
+        }
+
+        .user-ul .tx {
+            width: 35px;
+            height: 35px;
+            margin-right: 10px;
+        }
+
+        .user-ul .content {
+            border-bottom: 1px solid #ddd;
+            width: calc(100% - 45px);
+            padding-bottom: 7px;
+        }
+
+        .user-ul .top span {
+            font-weight: bold;
+
+        }
+
+        .user-ul .time {
+            font-size: 12px;
+            color: #757575;
+            margin-top: 5px;
+        }
+
+        .my-rw {
+            display: flex;
+            align-items: baseline;
+            justify-content: center;
+        }
+
+        .my-rw h3 {
+            font-size: 50px;
+            color: #734d9a;
+            font-weight: normal;
+        }
+
+        .my-rw span {
+            color: #734d9a;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <header id="fx-header">
+            <div class="head">
+                <i class="aui-iconfont aui-icon-left" onclick="_closeToWin();"></i>
+                <div class="title">红包详情</div>
+            </div>
+            <div class="bg">
+                <img src="../../image/icon/bg_headtongue_2.png" alt="">
+            </div>
+            <div class="flex-c tx-wrap">
+                <div class="new-tx img-h">
+                    <img :src="returnImg(ffInfo.head_portrait)" onerror="this.src='../../image/error-img.png'" alt="">
+                </div>
+            </div>
+            <p class="word">{{ffInfo.name}}发出的红包</p>
+            <p class="tip-word word">"{{ffInfo.content}}"</p>
+            <div class="my-rw" v-if="rwInfo.reward">
+                <h3>{{rwInfo.reward}}</h3><span>金币</span>
+            </div>
+        </header>
+        <p class="text" v-if="ffInfo.data">已领取{{rwInfo.lists.length}}/{{ffInfo.data.count}}个，共{{money}}/{{ffInfo.data.money}}金币</p>
+        <ul class="user-ul">
+            <li class="list flex" v-for="(m, index) in rwInfo.lists">
+                <img class="tx" :src="returnImg(m.avatar)" onerror="this.src='../../image/touxiang.png'" alt="">
+                <div class="content">
+                    <div class="flex-bt top">
+                        <span class="name">{{m.name}}</span>
+                        <span class="price">{{m.money}}金币</span>
+                    </div>
+                    <div class="flex-bt">
+                        <span class="time">{{m.time}}</span>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            myuserid: $api.getStorage('userid'),
+            id: 0, // 红包id
+            rwInfo: {
+                lists: []
+            },
+            money: 0, // 已领取金额
+        },
+        methods: {
+            _url: function(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg: function(url) {
+                return returnImg(url);
+            },
+        }
+    })
+    apiready = function() {
+        $api.fixStatusBar($api.dom('header'));
+        view.id = api.pageParam['id'];
+        view.ffInfo = api.pageParam['data'];
+        console.log(JSON.stringify(view.ffInfo))
+        getDetail()
+    }
+
+    // 获取红包详情
+    function getDetail() {
+        _ajax('api/Cluster/receive', function(ret, err) {
+            console.log(JSON.stringify(ret))
+            console.log(JSON.stringify(err))
+            if (ret && ret.code == 200) {
+                view.rwInfo = ret.data;
+                if (ret.data && ret.data.lists && ret.data.lists.length > 0) {
+                    var arr = ret.data.lists;
+                    for (var i = 0, len = arr.length; i < len; i++) {
+                        view.money += Number(arr[i].money);
+                    }
+                    view.money = view.money.toFixed(2);
+                }
+            }
+        }, {
+            chat_id: view.id,
+            user_id: $api.getStorage('userid')
+        })
+    }
+</script>
+
+</html>

@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Document</title>
+    <link rel="stylesheet" href="../css/api.css">
+    <link rel="stylesheet" href="../css/news.css">
+    <link rel="stylesheet" href="../css/swiper.css">
+    <style>
+        .swiper-container {
+            margin: 7px 14px;
+        }
+
+        .swiper-container img {
+            width: 100%;
+            border-radius: 7px;
+            height: 48px;
+        }
+
+        .jiazulr {
+            align-items: center;
+            padding: 0 10px;
+            display: flex;
+        }
+
+        .jiazulr.r {
+            justify-content: flex-end;
+        }
+
+        .jiazulr img {
+            height: 30px;
+            margin-right: 15px;
+        }
+
+        .jiazulr.r .btn {
+            padding: 2px 10px;
+            /* background: linear-gradient(to right, rgb(0, 98, 236), rgb(162, 0, 255)); */
+            background: #CE89FF;
+            border-radius: 30px;
+            align-items: center;
+            display: flex;
+            font-size: 14px;
+        }
+
+        .jiazulr.r span {
+            color: #fff;
+            font-size: 12px;
+            /* font-weight: bold; */
+        }
+
+        /* 手册 */
+        .sc {
+            width: 95.5vw;
+            margin-left: 2.25vw;
+            border-radius: 10px;
+        }
+
+        .new-back {
+            background-image: url('../image/back.png');
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <header>
+            <ul class="h-wrap">
+                <li class="h-list">
+                    <div class="for flex-bt">
+                        <div class="left flex">
+                            <div class="back new-back" tapmode onclick="_closeToWin()"></div>
+                            <div class="title ">家族</div>
+                        </div>
+                        <div class="jiazulr r">
+                            <img onclick="showconfrim()" src="../image/jiazu/common_ms_live_top_search_icon_n.png" alt="">
+                            <span class="btn" onclick="_url({url:'frame0/create_jz',title:'创建家族'})">创建家族</span>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+            <div class="swiper-container" v-if="lbList.length>0 && !ios">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide" v-for="(m, index) in lbList"><img :src="returnImg(m.img)" onerror="this.src='../image/error-img.png'" alt="" @click="openSlid(index)"></div>
+                </div>
+            </div>
+            <!-- <img class="sc" onclick="_url({url:'frame0/jiazusc',title:'家族手册'})" src="../image/jiazushouce.png" alt=""> -->
+            <!-- <img class="sc" onclick="_url({url:'about',id: 10, title:'家族手册'})" src="../image/jiazushouce.png" alt=""> -->
+            <div class="tlist new-nav small-nav" style="padding: 10px;">
+                <div class="titem n-list" :class="{active: index==0}" tapmode onclick="randomSwitchBtn(0)">同城</div>
+                <div class="titem n-list" :class="{active: index==1}" tapmode onclick="randomSwitchBtn(1)">附近</div>
+                <!-- <div class="titem n-list" :class="{active: index==1}" tapmode onclick="randomSwitchBtn(1)">总榜</div> -->
+                <div class="titem n-list" :class="{active: index==2}" tapmode onclick="randomSwitchBtn(2)">日榜</div>
+                <div class="titem n-list" :class="{active: index==3}" tapmode onclick="randomSwitchBtn(3)">周榜</div>
+                <!-- <div class="titem n-list" :class="{active: index==4}" tapmode onclick="randomSwitchBtn(4)">最新</div>
+                <div class="titem n-list" :class="{active: index==5}" tapmode onclick="randomSwitchBtn(5)">我的家族</div> -->
+            </div>
+        </header>
+    </div>
+</body>
+<script src="../script/jquery.js"></script>
+<script src="../script/api.js"></script>
+<script src="../script/ffkj.js"></script>
+<script src="../script/group.js"></script>
+<script src="../script/swiper.js"></script>
+<script src="../script/vue.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            index: 0,
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+            lbList: []
+        },
+        methods: {
+            // 轮播跳转
+            openSlid(index) {
+                console.log(index);
+                var _this = this;
+                var data = _this.lbList[index];
+                if (!data.url) return;
+                _url({
+                    url: data.url,
+                    title: '详情'
+                }, 'web')
+            },
+            // 跳转
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+        }
+    })
+    apiready = function() {
+        view.ios = $api.getStorage('shang');
+        $api.fixStatusBar($api.dom('header'));
+        _heibai(1)
+        _listener('newmsg', function(ret) {
+            showMsgFrm(ret.value.data)
+        })
+        getSlide(3, function(data) {
+            view.lbList = data;
+            setTimeout(function() {
+                var mySwiper = new Swiper('.swiper-container', {
+                    loop: true, // 循环模式选项
+                    // on: {
+                    //     touchStart(swiper, event) {
+                    //         console.log('滑动轮播开始');
+                    //         setGroup(false);
+                    //     },
+                    //     touchEnd(swiper, event) {
+                    //         console.log('滑动轮播结束');
+                    //         setGroup(true);
+                    //     },
+                    // },
+                })
+
+                openGroup();
+            }, 300)
+        })
+    }
+
+
+
+    function openGroup() {
+        var h = $api.offset($api.dom('header')).h;
+        var fh = 0;
+        // var fh = $api.offset($api.dom('footer')).h;
+        // var frmArr = ['frame2', 'frame2', 'frame2', 'frame2', 'frame2', 'myjz'];
+        var frmArr = ['frame2', 'frame2', 'frame2', 'frame2'];
+        var paramArr = [{
+            same_city: 1
+        }, {
+            nearby: 1
+        }, {
+            order: 'day'
+        }, {
+            order: 'week'
+        }]
+        groupInit('jiazu', frmArr, h, fh, 0, '', paramArr, {
+            pre: 1
+        }, function(index) {
+            view.index = index;
+        });
+    }
+
+    function randomSwitchBtn(index) {
+        view.index = index
+        // active(index, '.titem'); // cls 使用与组名一致，便于复用
+        api.setFrameGroupIndex({
+            name: 'jiazu',
+            index: index,
+            scroll: true, //是否平滑滚动至目标窗口，即是否带有动画
+            reload: false, // 刷新
+        });
+    }
+
+    // 搜索家族
+    function showconfrim() {
+        api.prompt({
+            title: '输入家族ID搜索'
+        }, function(ret, err) {
+            var text = ret.text;
+            console.log(text)
+            if (!text) {
+                _msg('请输入输入家族ID');
+                return;
+            }
+            _ajax('api/family/info', function(rets, errs) {
+                if (rets && rets.code == 200) {
+                    openQun(text, rets.data.name)
+                } else {
+                    _msg(rets.msg);
+                }
+            }, {
+                id: text,
+                user_id: $api.getStorage('userid'),
+            })
+
+        })
+    }
+</script>
+
+</html>

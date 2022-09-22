@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/aui_font.css">
+    <link rel="stylesheet" href="../../css/user.css">
+    <style>
+        .title {
+            color: #000 !important;
+        }
+        .rule {
+            padding: 14px 14px;
+            font-size: 12px;
+            line-height: 1.8;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap" id="view" v-cloak>
+        <ul class="ul w-bg no-go">
+            <li class="li">
+                <div class="content" style="width: 100%;text-align: right;">
+                    <div class="title" style="word-break: keep-all;width: auto;;">个性化内容推荐</div>
+                    <i class="base-icon my-msg" :class="{'my-msg-close': status}" onclick="changeTuijian()"></i>
+                </div>
+            </li>
+        </ul>
+        <section class="rule" v-if="content">
+            <div class="content" v-html="content">
+            </div>
+        </section>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script src="../../script/yinsi.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            status: $api.getStorage('tuijian_status') == 'undefined' ? 0 : $api.getStorage('tuijian_status'),
+            content: "<p><span style=\"color: rgb(36, 41, 47); font-family: -apple-system, BlinkMacSystemFont, 微软雅黑, \"PingFang SC\", Helvetica, Arial, \"Hiragino Sans GB\", \"Microsoft YaHei\", SimSun, 宋体, Heiti, 黑体, sans-serif; font-size: 14px; background-color: rgb(255, 255, 255);\">个性化内容推荐说明<\/span><br\/><span style=\"color: rgb(36, 41, 47); font-family: -apple-system, BlinkMacSystemFont, 微软雅黑, \"PingFang SC\", Helvetica, Arial, \"Hiragino Sans GB\", \"Microsoft YaHei\", SimSun, 宋体, Heiti, 黑体, sans-serif; font-size: 14px; background-color: rgb(255, 255, 255);\">1.个性化内容推荐功能<\/span><br\/><span style=\"color: rgb(36, 41, 47); font-family: -apple-system, BlinkMacSystemFont, 微软雅黑, \"PingFang SC\", Helvetica, Arial, \"Hiragino Sans GB\", \"Microsoft YaHei\", SimSun, 宋体, Heiti, 黑体, sans-serif; font-size: 14px; background-color: rgb(255, 255, 255);\">个性化内容推荐是指我们基于收集的信息，向您进行定制化内容的展现，如向您展示或推荐相关程度更高的内容。<\/span><br\/><span style=\"color: rgb(36, 41, 47); font-family: -apple-system, BlinkMacSystemFont, 微软雅黑, \"PingFang SC\", Helvetica, Arial, \"Hiragino Sans GB\", \"Microsoft YaHei\", SimSun, 宋体, Heiti, 黑体, sans-serif; font-size: 14px; background-color: rgb(255, 255, 255);\">2.我不喜欢推荐的内容怎么办？<\/span><br\/><span style=\"color: rgb(36, 41, 47); font-family: -apple-system, BlinkMacSystemFont, 微软雅黑, \"PingFang SC\", Helvetica, Arial, \"Hiragino Sans GB\", \"Microsoft YaHei\", SimSun, 宋体, Heiti, 黑体, sans-serif; font-size: 14px; background-color: rgb(255, 255, 255);\">您有权自行控制和决策是否使用个性化内容推荐功能：<\/span><br\/><span style=\"color: rgb(36, 41, 47); font-family: -apple-system, BlinkMacSystemFont, 微软雅黑, \"PingFang SC\", Helvetica, Arial, \"Hiragino Sans GB\", \"Microsoft YaHei\", SimSun, 宋体, Heiti, 黑体, sans-serif; font-size: 14px; background-color: rgb(255, 255, 255);\">1）当您对我们基于个性化内容推荐策略推送的具体信息不感兴趣或希望减少某类信息推荐时，您可以拉黑该内容进行关闭该信息。<\/span><br\/><span style=\"color: rgb(36, 41, 47); font-family: -apple-system, BlinkMacSystemFont, 微软雅黑, \"PingFang SC\", Helvetica, Arial, \"Hiragino Sans GB\", \"Microsoft YaHei\", SimSun, 宋体, Heiti, 黑体, sans-serif; font-size: 14px; background-color: rgb(255, 255, 255);\">2）如果您不希望被推荐个性化的内容，可通过本页设置关闭“个性化内容推荐”。<\/span><br\/><span style=\"color: rgb(36, 41, 47); font-family: -apple-system, BlinkMacSystemFont, 微软雅黑, \"PingFang SC\", Helvetica, Arial, \"Hiragino Sans GB\", \"Microsoft YaHei\", SimSun, 宋体, Heiti, 黑体, sans-serif; font-size: 14px; background-color: rgb(255, 255, 255);\">3.关闭个性化内容推荐的效果是什么？<\/span><br\/><span style=\"color: rgb(36, 41, 47); font-family: -apple-system, BlinkMacSystemFont, 微软雅黑, \"PingFang SC\", Helvetica, Arial, \"Hiragino Sans GB\", \"Microsoft YaHei\", SimSun, 宋体, Heiti, 黑体, sans-serif; font-size: 14px; background-color: rgb(255, 255, 255);\">当您选择关闭个性化内容推荐后，您将无法享受个性化内容推荐服务，我们会基于内容热度等非个性化因素向您展示内容，您可能会看到您不感兴趣甚至不喜欢的内容，您的使用体验可能会受到影响。<\/span><br\/><span style=\"color: rgb(36, 41, 47); font-family: -apple-system, BlinkMacSystemFont, 微软雅黑, \"PingFang SC\", Helvetica, Arial, \"Hiragino Sans GB\", \"Microsoft YaHei\", SimSun, 宋体, Heiti, 黑体, sans-serif; font-size: 14px; background-color: rgb(255, 255, 255);\">个性化推荐将生效当前账号。<\/span><\/p>"
+        }
+    })
+    apiready = function() {
+    }
+    function changeTuijian() { 
+        view.status = (view.status == 1 ? 0 : 1);
+
+        $api.setStorage('tuijian_status', view.status);
+    }
+</script>
+</html>

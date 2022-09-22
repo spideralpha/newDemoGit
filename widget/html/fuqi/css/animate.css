@@ -1,0 +1,443 @@
+@keyframes unlockFootLi {
+  0% {
+    transform: translateX(205%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+@keyframes loading {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(-360deg);
+  }
+}
+@keyframes juxie {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: translate(-3%, -3%) scale(1.1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-6%, -6%) scale(1.2);
+  }
+}
+@keyframes shuiping {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: translate(4%, 4%) scale(1.1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(8%, 8%) scale(1.2);
+  }
+}
+@keyframes tianping {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: translate(5%, -5%) scale(1.1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(10%, -10%) scale(1.2);
+  }
+}
+@keyframes assistImg1_run {
+  0% {
+    opacity: 0;
+    transform: scale(1) translate(0, 0);
+  }
+  25% {
+    opacity: 1;
+    transform: scale(1.2) translate(-0.15rem, -0.15rem);
+  }
+  50% {
+    opacity: 0;
+    transform: scale(1.2) translate(-0.3rem, -0.3rem);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes assistImg2_run {
+  0% {
+    opacity: 0;
+    transform: scale(1) translate(0, 0);
+  }
+  25% {
+    opacity: 1;
+    transform: scale(1.2) translate(-0.15rem, 0.15rem);
+  }
+  50% {
+    opacity: 0;
+    transform: scale(1.2) translate(-0.3rem, 0.3rem);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes assistImg3_run {
+  0% {
+    opacity: 0;
+    transform: scale(1) translate(0, 0);
+  }
+  25% {
+    opacity: 1;
+    transform: scale(1.2) translate(0.16rem, 0.16rem);
+  }
+  50% {
+    opacity: 0;
+    transform: scale(1.2) translate(0.32rem, 0.32rem);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes assistImg4_run {
+  0% {
+    opacity: 0;
+    transform: scale(1) translate(0, 0);
+  }
+  25% {
+    opacity: 1;
+    transform: scale(1.2) translate(0.1rem, -0.1rem);
+  }
+  50% {
+    opacity: 0;
+    transform: scale(1.2) translate(0.2rem, -0.2rem);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes assistImg5_run {
+  0% {
+    opacity: 0;
+    transform: scale(1) translate(0, 0);
+  }
+  25% {
+    opacity: 1;
+    transform: scale(1.2) translate(0.15rem, -0.15rem);
+  }
+  50% {
+    opacity: 0;
+    transform: scale(1.2) translate(0.3rem, -0.3rem);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes ks {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  25% {
+    transform: scale(1.4);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.8);
+    opacity: 1;
+  }
+  75% {
+    transform: scale(2.2);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(2.6);
+    opacity: 0;
+  }
+}
+@keyframes start1 {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0);
+  }
+  10% {
+    opacity: 1;
+    transform: translate(-0.4rem, 0.2rem);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-4rem, 2rem);
+  }
+}
+@keyframes xing {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(9rem, 4rem, 0);
+  }
+}
+@keyframes xing1 {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes xingdian {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-9rem, 4rem, 0);
+  }
+}
+@keyframes ball {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes guess {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(0.9);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes saoguang {
+  0% {
+    left: -200%;
+  }
+  100% {
+    left: 200%;
+  }
+}
+@keyframes opacity {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes opacity1 {
+  0% {
+    opacity: 0.3;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes opacity2 {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes bigger {
+  0% {
+    transform: scale(0);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes bigBell1 {
+  0% {
+    transform: scale(0);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes lx {
+  0% {
+    transform: translate(-42%, -42%);
+  }
+  100% {
+    transform: translate(94%, -83%);
+  }
+}
+@keyframes zl {
+  0% {
+    transform: translate(-42%, -42%);
+  }
+  100% {
+    transform: translate(50%, 46%);
+  }
+}
+@keyframes ah {
+  0% {
+    transform: translate(-42%, -42%);
+  }
+  100% {
+    transform: translate(-146%, 46%);
+  }
+}
+@keyframes xx {
+  0% {
+    transform: translate(-42%, -42%);
+  }
+  100% {
+    transform: translate(-189%, -83%);
+  }
+}
+@keyframes pp {
+  0% {
+    transform: translate(-42%, -42%);
+  }
+  100% {
+    transform: translate(-50%, -175%);
+  }
+}
+@keyframes scan {
+  0% {
+    top: -2.8rem;
+    transform: rotate(180deg);
+  }
+  49.9% {
+    top: 5rem;
+    transform: rotate(180deg);
+  }
+  50% {
+    top: 5rem;
+    transform: rotate(0deg);
+  }
+  100% {
+    top: -2.8rem;
+    transform: rotate(0deg);
+  }
+}
+@keyframes radius {
+  0% {
+    transform: scale(1);
+    border-radius: 0%;
+  }
+  100% {
+    transform: scale(0.8);
+    border-radius: 50%;
+  }
+}
+@keyframes showpp {
+  0% {
+    background: url(../img/lALPBFRyb2MXr_nNAUTM8A_240_324.png) no-repeat center;
+    background-size: cover;
+  }
+  100% {
+    background: url(../img/lALPBFDk8L4CN07NAUTM8A_240_324.png) no-repeat center;
+    background-size: cover;
+  }
+}
+@keyframes ppList {
+  0% {
+    bottom: 0;
+  }
+  100% {
+    bottom: -29.52rem;
+  }
+}
+@keyframes ppListBack {
+  0% {
+    bottom: 0;
+  }
+  70% {
+    bottom: -29.52rem;
+  }
+  100% {
+    bottom: -26.24rem;
+  }
+}
+.ppAn {
+  animation: pp 0.3s linear forwards;
+}
+
+.lxAn {
+  animation: lx 0.3s linear forwards;
+}
+
+.zlAn {
+  animation: zl 0.3s linear forwards;
+}
+
+.ahAn {
+  animation: ah 0.3s linear forwards;
+}
+
+.xxAn {
+  animation: xx 0.3s linear forwards;
+}
+
+.opacity1An {
+  animation: opacity1 0.3s linear forwards;
+}
+
+.opacity2An {
+  animation: opacity2 0.3s linear forwards;
+}
+
+.bellAn, .unlockFootListAn {
+  animation: opacity2 0.1s linear forwards, opacity 0.2s linear 1.2s forwards;
+}
+
+.unlockFootLi0An {
+  animation: unlockFootLi 0.2s linear forwards;
+}
+
+.unlockFootLi1An {
+  animation: unlockFootLi 0.2s linear forwards;
+}
+
+.unlockFootLi2An {
+  animation: unlockFootLi 0.2s linear forwards;
+}
+
+.unlockFootLi0_icon2An {
+  animation: ball 1s linear infinite, opacity 0s linear 0.4s forwards;
+}
+
+.unlockFootLi1_icon2An {
+  animation: ball 1s linear infinite, opacity 0s linear 0.7s forwards;
+}
+
+.unlockFootLi2_icon2An {
+  animation: ball 1s linear infinite, opacity 0s linear 1s forwards;
+}
+
+.unlockFootLi_icon3An {
+  animation: opacity2 0.2s linear forwards;
+}
+
+.ppListBackAn {
+  animation: ppListBack 1.8s ease-out forwards;
+}
+
+.ppListAn {
+  animation: ppList 0.8s ease-out forwards;
+}
+
+.showppAn {
+  animation: showpp 0.5s ease-in-out forwards;
+}
+
+/*# sourceMappingURL=animate.css.map */

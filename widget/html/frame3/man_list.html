@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/aui_font.css">
+    <link rel="stylesheet" href="../../css/chengyuan.css">
+
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <header>
+            <i class="aui-iconfont aui-icon-left" onclick="_closeToWin();"></i>
+            <span>成员列表（{{ffList.length}}人）</span>
+        </header>
+        <div class="list">
+            <div class="item" v-for="(m, index) in ffList" @click="selectMan(m)">
+                <img class="avatar" :src="returnImg(m.avatar)" onerror="this.src='../../image/touxiang.png'" alt="">
+                <div class="right">
+                    <div class="info">
+                        <div class="username">{{m.name}}
+                            <span class="new-fuhao" v-if="m.charmGrade"><img :src="returnImg(m.charmIcon)" onerror="this.src='../../image/icon/meili.png'" alt=""></span>
+                            <span class="new-fuhao" v-if="m.tycoonGrade"><img :src="returnImg(m.tycoonIcon)" onerror="this.src='../../image/icon/tuhao.png'" alt=""></span>
+                            <img v-if="m.is_noble" :src="returnImg(m.noble_icon)" class="new-noble" onerror="this.src='../image/error-img.png'" alt="">
+                        </div>
+                        <div class="tag">
+                            <span class="boy-tag" :class="{'girl-tag':m.sex == '女'}">{{m.age}}</span>
+                        </div>
+                        <!-- <div class="todayactive">今日活跃度：100</div> -->
+                    </div>
+                    <!-- <div class="juese">
+                        族长
+                    </div> -->
+                </div>
+            </div>
+            <!-- <div class="item" v-for="item in 10">
+                <img class="avatar" src="../../image/touxiang.png" alt="">
+                <div class="right">
+                    <div class="info">
+                        <div class="username">奇偶IE个
+                            <span class="new-fuhao"><img src='../../image/icon/meili.png' alt=""></span>
+                            <span class="new-fuhao"><img src='../../image/icon/tuhao.png' alt=""></span>
+                            <img src="../../image/index/live_nobility_bo_msg_ic.png" class="new-noble" onerror="this.src='../image/error-img.png'" alt="">
+                        </div>
+                        <div class="tag">
+                            <div class="tagitem"> <img src="../../image/icon/ic_male_date.png" alt=""> 25 </div>
+                        </div>
+                        <div class="todayactive">今日活跃度：0</div>
+                    </div>
+                </div>
+            </div> -->
+        </div>
+    </div>
+    <script src="../../script/api.js"></script>
+    <script src="../../script/jquery.js"></script>
+    <script src="../../script/ffkj.js"></script>
+    <script src="../../script/vue.js"></script>
+    <script>
+        var view = new Vue({
+            el: '#view',
+            data: {
+                imgurl: imgurl,
+                ffList: [],
+                ffInfo: {},
+                ios: 1, // 1上架 0非上架
+                id: 0
+            },
+            methods: {
+                // 跳转
+                _url: function(param, url) {
+                    _url(param, url);
+                },
+                // 返回图片路径
+                returnImg: function(url) {
+                    return returnImg(url);
+                },
+                selectMan(data) {
+                    api.execScript({
+                        name: 'frame0/qunliao_win',
+                        frameName: 'frame0/qunliao',
+                        script: 'findMan(' + data.id + ', "' + data.name + '")'
+                    })
+                }
+            }
+        })
+        apiready = function() {
+            view.id = api.pageParam['id']
+            $api.fixStatusBar($api.dom('header'));
+            _shangla(function() {
+                _lists('api/cluster/users', 1, 1, {
+                    id: view.id
+                });
+            })
+
+            _scrollToBottom(function() {
+                if (heigutgao == 1) {
+                    pagenum++;
+                    _lists('api/cluster/users', pagenum, '', {
+                        id: view.id
+                    });
+                }
+            })
+
+        }
+    </script>
+</body>
+
+</html>

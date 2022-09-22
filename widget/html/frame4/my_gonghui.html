@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/news.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui_font.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/gonghui.css" />
+    <style>
+        .txt {
+            padding: 100px 0;
+            text-align: center;
+        }
+
+        .tips {
+            width: 100vw;
+            margin: 0;
+            padding: 10px;
+        }
+
+        .input img {
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <div class="wrap" style="padding-bottom: 30px;" v-if="ffInfo.phone">
+            <div class="field">
+                <div class="label">申请人姓名:</div>
+                <div class="input">
+                    <input type="text" placeholder="请输入公会申请者姓名" readonly v-model="ffInfo.nickname">
+                </div>
+            </div>
+            <div class="field">
+                <div class="label">身份证号码:</div>
+                <div class="input">
+                    <input type="text" placeholder="请输入身份证号码" readonly v-model="ffInfo.idcard">
+                </div>
+            </div>
+            <div class="field">
+                <div class="label">联 系 方 式:</div>
+                <div class="input">
+                    <input type="text" placeholder="请输入公会申请者联系电话" readonly v-model="ffInfo.phone">
+                </div>
+            </div>
+            <div class="field">
+                <div class="label">公 会 名 称:</div>
+                <div class="input">
+                    <input type="text" placeholder="请输入公会名称" readonly v-model="ffInfo.name">
+                </div>
+            </div>
+            <div class="field">
+                <div class="label">公 会 人 数:</div>
+                <div class="input">
+                    <input type="text" placeholder="请输入你的公会人数" readonly v-model="ffInfo.count">
+                </div>
+            </div>
+            <div class="field flex-col">
+                <div class="label">公会认证图片:</div>
+                <div class="input">
+                    <img :src="returnImg(ffInfo.image)" onerror="this.src='../../image/error-img.png'" alt="">
+                </div>
+            </div>
+            <div class="tips" v-if="ffInfo.reason && ffInfo.status ==-1">
+                <h3>拒绝原因：</h3>
+                <div class="tip" v-html="ffInfo.reason"></div>
+            </div>
+            <div class="btn" onclick="_url({url:'frame4/apply_gonghui', title:'申请公会'})" v-if="ffInfo.status ==-1">再次申请 </div>
+            <div class="btn" v-if="ffInfo.status ==0">审核中</div>
+        </div>
+        <div v-else>
+            <p class="txt">您还不是公会</p>
+            <div class="btn" onclick="_url({url:'frame4/apply_gonghui', title:'申请公会'})">立即申请</div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/jquery.js"></script>
+<script type="text/javascript" src="../../script/vue.js"></script>
+<script type="text/javascript" src="../../script/ffkj.js"></script>
+<script type="text/javascript">
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+        },
+        methods: {
+            // 跳转
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+        }
+    })
+    apiready = function () {
+        getData()
+    }
+
+    function getData() {
+        _ajax('api/proxy/info', function (ret, err) {
+            if (ret && ret.code == 200) {
+                view.ffInfo = ret.data;
+            }
+        }, {
+            user_id: $api.getStorage('userid'),
+        })
+    }
+</script>
+
+</html>

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/aui_font.css">
+    <link rel="stylesheet" href="../../css/win.css">
+    <link rel="stylesheet" href="../../css/liao_win.css">
+    <style>
+        footer {
+            background: #fff;
+            position: fixed;
+            bottom: 0;
+            width: 100vw;
+        }
+
+        header .back {
+            background-image: url('../../image/back_w.png');
+        }
+
+        header .title {
+            width: 100%;
+            text-align: center;
+            color: #fff;
+            margin: 0;
+        }
+
+        .aui-iconfont {
+            color: #fff;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <header>
+            <div class="head new-padding-10 flex-c">
+                <div class="back" onclick="_closeToWin()"></div>
+                <!-- 亲密度大于0显示 -->
+                <div class="title love-wrap flex-c" v-if="info.data.intimate>0 && !info.data.kefu">
+                    <img class="love-head" :src="returnImg(info.another.avatar)" onerror="this.src='../../image/touxiang.png'" alt="">
+                    <div class="love-score">
+                        <img src="../../image/chat.png" alt="">
+                        <p>{{info.data.intimate}}°C</p>
+                    </div>
+                    <img class="love-head" :src="returnImg(info.self.avatar)" onerror="this.src='../../image/touxiang.png'" alt="">
+                </div>
+                <div class="title" v-else>{{title}}</div>
+                <!-- 普通用户 非客服 -->
+                <div class="more new-hide" onclick="_more()">更多</div>
+            </div>
+        </header>
+        <!-- 聊天背景 -->
+        <div class="ltbg" v-if="info.another && info.another.avatar">
+            <img id="ltbg" :src="returnImg(info.another.avatar)" onerror="this.src='../../image/touxiang.png'" alt="">
+        </div>
+        <footer></footer>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+            score: 0,
+            title: '',
+            touserid: '',
+
+            info: {
+                self: {},
+                another: {},
+                data: {
+                    intimate: 0,
+                    topChat: 0
+                }
+            },
+        },
+        methods: {
+            // 跳转
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+            showDetail(url, data, topH, footerH) {
+                showDetail(url, data, topH, footerH);
+            },
+        }
+    })
+    var moreType = 0;
+    apiready = function() {
+        view.touserid = api.pageParam['touserid'];
+        $api.fixStatusBar($api.dom('header'));
+        $api.fixTabBar($api.dom('footer'));
+
+        view.title = api.pageParam['title'];
+
+        if (api.pageParam['keyback'] == 1) {
+            keyback();
+        } else {
+            _listener('keyback', function() {
+                _closeToWin();
+            })
+        }
+        // 置顶聊天
+        _listener('setMsgTop', function(ret) {
+            if (ret.value.uid == view.touserid) {
+                view.info.data.topChat = ret.value.val;
+            }
+        })
+        api.pageParam.frmBg = 0; // frame背景设为透明
+
+        getData()
+    }
+
+    // 获取双方资料
+    function getData() {
+        _ajax('api/privatechat/detail', function(ret, err) {
+            if (ret && ret.code == 200 && ret.data) {
+                var dd = ret.data;
+                view.info = dd;
+                if (!api.pageParam['title']) {
+                    view.title = dd.another.name;
+                }
+                if (view.info.data.kefu != 1) {
+                    var html = '<i class="aui-iconfont aui-icon-more"></i>';
+                    $api.html($api.dom('.more'), html);
+                    $api.removeCls($api.dom('.more'), 'new-hide');
+                    moreType = 1;
+                }
+                api.pageParam['info'] = dd;
+
+                if (view.info.data.kefu != 1) {
+                    setTimeout(function() {
+                        _openFrame('frame0/liaotian', '', '1', api.pageParam);
+                    }, 300)
+                } else {
+                    setTimeout(function() {
+                        _openFrame('frame0/liaotian_kf', '', '1', api.pageParam);
+                    }, 300)
+                }
+            }
+        }, {
+            user_id: $api.getStorage('userid'),
+            to_user: view.touserid
+        })
+    }
+
+    function changeScore(s) {
+        if (s && view.info.data.kefu != 1) {
+            view.info.data.intimate = s;
+            // ios 行为诡异 除第一次外会赋值失败 故使用dom赋值
+            if (api.systemType == 'ios') {
+                $('.love-score p').text(s + '°C');
+            }
+        }
+    }
+
+    // 更多
+    function _more() {
+        if (!moreType) return;
+        if (view.info.data.kefu != 0) return;
+        // api.execScript({
+        //     frameName: 'frame0/liaotian',
+        //     script: '_more()'
+        // })
+        _url({
+            url: 'frame0/chat_set',
+            title: '聊天设置',
+            uid: view.touserid,
+            data: view.info
+        })
+    }
+
+    // 修改备注
+    function changeTitle(title) {
+        view.title = title;
+    }
+</script>
+
+</html>

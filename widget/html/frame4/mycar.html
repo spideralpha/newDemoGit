@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/aui_font.css">
+    <title>Document</title>
+    <style>
+        html,
+        body {
+            margin: 0;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            padding: 0 14px;
+            height: 50px;
+            line-height: 50px;
+            font-size: 14px;
+            position: sticky;
+            top: 0;
+            background-color: #fff;
+            z-index: 2;
+        }
+
+        header .aui-icon-left {
+            margin-right: 6px;
+            font-size: 14px;
+        }
+
+        header .right {
+            font-size: 12px;
+        }
+
+        .listbox {
+            margin: 0 14px;
+            position: relative;
+        }
+
+        .list {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .bg {
+            width: 96%;
+            margin-top: -200px;
+        }
+
+        .carname {
+            text-align: center;
+            font-size: 13px;
+        }
+
+        .item {
+            width: 100vw;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .item img {
+            height: 250px;
+            width: 250px;
+            object-fit: contain;
+            z-index: 1;
+        }
+
+        .status {
+            position: absolute;
+            right: 6px;
+            top: 0;
+            width: 20%;
+        }
+
+        .status.expired {
+            width: 50%;
+            left: 25%;
+            top: 15%;
+            z-index: 1;
+        }
+
+        .time {
+            font-size: 12px;
+            color: #757575;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view">
+        <header>
+            <div class="hleft">
+                <span class="aui-iconfont aui-icon-left" onClick="_closeToWin()"></span>
+                我的车库
+            </div>
+            <div class="right" onClick="submit()">保存</div>
+        </header>
+        <div class="listbox">
+            <div class="list" v-for="(m, index) in ffList" @click="select=index;">
+                <div class="item">
+                    <img :src="returnImg(m.cover)" onerror="this.src='../../image/error-img.png'" alt="">
+                </div>
+                <img class="bg" src="../../image/more/ms_car_place_bgs.png" alt="">
+                <div class="carname">
+                    <p class="name">{{m.name}}</p>
+                    <p class="time" v-if="!m.is_expire">到期时间 {{m.expire}}</p>
+                </div>
+                <img src="../../image/more/ms_car_expired_sign.png" alt="" class="status expired" v-if="m.is_expire==1">
+                <img src="../../image/more/ms_car_display_sign.png" alt="" class="status" v-if="!m.is_expire && select==index">
+            </div>
+            <!-- <div class="list">
+                <div class="item">
+                    <img src="../../image/test/car1.png" alt="">
+                </div>
+                <img class="bg" src="../../image/more/ms_car_place_bgs.png" alt="">
+                <div class="carname">
+                    <p class="name">辉煌战绩跑车</p>
+                </div>
+                <img src="../../image/more/ms_car_expired_sign.png" alt="" class="status expired">
+                <img src="../../image/more/ms_car_display_sign.png" alt="" class="status">
+            </div> -->
+            <div id="no_more" class="null" v-if="ffList.length==0"></div>
+        </div>
+    </div>
+
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script src="../../json/mycar.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+            select: -1,
+        },
+        methods: {
+            // 跳转
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+        }
+    })
+    apiready = function() {
+        $api.fixStatusBar($api.dom('header'));
+        getMyCar();
+    }
+
+    // 获取我的座驾
+    function getMyCar() {
+        _ajax('api/car/myCar', function(ret, err) {
+            if (ret && ret.code == 200) {
+                for (var i = 0, len = ret.data.length; i < len; i++) {
+                    if (ret.data[i].is_select == 1) {
+                        view.select = i;
+                    }
+                }
+                view.ffList = ret.data;
+            }
+        }, {
+            user_id: $api.getStorage('userid')
+        })
+    }
+
+    // 设置默认座驾
+    function submit() {
+        if (view.select == -1) {
+            _msg('请选择座驾');
+            return;
+        }
+        var id = view.ffList[view.select].id;
+        _ajax('api/car/select', function(ret, err) {
+            _msg(ret.msg);
+        }, {
+            user_id: $api.getStorage('userid'),
+            id: id
+        })
+    }
+</script>
+
+</html>

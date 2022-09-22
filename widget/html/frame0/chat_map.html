@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>小火苗</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    </script>
+    <style>
+        .default-ul {
+            width: 100%;
+            height: 35vh;
+            overflow-y: auto;
+            margin-top: 65vh;
+            position: fixed;
+            top: 0;
+        }
+
+        .area-ul .list {
+            border-bottom: 1px solid #eee;
+            margin: 0 10px;
+            padding: 10px 0;
+            position: relative;
+        }
+
+        .area-ul .list.active::after {
+            background-image: url('../../image/select2.png');
+            background-size: 100%;
+            width: 20px;
+            height: 20px;
+            position: absolute;
+            right: 10px;
+            display: inline-block;
+            content: '';
+            top: calc(50% - 10px);
+        }
+
+        .area-ul .list .name {
+            font-size: 14px;
+            /* font-weight: bold;
+            font-size: 16px; */
+        }
+
+        .area-ul .list .desc {
+            font-size: 12px;
+            color: #757575;
+            margin-top: 7px;
+            max-width: 90%;
+        }
+
+        /* 头部 */
+        header {
+            font-size: 14px;
+            color: #333;
+            position: sticky;
+            position: -webkit-sticky;
+            top: 0;
+            z-index: 1;
+            background: #fff;
+        }
+
+        .header {
+            padding: 10px;
+        }
+
+        header .search {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        header .input {
+            display: flex;
+            align-items: center;
+            border: 1px solid #eee;
+            padding: 7px;
+            border-radius: 15px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        header .input input {
+            width: 100%;
+            margin-left: 10px;
+        }
+
+        header .input img {
+            width: 15px;
+        }
+
+        header .search button {
+            color: #757575;
+            word-break: keep-all;
+            margin-left: 15px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <header>
+            <div class="header">
+                <div class="flex-bt ">
+                    <button onclick="api.closeFrame();">取消</button>
+                    <button onclick="submit()">发送</button>
+                </div>
+                <div class="search" v-if="!searchType">
+                    <div class="input" @click="searchType=1">
+                        <img src="../../image/icon/ic_navi_search.png" alt="">
+                        <input type="text" placeholder="回车搜索" readonly>
+                    </div>
+                </div>
+                <div class="search" v-else>
+                    <div class="input">
+                        <img src="../../image/icon/ic_navi_search.png" alt="">
+                        <input type="text" placeholder="回车搜索" v-model="kw" @keyup.enter="search">
+                        <img v-if="kw" @click="kw=''" src="../../image/task/tk_close.png" alt="">
+                    </div>
+                    <button @click="searchType=0;kw=''">取消</button>
+                </div>
+            </div>
+        </header>
+        <ul class="area-ul default-ul" v-if="!searchType">
+            <!-- <li class="list" @click="selectArea(area.formatted_address, area.location.lng, area.location.lat)">
+                <p class="name">【位置】</p>
+                <p class="desc">{{area.formatted_address}}</p>
+            </li> -->
+            <li class="list " :class="{'active':active==index}" v-for="(m,index) in ffList" @click="active=index">
+                <p class="name">{{m.name}}</p>
+                <p class="desc aui-ellipsis-1">{{m.address}}</p>
+            </li>
+        </ul>
+        <!-- 搜索推荐列表 -->
+        <ul class="area-ul" v-else>
+            <li class="list " v-for="(m,index) in sList" @click="setPoint(m)">
+                <p class="name aui-ellipsis-1">{{m.name}}</p>
+                <p class="desc aui-ellipsis-1">{{m.address}}</p>
+            </li>
+        </ul>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script src="../../script/map.js"></script>
+<script src="../../json/map.js"></script>
+<script>
+    var map;
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffInfo: {},
+            ffList: [],
+            ios: 1, // 1上架 0非上架
+            area: {},
+
+            kw: '',
+            searchType: 0, // 是否处于搜索状态 1是 0否
+            active: -1,
+            page: 0,
+            sList: [], // 搜索列表
+        },
+        watch: {
+            searchType: function(n, o) {
+                // 监听搜索状态
+                if (n == 1) {
+                    map.hide();
+                } else {
+                    map.show();
+                }
+            }
+        },
+        methods: {
+            // 设置中心点
+            setPoint(data) {
+                view.searchType = 0;
+                map.point({
+                    lon: data.lon,
+                    lat: data.lat
+                });
+                map.getAddress(data.lon, data.lat, function(retg) {
+                    if (retg && retg.status) {
+                        view.ffList = retg.poiList;
+                        view.active = 0;
+                    }
+                })
+            },
+            // 搜索
+            search() {
+                if (!view.kw) return;
+                view.active = -1;
+                search(0);
+            },
+            returnImg(url) {
+                return returnImg(url);
+            },
+            // 选择地址
+            selectArea: function(key, lon, lat) {
+                var obj = {
+                    key: key,
+                    lon: lon,
+                    lat: lat
+                }
+                _send('areaSelect', {
+                    area: obj
+                })
+                timerWin();
+            },
+            _url: function(param, url) {
+                _url(param, url);
+            },
+        }
+    })
+
+    apiready = function() {
+        $api.fixStatusBar($api.dom('header'));
+        map = new Map();
+        getNear();
+
+        _scrollToBottom(function() {
+            if (heigutgao == 1 && view.searchType == 1) {
+                view.page++;
+                search(view.page)
+            }
+        })
+
+    }
+
+    // 获取附近地址
+    function getNear() {
+        map.getLocation(function(ret, err) {
+            if (ret) {
+                var y = $api.offset($api.dom('header')).h;
+                var h = api.frameHeight * 0.65 - y;
+                map.open({
+                    y: y,
+                    h: h
+                }, function() {
+                    map.point({
+                        lon: ret.lon,
+                        lat: ret.lat
+                    });
+                })
+                map.getAddress(ret.lon, ret.lat, function(retg) {
+                    if (retg && retg.status) {
+                        view.ffList = retg.poiList;
+                        view.active = 0;
+                    }
+                })
+            }
+        })
+    }
+
+    function submit() {
+        if (view.active == -1) return;
+        _msg('发送中...')
+        var data = view.ffList[view.active].coord;
+        var obj = {
+            type: 6,
+            content: data.lon + ',' + data.lat,
+        }
+        if (api.pageParam['qunType']) {
+            api.execScript({
+                name: 'frame0/qunliao_win',
+                frameName: 'frame0/qunliao',
+                script: 'sendMsg(' + JSON.stringify(obj) + ')'
+            })
+        } else {
+            api.execScript({
+                name: 'frame0/liaotian_win',
+                frameName: 'frame0/liaotian',
+                script: 'sendMsg(' + JSON.stringify(obj) + ')'
+            })
+        }
+    }
+
+
+    // 搜索
+    function search(page) {
+        _loading();
+        if (page == 0) {
+            view.page = 0;
+            view.sList = [];
+            heigutgao = 1;
+        }
+        map.searchN({
+            kw: view.kw,
+            page: page
+        }, function(ret) {
+            _loadingClose();
+            if (ret.length == 0) {
+                heigutgao = 0;
+            }
+            view.sList = view.sList.concat(ret);
+        })
+    }
+</script>
+
+</html>

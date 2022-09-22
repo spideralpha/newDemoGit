@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>title</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui_font.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/news.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/frame3.css" />
+    <style>
+
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <section class="m-frame">
+            <ul class="item" v-if="!ios">
+                <li class="item_li" onclick="_url({url:'frame4/set_shoufei', title:'收费设置'})">
+                    <div class="lt">收费设置</div>
+                    <div class="rt">
+                        <span class="aui-iconfont aui-icon-right"></span>
+                    </div>
+                </li>
+            </ul>
+            <ul class="item">
+                <li class="item_li" v-if="!ios" onclick="_url({slidBackEnabled:0}, 'frame4/meiyan_win')">
+                    <div class="lt">美颜设置</div>
+                    <div class="rt">
+                        <span class="aui-iconfont aui-icon-right"></span>
+                    </div>
+                </li>
+                <!-- <li class="item_li" v-if="!ios" onclick="_url({url:'frame4/set_guizu', title:'贵族特权设置'})">
+                    <div class="lt">贵族特权设置</div>
+                    <div class="rt">
+                        <span class="aui-iconfont aui-icon-right"></span>
+                    </div>
+                </li> -->
+                <li class="item_li" v-if="!ios" onclick="_url({url:'frame4/set_yinsi', title:'隐私设置'})">
+                    <div class="lt">隐私设置</div>
+                    <div class="rt">
+                        <span class="aui-iconfont aui-icon-right"></span>
+                    </div>
+                </li>
+                <li class="item_li" v-if="!ios" onclick="_url({url:'frame4/set_tong', title:'通用设置'})">
+                    <div class="lt">通用设置</div>
+                    <div class="rt">
+                        <span class="aui-iconfont aui-icon-right"></span>
+                    </div>
+                </li>
+                <li class="item_li" v-if="!ios" onclick="_url({url:'frame2/set_notice', title:'新消息通知'})">
+                    <div class="lt">新消息通知</div>
+                    <div class="rt">
+                        <span class="aui-iconfont aui-icon-right"></span>
+                    </div>
+                </li>
+                <li class="item_li" onclick="_url({url:'frame4/wo_de_hei_ming_dan_frame', title: '黑名单'})">
+                    <div class="lt">黑名单</div>
+                    <div class="rt">
+                        <span class="aui-iconfont aui-icon-right"></span>
+                    </div>
+                </li>
+                <li class="item_li" onclick="_url({url:'frame2/set_tuijian', title:'个性化内容推荐管理'})">
+                    <div class="lt">个性化内容推荐管理</div>
+                    <div class="rt">
+                        <span class="aui-iconfont aui-icon-right"></span>
+                    </div>
+                </li>
+                <!-- <li class="item_li" onclick="_url({url:'frame3/qing_shao_nian', title:'青少年模式'})">
+                    <div class="lt">青少年模式</div>
+                    <div class="rt">
+                        <span class="aui-iconfont aui-icon-right"></span>
+                    </div>
+                </li> -->
+            </ul>
+            <ul class="item">
+                <li class="item_li" onclick="_url({url: 'frame3/safe', title: '账号与安全'})">
+                    <div class="lt">账号与安全</div>
+                    <div class="rt">
+                        <span class="f-size12"></span>
+                        <span class="aui-iconfont aui-icon-right"></span>
+                    </div>
+                </li>
+                <li class="item_li" onclick="_url({url: 'frame4/helpcenter', title: '帮助中心'})">
+                    <div class="lt">帮助中心</div>
+                    <div class="rt">
+                        <span class="f-size12"></span>
+                        <span class="aui-iconfont aui-icon-right"></span>
+                    </div>
+                </li>
+                <li class="item_li" onclick="_url({url:'user/pwd', title:'设置密码'})">
+                    <div class="lt">设置密码</div>
+                    <div class="rt">
+                        <span class="f-size12"></span>
+                        <span class="aui-iconfont aui-icon-right"></span>
+                    </div>
+                </li>
+                <li class="item_li" onclick="zhuxiao()">
+                    <div class="lt">注销账号</div>
+                    <div class="rt">
+                        <span class="f-size12"></span>
+                        <span class="aui-iconfont aui-icon-right"></span>
+                    </div>
+                </li>
+                <li class="item_li" onclick="_url({url: 'frame4/about', title: '关于我们'})">
+                    <div class="lt">关于小火苗</div>
+                    <div class="rt">
+                        <span class="f-size12"></span>
+                        <span class="aui-iconfont aui-icon-right"></span>
+                    </div>
+                </li>
+            </ul>
+            <ul class="item">
+                <li class="item_li flex-c" onclick="_login()">
+                    <div class="flex-c" style="width: 100%;color: #7338d8;font-weight: bold;">退出当前账号</div>
+                </li>
+            </ul>
+        </section>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/jquery.js"></script>
+<script type="text/javascript" src="../../script/ffkj.js"></script>
+<script type="text/javascript" src="../../script/vue.js"></script>
+<script type="text/javascript">
+    var view = new Vue({
+        el: '#view',
+        data: {
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+        },
+        methods: {
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+        }
+    })
+    apiready = function() {
+        view.ios = $api.getStorage('shang');
+
+        // 获取用户信息
+        _getUser(function(ret) {
+            view.ffInfo = ret.result;
+        })
+    }
+
+
+    // 修改隐身信息是否显示
+    function changeSocial(ziduan) {
+        view.ffInfo[ziduan] = view.ffInfo[ziduan] == 1 ? 0 : 1;
+        var obj = {
+            user_id: $api.getStorage('userid'),
+        }
+        obj[ziduan] = view.ffInfo[ziduan];
+        _ajax('api/user/editInfo', function(ret, err) {
+            console.log(JSON.stringify(ret))
+            console.log(JSON.stringify(err))
+        }, obj)
+    }
+
+    // 注销账号
+    function zhuxiao() {
+        var obj = {
+            msg: '注销账号会清空您的所有的账信息，是否要继续注销？'
+        }
+        _confirm(obj, function(bIndex) {
+            if (bIndex == 1) {
+                if (!view.ffInfo.phone) {
+                    _url({
+                        url: 'frame4/bang_ding_shou_ji_frm',
+                        title: '绑定手机'
+                    })
+                } else {
+                    _url({
+                        url: 'user/delete',
+                        title: '注销账号',
+                        phone: view.ffInfo.phone
+                    })
+                }
+            }
+        })
+
+    }
+</script>
+
+</html>

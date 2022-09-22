@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>小火苗</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <style>
+        /* 金币 */
+        .icon {
+            background-image: url('../../image/member/recharge_icon_gold.png');
+            background-size: 100%;
+            width: 20px;
+            height: 20px;
+        }
+
+        .top {
+            position: relative;
+            /* padding-top: 20px; */
+        }
+
+        .top-bg {
+            width: 100%;
+        }
+
+        .top .money {
+            position: absolute;
+            width: 100%;
+            box-sizing: border-box;
+            padding: 10px;
+            bottom: 20px;
+
+        }
+
+        .top .money .left {
+            display: flex;
+            align-items: baseline;
+        }
+
+        .top .money span {
+            color: #757575;
+            font-size: 12px;
+        }
+
+        .top .money h3 {
+            font-weight: normal;
+            font-size: 25px;
+            color: #CD7DFE;
+            margin-left: 10px;
+            margin-right: 5px;
+        }
+
+        .content {
+            padding: 20px;
+            border-radius: 20px 20px 0 0;
+            margin-top: -20px;
+            z-index: 1;
+            background: #fff;
+            position: relative;
+            overflow-y: auto;
+            max-height: 70vh;
+        }
+
+        .money-ul {
+            position: relative;
+        }
+
+        .money-ul .list {
+            border: 1px solid #eee;
+            border-radius: 5px;
+            text-align: center;
+            width: calc((100% - 20px) / 3);
+            margin-right: 10px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+            padding: 20px 0 10px;
+            border-radius: 7px;
+            position: relative;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .money-ul .list:nth-child(3n) {
+            margin-right: 0;
+        }
+
+        /* 首冲 */
+        .money-ul .list.first::before {
+            display: inline-block;
+            content: '';
+            background-image: url('../../image/member/recharge_label_discount.png');
+            width: 64px;
+            height: 20px;
+            background-size: 100%;
+            position: absolute;
+            top: -10px;
+            left: -1px;
+        }
+
+        .money-ul .price {
+            font-size: 20px;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .money-ul .txt {
+            font-size: 10px;
+            color: #CD7DFE;
+        }
+
+        .money-ul .money {
+            color: #555;
+        }
+
+        .title {
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        /* 支付 */
+        .pay-ul .list {
+            width: 48%;
+            border: 1px solid #eee;
+            border-radius: 5px;
+            text-align: center;
+            padding: 7px 0;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .pay-ul .list img {
+            width: 20px;
+            margin-right: 5px;
+        }
+
+
+        /* 选中 */
+        .list.active {
+            border: 1px solid #CD7DFE;
+        }
+
+        .list.active::after {
+            display: inline-block;
+            content: '';
+            background-image: url('../../image/member/recharge_select.png');
+            width: 20px;
+            height: 20px;
+            background-size: 100%;
+            position: absolute;
+            bottom: 0;
+            right: 0;
+        }
+
+        footer {
+            padding: 20px;
+            position: fixed;
+            background: #fff;
+            bottom: 0;
+            width: 100%;
+            box-sizing: border-box;
+            z-index: 1;
+        }
+
+        .chong-btn {
+            border-radius: 20px;
+            line-height: 40px;
+            font-weight: bold;
+            text-align: center;
+            width: 100%;
+            color: #fff;
+            background: linear-gradient(to right, #ff66c1, #CD7DFE);
+        }
+
+        footer .rw {
+            background-image: url('../../image/member/mark_prizedraw_icon.png');
+            background-size: 100%;
+            width: 62px;
+            height: 20px;
+            position: absolute;
+            right: 0px;
+            top: -10px;
+            font-size: 10px;
+            text-align: center;
+            color: #fff;
+        }
+
+        .xieyi {
+            text-align: center;
+            font-size: 12px;
+            padding: 10px 0;
+        }
+
+        .xieyi a {
+            color: #388bff;
+        }
+
+        .footer {
+            position: relative;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <div class="top">
+            <img class="top-bg" src="../../image/member/recharge_bg2.jpg" alt="">
+            <div class="money flex-bt" onclick="_url({url:'frame4/duihuan', title:'兑换'})">
+                <div class="left">
+                    <span>金币余额</span>
+                    <h3>{{myMoney}}</h3>
+                    <span class="icon"></span>
+                </div>
+                <img style="width: 20px;" src="../../image/icon/go.png" alt="">
+            </div>
+        </div>
+        <div class="content">
+            <ul class="money-ul flex-w">
+                <li class="list" @click="cIndex=index" :class="{'active':cIndex==index, 'first':m.is_first==1}" v-for="(m, index) in ffList">
+                    <p class="price">{{m.money}}<span class="icon"></span></p>
+                    <p class="txt" v-if="m.reward_money">送{{m.reward_money}}金币</p>
+                    <p class="txt" v-if="m.reward_noble_name">送{{m.reward_noble_day}}天{{m.reward_noble_name}}</p>
+                    <p class="txt" v-if="m.reward_car_name">送{{m.reward_car_day}}天{{m.reward_car_name}}</p>
+                    <p class="money">￥{{m.price}}</p>
+                </li>
+                <!-- <li class="list" :class="{'active':cIndex==index, 'first':m.is_first==1}" v-for="(m, index) in ffList">
+                    <p class="price">{}<span class="icon"></span></p>
+                    <p class="txt">送20金币</p>
+                    <p class="txt">送7天骑士贵族</p>
+                    <p class="money">￥1</p>
+                </li> -->
+            </ul>
+            <p class="title">充值方式</p>
+            <ul class="pay-ul flex-bt">
+                <li class="list" v-if="PAY_W" :class="{'active':payIndex==0}" @click="payIndex=0"><img src="../../image/member/recharge_icon_wechat.png" alt="">{{escape_w}}支付</li>
+                <li class="list" v-if="PAY_A" :class="{'active':payIndex==1}" @click="payIndex=1"><img src="../../image/member/recharge_icon_zhi.png" alt="">{{escape_a}}支付</li>
+            </ul>
+            <p class="xieyi">阅读并同意<a onclick="_url({url:'about', title:'充值协议',id: 15})">《充值协议》</a> <br>请勿轻信任何非官方渠道的虚拟充值信息进行充值，谨慎诈骗等不法行为及由此带来的法律风险！禁止未成年人充值！若充值遇到问题，请及时联系<a onclick="window.location.href='https://chaten.sobot.com/chat/h5/v2/index.html?sysnum=2dc365c4a115420fbb8eae514b1d936d&source=2'">在线客服</a></p>
+        </div>
+        <footer>
+            <div class="footer">
+                <span class="rw">充值抽奖</span>
+                <button class="chong-btn" onclick="submit()">立即充值</button>
+            </div>
+        </footer>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script src="../../script/jsencrypt.js"></script>
+<script src="../../script/zhifu.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+
+            myMoney: 0,
+            payIndex: 1, //1 支付A 0vx
+            cIndex: 0,
+            PAY_A: PAY_A,
+            PAY_W: PAY_W,
+            escape_a: escape_a,
+            escape_w: escape_w
+        },
+        methods: {
+            // 跳转
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+        }
+    })
+
+    apiready = function() {
+        _listener('viewappear', function() {
+            getMyMoney();
+            getChong();
+        })
+        getMyMoney();
+        getChong();
+    }
+
+    // 渲染充值列表
+    function getChong() {
+        _ajax('api/Topup/lists', function(ret, err) {
+            console.log(JSON.stringify(ret));
+            console.log(JSON.stringify(err));
+            if (ret && ret.code == 200) {
+                view.ffList = ret.data;
+            }
+        }, {
+            user_id: $api.getStorage('userid')
+        })
+    }
+
+    // 获取余额
+    function getMyMoney() {
+        _ajax('api/user/userVolley', function(ret, err) {
+            console.log(JSON.stringify(ret));
+            console.log(JSON.stringify(err));
+            if (ret && ret.code == 200) {
+                view.myMoney = ret.volley;
+            }
+        }, {
+            user_id: $api.getStorage('userid'),
+        })
+    }
+
+    // 确定
+    function submit() {
+        var userid = $api.getStorage('userid');
+        var data = view.ffList[view.cIndex];
+
+        var param = setRSA('[userid={{' + userid + '}}][id={{' + data.id + '}}][paymethod={{' + view.payIndex + '}}]');
+        _ajax('api/topup/recharge', function(ret, err) {
+            console.log(JSON.stringify(ret))
+            console.log(JSON.stringify(err))
+            var payType = view.payIndex == 1 ? 'pay_a' : 'pay_w';
+            if (ret.code == 200) {
+                openOtherPay({
+                    money: data.price,
+                    payType: payType,
+                    info: ret.data,
+                }, function() {
+                    openOtherPaySuccess()
+                })
+            } else {
+                _msg(ret.msg);
+            }
+        }, {
+            z: param,
+        })
+    }
+
+
+    // 设置密钥
+    function setRSA(msg) {
+        var rsa = new JSEncrypt();
+        rsa.setPublicKey(
+            '-----BEGIN PUBLIC KEY-----MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCpvdExvx5zybwFboU1NSjuIghiuXNQSNiJ27G8iETbJdhtibKvTlbyzBVhq0brhnG16MG29pf8055zwODYKpWC+hPVJTflzhcYEVEqRpstq9q2BHe75ErRgjYIQiNGZJ11czQUj82TgDP3xMKntpchel5J3XbYfGjMzG3nARoOpwIDAQAB-----END PUBLIC KEY-----',
+            '10001');
+        return rsa.encrypt(msg);
+    }
+
+    // 重载 支付成功
+    function openOtherPaySuccess() {
+        _url({
+            data: view.ffList[view.cIndex],
+            title: '',
+        }, 'frame4/chong_success')
+        // _url({
+        //     url: 'frame3/choujiang',
+        //     title: '首冲抽奖',
+        //     winName: 'member_win'
+        // })
+        _send('pay_refresh');
+    }
+
+    function _more() {
+        _url({
+            url: 'frame4/zhangdan',
+            title: '账单'
+        })
+    }
+
+    // 联系客服
+    function openService() {
+        _ajax('api/Member/kefu', function(ret, err) {
+            if (ret && ret.data && ret.data.id) {
+                _url({
+                    touserid: ret.data.id,
+                    title: '与客服的聊天',
+                    moreType: 1,
+                }, 'frame0/liaotian_win')
+            } else {
+                _msg('暂无法联系客服');
+            }
+        })
+    }
+</script>
+
+</html>

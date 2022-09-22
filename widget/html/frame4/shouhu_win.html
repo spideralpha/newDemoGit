@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/aui_font.css">
+    <link rel="stylesheet" href="../../css/sh_win.css">
+    <style>
+    </style>
+</head>
+
+<body>
+    <header id="view" v-cloak>
+        <div class="header">
+            <i class="aui-iconfont aui-icon-left" onClick="_closeToWin()"></i>
+            <div class="tabs">
+                <div class="tab active" tapmode onclick="randomSwitchBtn(0)">我守护</div>
+                <div class="tab" tapmode onclick="randomSwitchBtn(1)">守护我</div>
+            </div>
+            <!-- <i class="aui-iconfont aui-icon-question" onClick="showDetail('frame4/shouhu_rule')"></i> -->
+        </div>
+    </header>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/vue.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/group.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            index: 0
+        },
+        methods: {}
+    })
+
+    apiready = function() {
+        $api.fixStatusBar($api.dom('header'))
+        _heibai(1);
+        var h = $api.offset($api.dom('header')).h;
+        groupInit('shouhu', ['frame4/shouhu', 'frame4/shouhu'], h, 0, 0, '.tab', [{
+            types: 1
+        }, {
+            types: 2
+        }], {
+            pre: 2
+        });
+
+        _listener('newmsg', function(ret) {
+            showMsgFrm(ret.value.data)
+        })
+    }
+
+    function randomSwitchBtn(index) {
+        active(index, '.tab')
+        api.setFrameGroupIndex({
+            name: 'shouhu',
+            index: index,
+            scroll: true, //是否平滑滚动至目标窗口，即是否带有动画
+            reload: false, // 刷新
+        });
+    }
+</script>
+
+</html>

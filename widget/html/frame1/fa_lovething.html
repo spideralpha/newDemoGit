@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/aui_font.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <style>
+        html,
+        body {
+            background-color: rgb(247, 247, 247);
+        }
+
+        .dy-wrap .list {
+            display: flex;
+            align-items: center;
+            background: #fff;
+            border-bottom: 1px solid #eee;
+            padding: 15px;
+            font-size: 14px;
+        }
+
+        .dy-wrap .list .title {
+            font-weight: bold;
+            margin-right: 10px;
+            /* color: #222; */
+            color: #333333;
+            word-break: keep-all;
+        }
+
+        .dy-wrap .list .content {
+            width: 100%;
+        }
+
+        .dy-wrap .list .content textarea {
+            width: 100%;
+            resize: none;
+            height: 120px;
+            line-height: 20px;
+        }
+
+        .dy-wrap .list .content input {
+            width: 100%;
+        }
+
+        .new-submit {
+            font-size: 14px;
+        }
+
+        /* 配图 */
+        .dy-wrap .list.tu {
+            align-items: flex-start;
+            padding-bottom: 0;
+        }
+
+        .dy-wrap .list.tu .i-list {
+            position: relative;
+            margin-bottom: 15px;
+            margin-right: 15px;
+        }
+
+        .dy-wrap .list.tu .img {
+            height: 80px;
+            width: 80px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .dy-wrap .list.tu .img img {
+            height: 80px;
+            width: 80px;
+        }
+
+        .dy-wrap .list.tu .aui-icon-close {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #fff;
+            border: 1px dashed #aaa;
+            border-radius: 50%;
+            padding: 2px;
+        }
+
+        .tip {
+            font-size: 10px;
+            color: #F46CEF;
+            padding: 10px;
+            text-align: center;
+        }
+
+        /* 播放 */
+        .my-play-icon {
+            width: 15px;
+            height: 15px;
+            display: inline-block;
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            background-image: url('../../image/icon/play.png');
+            position: absolute;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <ul class="wrap dy-wrap">
+            <li class="list tu flex-col new-margin-t-10">
+                <div class="content">
+                    <ul class="img-wrap flex-w">
+                        <!-- <li class="i-list">
+                            <div class="img img-h">
+                                <img src="../../image/logo.png" alt="">
+                                <i class="my-play-icon"></i>
+                            </div>
+                            <i class="aui-iconfont aui-icon-close" @click="delVideo()"></i>
+                        </li> -->
+                        <li class="i-list" v-if="video">
+                            <div class="img img-h">
+                                <img :src="returnImg(cover)" alt="">
+                                <i class="my-play-icon"></i>
+                            </div>
+                            <i class="aui-iconfont aui-icon-close" @click="delVideo()"></i>
+                        </li>
+                        <li class="i-list" v-else v-for="(m, index) in imgArr">
+                            <div class="img img-h">
+                                <img :src="returnImg(m)" alt="">
+                            </div>
+                            <i class="aui-iconfont aui-icon-close" @click="delImg(index)"></i>
+                        </li>
+                        <li id="pic" v-if="!video" class="i-list" onclick="selectFile();">
+                            <div class="img img-h">
+                                <img src="../../image/icon/btn_addphoto.png" alt="">
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+            <li class="list dy-content new-margin-t-10">
+                <div class="content">
+                    <textarea name="" id="" v-model="content" placeholder="谈吐文明的人更受欢迎，请勿发布低俗、色情交易、或曝光他人隐私的内容"></textarea>
+                </div>
+            </li>
+        </ul>
+        <button class="new-submit" onclick="submit()">确定发布</button>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+
+<script src="../../script/fabu.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+            imgArr: [],
+            video: '',
+            cover: '',
+            content: ''
+        },
+        methods: {
+            // 删除视频
+            delVideo() {
+                var _this = this;
+                _this.video = '';
+                _this.cover = '';
+            },
+            // 删除图片
+            delImg(index) {
+                view.imgArr.splice(index, 1);
+            },
+            // 跳转
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+        }
+    })
+    apiready = function() {
+        view.id = api.pageParam['id'];
+
+    }
+
+
+    // 选择图片
+    function selectFile() {
+        if (view.imgArr.length == 0) {
+            var buttons = ['图片', '视频'];
+            _action('', buttons, function(bIndex) {
+                if (bIndex != buttons.length + 1) {
+                    if (bIndex == 1) {
+                        getImg();
+                    } else {
+                        getVideo();
+                    }
+                }
+            })
+        } else {
+            // 只能选择图片
+            getImg()
+        }
+    }
+
+    // 获取图片
+    function getImg() {
+        openPic(function(ret) {
+            if (ret && ret.data) {
+                view.imgArr.push(ret.data);
+
+            }
+        })
+    }
+    // 获取视频
+    function getVideo() {
+        openPic(function(ret) {
+            // 获取视频封面
+            getVideoCover(ret.data, function(image) {
+                view.video = ret.data;
+                view.cover = image;
+            })
+        }, 'video');
+    }
+
+    // 确定
+    function submit() {
+        if (!view.content) {
+            _msg('您还没写内容呢');
+            return;
+        }
+        if (!view.video && view.imgArr.length == 0) {
+            _msg('视频和图片不能同时为空');
+            return;
+        }
+        // judegFB(2)
+        _loading();
+        if (view.video) {
+            submitVideo();
+        } else {
+            submitImg();
+        }
+    }
+
+    // 发布 视频
+    function submitVideo() {
+        // 上传视频
+        pushVideo(view.video, function(v) {
+            _upImg({
+                image: view.cover
+            }, function(u) {
+                _ajax('home/Dymanic/adddymanic', function(ret, err) {
+                    console.log(JSON.stringify(ret))
+                    console.log(JSON.stringify(err))
+                    _loadingClose();
+                    _msg(ret.msg);
+                    if (ret && ret.code == 200) {
+                        timerWin(1000, 'frame1/lovemore');
+                    }
+                }, {
+                    content: view.content,
+                    userid: $api.getStorage('userid'),
+                    type: 1,
+                    video: v,
+                    cover: u,
+                    category_id: view.id,
+                })
+            })
+        })
+    }
+    // 发布 图片
+    function submitImg() {
+        _upImgs({
+            image: view.imgArr
+        }, function(u) {
+            _ajax('home/Dymanic/adddymanic', function(ret, err) {
+                console.log(JSON.stringify(ret))
+                console.log(JSON.stringify(err))
+                _loadingClose();
+                _msg(ret.msg);
+                if (ret && ret.code == 200) {
+                    timerWin(1000, 'frame1/lovemore');
+                }
+            }, {
+                content: view.content,
+                userid: $api.getStorage('userid'),
+                type: 1,
+                masterimg: u,
+                category_id: view.id,
+                to_user: api.pageParam['uid']
+            })
+        })
+    }
+</script>
+
+</html>

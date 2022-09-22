@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>小火苗</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/modal.css">
+    <style>
+        .modal {
+            border-width: 90px 0px 10px;
+            border-style: solid;
+            border-color: transparent;
+            border-image-source: url('../../image/modal/notice_bg.9.png');
+            border-image-slice: 90% 0% 5% fill;
+            display: flex;
+            justify-content: center;
+            width: 90vw;
+        }
+
+        .content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            width: 90%;
+        }
+
+        .txt-wrap {
+            overflow-y: auto;
+            margin: 10px 0;
+            height: 30vh;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak>
+        <div class="modal-bg" onclick="_close()">
+            <div class="modal" @click.stop>
+                <div class="content">
+                    <div class="txt-wrap">
+                        <p>这是公告内容这是公告内容这是公告内容这是公告内容这是公告内容这是公告内容这是公告内容</p>
+                        <p>这是公告内容</p>
+                        <p>这是公告内容</p>
+                        <p>这是公告内容</p>
+                        <p>这是公告内容</p>
+                        <p>这是公告内容</p>
+                        <p>这是公告内容</p>
+                        <p>这是公告内容</p>
+                        <p>这是公告内容</p>
+                        <p>这是公告内容</p>
+                        <p>这是公告内容</p>
+                        <p>这是公告内容</p>
+                        <p>这是公告内容</p>
+                        <p>这是公告内容</p>
+                        <p>这是公告内容</p>
+                    </div>
+                    <div class="flex-c" style="width:100%">
+                        <button class="modal-btn">我知道了</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

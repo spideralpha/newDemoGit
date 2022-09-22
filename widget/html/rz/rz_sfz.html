@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>小火苗</title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/news.css">
+    <link rel="stylesheet" href="../../css/aui_font.css">
+    <link rel="stylesheet" href="../../css/xueli.css">
+    <style>
+        html,
+        body {
+            margin: 0;
+            background-color: rgb(240, 240, 240);
+        }
+
+        .list {
+            width: 92%;
+            margin-left: 4%;
+            background-color: #fff !important;
+            padding: 20px 0;
+        }
+
+        .list img {
+            width: 60px !important;
+        }
+
+        .tip-wrap .title {
+            font-weight: bold;
+            font-size: 15px;
+            color: #666;
+        }
+
+        .tip-wrap .text {
+            font-size: 13px;
+            color: #777;
+        }
+
+        .tip-wrap {
+            background-color: #fff;
+        }
+
+        .tip-wrap .text span {
+            color: rgb(255, 128, 128);
+        }
+
+        .tip-wrap img {
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        .show img {
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: cover;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" v-cloak class="wrap">
+        <ul class="ul ">
+            <li class="list flex-col flex-c" v-if="!image_front" onclick="selectFile(0)">
+                <img src="../../image/icon/addpic.png" alt="">
+                <span class="new-margin-t-10">上传正面照片</span>
+            </li>
+            <li class="list show flex" v-else onclick="selectFile(0)">
+                <img :src="returnImg(image_front)" alt="">
+            </li>
+        </ul>
+        <ul class="ul ">
+            <li class="list flex-col flex-c" v-if="!image_behind" onclick="selectFile(1)">
+                <img src="../../image/icon/addpic.png" alt="">
+                <span class="new-margin-t-10">上传反面照片</span>
+            </li>
+            <li class="list show flex" v-else onclick="selectFile(1)">
+                <img :src="returnImg(image_behind)" alt="">
+            </li>
+        </ul>
+        <footer class="flex-c">
+            <button class="new-submit" onclick="submit()">提交认证信息</button>
+        </footer>
+        <div class="tip-wrap">
+            <p class="title">拍摄身份证要求</p>
+            <p class="text">大陆公民持有本人有效二代身份证</p>
+            <p class="text">拍摄时确保身份证<span>边框完整、字体清晰、亮度均匀</span></p>
+            <img src="../../image/u20964.png" alt="">
+        </div>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/jquery.js"></script>
+<script src="../../script/ffkj.js"></script>
+<script src="../../script/vue.js"></script>
+<script>
+    var view = new Vue({
+        el: '#view',
+        data: {
+            imgurl: imgurl,
+            ffList: [],
+            ffInfo: {},
+            ios: 1, // 1上架 0非上架
+            image_front: '',
+            image_behind: '',
+        },
+        methods: {
+            _url(param, url) {
+                _url(param, url);
+            },
+            // 返回图片路径
+            returnImg(url) {
+                return returnImg(url);
+            },
+        }
+    })
+    apiready = function () {}
+
+    // 选择图片
+    function selectFile(index) {
+        openPic(function (ret) {
+            console.log(JSON.stringify(ret))
+            if (ret && ret.data) {
+                if (index == 0) {
+                    view.image_front = ret.data;
+                } else {
+                    view.image_behind = ret.data;
+                }
+                // view.imgList[index] = ret.data;
+                // alert(JSON.stringify(view.imgList))
+                view.$forceUpdate();
+            }
+        })
+    }
+
+
+    // 发布 
+    function submit(types) {
+        if (!view.image_front || !view.image_behind) {
+            _msg('请上传相关证件图片');
+            return;
+        }
+        _loading();
+        _upImg({
+            image: view.image_front
+        }, function (u1) {
+            _upImg({
+                image: view.image_behind
+            }, function (u2) {
+                _ajax('api/auth/certification', function (ret, err) {
+                    console.log(JSON.stringify(ret))
+                    console.log(JSON.stringify(err))
+                    _loadingClose();
+                    _msg(ret.msg);
+                    if (ret && ret.code == 200) {
+                        timerWin('', 'member_win');
+                    }
+                }, {
+                    user_id: $api.getStorage('userid'),
+                    types: api.pageParam['types'], // 1实名
+                    image_front: u1,
+                    image_behind: u2
+                })
+            })
+        })
+    }
+</script>
+
+</html>

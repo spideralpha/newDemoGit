@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport"
+        content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no" />
+    <title>小火苗</title>
+    <link rel="stylesheet" type="text/css" href="../css/aui.css" />
+    <style>
+        .aui-content {
+            line-height: 1.2rem;
+            font-size: 0.75rem;
+        }
+    </style>
+</head>
+
+<body>
+    <section class="aui-content-padded">
+        <div class="aui-content">
+
+        </div>
+    </section>
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/ffkj.js"></script>
+<script type="text/javascript">
+    apiready = function () {
+        getPageContent(api.pageParam['id'], function (data) {
+            var content = data.body;
+            var reg = new RegExp('/public/uploads', 'ig');
+            content = content.replace(reg, imgurl + '/public/uploads');
+            $api.html($api.dom('.aui-content'), content);
+        })
+    }
+</script>
+
+</html>

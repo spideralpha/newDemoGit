@@ -1,0 +1,31 @@
+var retJson = [{
+    name: '新视图将旧视图推开',
+    type: 'push'
+}, {
+    name: '新视图移到旧视图上面',
+    type: 'movein'
+}, {
+    name: '交叉淡化过渡（不支持过渡方向）',
+    type: 'fade'
+}, {
+    name: '翻转效果',
+    type: 'flip'
+}, {
+    name: '将旧视图移开,显示下面的新视图',
+    type: 'reveal'
+}, {
+    name: '滴水效果（不支持过渡方向）',
+    type: 'ripple'
+}, {
+    name: '向上翻一页',
+    type: 'curl'
+}, {
+    name: '向下翻一页',
+    type: 'un_curl'
+}, {
+    name: '收缩效果（不支持过渡方向）',
+    type: 'suck'
+}, {
+    name: '立方体翻滚效果',
+    type: 'cube'
+}]

@@ -1,0 +1,99 @@
+.sp-wrap {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    background-image: url('../image/index/ms_sp_boy_bg_1.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.top {
+    width: 100%;
+    box-sizing: border-box;
+
+}
+
+.top .btn-w {
+    padding: 10px;
+}
+
+.back-btn {
+    color: #fff;
+    border-radius: 5px;
+    padding: 5px;
+    border: 1px solid;
+    font-size: 13px;
+}
+
+.music-btn {
+    width: 30px;
+    height: 30px;
+    display: inline-block;
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    background-image: url('../image/index/ms_sp_boy_sound_open.png');
+}
+
+.music-btn.no {
+    background-image: url('../image/index/ms_sp_boy_sound_close.png');
+}
+
+.scan {
+    background-image: url('../image/index/ms_sp_scan.png');
+    background-repeat: no-repeat;
+    background-size: 50%;
+    background-position: 0 bottom;
+    width: 80vh;
+    height: 80vh;
+    z-index: 1;
+
+    position: absolute;
+    animation-name: scan;
+    animation-duration: 5s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+}
+
+@keyframes scan {
+    0% {
+        transform: rotate(0);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.border {
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    padding: 75px;
+    background: transparent;
+}
+
+.type-img {
+    display: inline-block;
+    content: '';
+    background-image: url('../image/index/ms_sp_boy_radar_call.png');
+    background-repeat: no-repeat;
+    background-size: 100%;
+    width: 65px;
+    height: 65px;
+}
+.video-img {
+    background-image: url('../image/index/ms_sp_boy_radar_video.png');
+}
+
+.txt {
+    color: #fff;
+    text-align: center;
+    font-size: 12px;
+}
+
+.center {
+    position: absolute;
+    text-align: center;
+    z-index: 2;
+}
